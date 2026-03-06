@@ -1,1 +1,4 @@
 # greenhouse-fe
+
+# React + Vite
+
