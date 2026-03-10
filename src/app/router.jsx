@@ -1,5 +1,6 @@
 import { Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from '../features/auth/LoginPage';
+import DashboardPage from '../features/dashboard/DashboardPage';
 
 
 
@@ -8,6 +9,8 @@ function AppRouter() {
   console.log('AppRouter renderizado');
   return (
     <Routes>
+      <Route index element={<DashboardPage />} />
+      <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/login" element={<LoginPage />} />
 
       {/* 
