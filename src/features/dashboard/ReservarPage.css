@@ -1,0 +1,378 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+.reservar-page {
+  min-height: 100vh;
+  padding: 2rem;
+  background: #f1efeb;
+  color: #25221b;
+  font-family: 'Manrope', sans-serif;
+}
+
+.reserva-layout {
+  margin-top: 1.2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.85fr) minmax(280px, 0.9fr);
+  gap: 1.4rem;
+  align-items: start;
+}
+
+.reserva-main-card,
+.reserva-side-card {
+  border: 1px solid #ddd6c8;
+  border-radius: 16px;
+  background: #f8f6f2;
+  box-shadow: 0 8px 18px rgba(45, 33, 9, 0.06);
+}
+
+.reserva-main-card {
+  padding: 2rem;
+}
+
+.reserva-kicker {
+  margin: 0;
+  color: #2d7a4f;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.reserva-main-card h1 {
+  margin: 0.55rem 0 0;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.1rem, 4.8vw, 3.5rem);
+  line-height: 1;
+}
+
+.reserva-copy {
+  margin: 0.9rem 0 0;
+  max-width: 620px;
+  color: #646056;
+  font-size: 1.03rem;
+  line-height: 1.55;
+}
+
+.reserva-steps {
+  margin-top: 1.7rem;
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.reserva-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  padding: 0.46rem 0.92rem;
+  background: #ebe7df;
+  color: #6b665b;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.reserva-step strong {
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  background: rgba(40, 35, 22, 0.09);
+}
+
+.reserva-step.is-active {
+  color: #fff;
+  background: #267543;
+}
+
+.reserva-step.is-active strong {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.calendar-box {
+  margin-top: 1.5rem;
+  border: 1px solid #ddd6c8;
+  border-radius: 13px;
+  padding: 1.15rem;
+  background: #fff;
+}
+
+.calendar-box h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+.months-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.month-block {
+  border-radius: 12px;
+  background: #fbfaf7;
+  border: 1px solid #e8e2d6;
+  padding: 0.75rem;
+}
+
+.month-block p {
+  margin: 0;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+.month-header {
+  display: grid;
+  grid-template-columns: 2rem 1fr 2rem;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.month-header p {
+  text-align: center;
+}
+
+.month-nav-btn {
+  border: 0;
+  border-radius: 8px;
+  background: #eee8dc;
+  color: #3f382c;
+  height: 2rem;
+  width: 2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.month-nav-btn:hover:not(:disabled) {
+  background: #dfd5c3;
+}
+
+.month-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.month-nav-placeholder {
+  width: 2rem;
+  height: 2rem;
+}
+
+.days-grid {
+  margin-top: 0.65rem;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.28rem;
+  font-size: 0.8rem;
+}
+
+.days-grid span {
+  text-align: center;
+  color: #8a8478;
+  font-weight: 600;
+}
+
+.day-btn {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: center;
+  padding: 0.28rem 0;
+  border-radius: 6px;
+  color: #27231b;
+  font-weight: 600;
+}
+
+.day-btn:hover:not(:disabled) {
+  background: #efe6d6;
+}
+
+.day-btn.is-outside,
+.day-btn.is-past {
+  color: #bdb5a7;
+}
+
+.day-btn.is-unavailable {
+  color: #a8a096;
+  background: #ece9e2;
+}
+
+.day-btn.is-range {
+  color: #3c2a12;
+  background: #f2dcc2;
+}
+
+.day-btn.is-selected {
+  color: #fff;
+  background: #23713f;
+}
+
+.day-btn.is-today {
+  color: #fff;
+  background: #d2852f;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+}
+
+.day-btn:disabled {
+  cursor: not-allowed;
+}
+
+.calendar-legend {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  color: #6d675b;
+  font-weight: 600;
+}
+
+.calendar-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dot {
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-selected {
+  background: #23713f;
+}
+
+.dot-unavailable {
+  background: #c3beb5;
+}
+
+.dot-range {
+  background: #f2dcc2;
+}
+
+.dot-today {
+  background: #cc7520;
+}
+
+.calendar-alert {
+  margin: 1rem 0 0;
+  border: 1px solid #efc7c7;
+  border-radius: 10px;
+  background: #faecec;
+  color: #d43b3b;
+  padding: 0.8rem 0.9rem;
+  font-weight: 600;
+}
+
+.assistants-row {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.36rem;
+}
+
+.assistants-row label {
+  font-weight: 700;
+  color: #433d31;
+}
+
+.assistants-row select {
+  width: min(260px, 100%);
+  border: 1px solid #d8d0c3;
+  border-radius: 9px;
+  background: #fff;
+  padding: 0.6rem 0.7rem;
+  font: inherit;
+}
+
+.quote-btn {
+  margin-top: 1rem;
+  border: 0;
+  border-radius: 10px;
+  padding: 0.74rem 1rem;
+  background: linear-gradient(140deg, #2f7755, #1f5e42);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.quote-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.reserva-side-card {
+  padding: 1.1rem;
+}
+
+.reserva-side-card h3 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.reserva-side-card p {
+  margin: 1rem 0;
+  color: #706a5f;
+}
+
+.quote-summary p {
+  margin: 0.4rem 0;
+}
+
+.quote-price {
+  margin-top: 0.8rem;
+  color: #2d7a4f;
+  font-size: 1.05rem;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.46rem;
+}
+
+.tag-list span {
+  border-radius: 999px;
+  background: #ece7dd;
+  color: #666154;
+  font-size: 0.83rem;
+  padding: 0.25rem 0.6rem;
+  font-weight: 700;
+}
+
+@media (max-width: 1024px) {
+  .reservar-page {
+    padding: 1.2rem;
+  }
+
+  .reserva-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .reserva-main-card {
+    padding: 1.2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .reservar-page {
+    padding: 0.6rem;
+  }
+
+  .months-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .calendar-box h2 {
+    font-size: 1.2rem;
+  }
+}
