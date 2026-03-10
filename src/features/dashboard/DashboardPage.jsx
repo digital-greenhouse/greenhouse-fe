@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import DashboardMenu from './components/DashboardMenu';
 import './DashboardPage.css';
 
 const galleryItems = [
@@ -31,9 +33,6 @@ const galleryItems = [
 function DashboardPage() {
   const galleryRef = useRef(null);
   const [galleryVisible, setGalleryVisible] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const closeMobileMenu = () => setMenuOpen(false);
 
   useEffect(() => {
     const section = galleryRef.current;
@@ -56,74 +55,9 @@ function DashboardPage() {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 1024) {
-        setMenuOpen(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   return (
     <main className="villa-page">
-      <header className="villa-header">
-        <div className="brand-block">
-          <span className="brand-icon" aria-hidden="true">
-            ^
-          </span>
-          <div className="brand-text">
-            <p className="brand-title">Villa Encantada</p>
-            <p className="brand-subtitle">La Villa del Amor</p>
-          </div>
-        </div>
-
-        <button
-          className={`menu-toggle ${menuOpen ? 'is-open' : ''}`}
-          type="button"
-          aria-label={menuOpen ? 'Cerrar menu' : 'Abrir menu'}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((prev) => !prev)}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
-
-        <nav
-          className={`menu-nav ${menuOpen ? 'is-open' : ''}`}
-          aria-label="Menu principal"
-        >
-          <a href="#hero" onClick={closeMobileMenu}>
-            Inicio
-          </a>
-          <a href="#hero" onClick={closeMobileMenu}>
-            Reservar
-          </a>
-          <a href="#hero" onClick={closeMobileMenu}>
-            Servicios
-          </a>
-          <a href="#gallery" onClick={closeMobileMenu}>
-            Galeria
-          </a>
-          <a href="#hero" onClick={closeMobileMenu}>
-            Ubicacion
-          </a>
-          <a href="#hero" onClick={closeMobileMenu}>
-            Contacto
-          </a>
-
-          <button className="admin-btn admin-btn-mobile" type="button">
-            Admin
-          </button>
-        </nav>
-
-        <button className="admin-btn" type="button">
-          Admin
-        </button>
-      </header>
+      <DashboardMenu />
 
       <section id="hero" className="hero-section" aria-label="Presentacion principal">
         <div className="hero-overlay" />
@@ -138,8 +72,12 @@ function DashboardPage() {
           </p>
 
           <div className="hero-actions">
-            <button type="button">Reservar Ahora</button>
-            <a href="#gallery">Ver Galeria</a>
+            <Link className="hero-action-primary" to="/reservar">
+              Reservar Ahora
+            </Link>
+            <a className="hero-action-secondary" href="#gallery">
+              Ver Galeria
+            </a>
           </div>
         </div>
       </section>
