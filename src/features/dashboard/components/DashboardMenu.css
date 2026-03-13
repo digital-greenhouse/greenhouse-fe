@@ -111,6 +111,10 @@
 }
 
 .admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
   border: 0;
   border-radius: 12px;
   padding: 0.52rem 1.1rem;

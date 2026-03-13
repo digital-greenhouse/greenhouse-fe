@@ -62,12 +62,19 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
+  border: 0;
+  cursor: pointer;
   border-radius: 999px;
   padding: 0.46rem 0.92rem;
   background: #ebe7df;
   color: #6b665b;
   font-size: 0.9rem;
   font-weight: 700;
+}
+
+.reserva-step:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .reserva-step strong {
@@ -201,8 +208,8 @@
 }
 
 .day-btn.is-range {
-  color: #3c2a12;
-  background: #f2dcc2;
+  color: #fff;
+  background: #23713f;
 }
 
 .day-btn.is-selected {
@@ -248,10 +255,6 @@
 
 .dot-unavailable {
   background: #c3beb5;
-}
-
-.dot-range {
-  background: #f2dcc2;
 }
 
 .dot-today {
@@ -303,6 +306,94 @@
 .quote-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.datos-box,
+.confirm-box {
+  margin-top: 1.5rem;
+  border: 1px solid #ddd6c8;
+  border-radius: 13px;
+  padding: 1.15rem;
+  background: #fff;
+}
+
+.datos-box h2,
+.confirm-box h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+.datos-box p,
+.confirm-box p {
+  color: #706a5f;
+}
+
+.datos-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.datos-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: #433d31;
+}
+
+.datos-grid input,
+.datos-grid select,
+.datos-grid textarea {
+  border: 1px solid #d8d0c3;
+  border-radius: 9px;
+  background: #fff;
+  padding: 0.6rem 0.7rem;
+  font: inherit;
+}
+
+.datos-full {
+  grid-column: 1 / span 2;
+}
+
+.step-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.step-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 0.74rem 1rem;
+  background: linear-gradient(140deg, #2f7755, #1f5e42);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.step-btn-secondary {
+  background: #e9e4da;
+  color: #464032;
+}
+
+.confirm-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.confirm-grid p {
+  margin: 0.3rem 0;
+}
+
+.confirm-total {
+  margin-top: 1rem;
+  font-size: 1.05rem;
 }
 
 .reserva-side-card {
@@ -374,5 +465,14 @@
 
   .calendar-box h2 {
     font-size: 1.2rem;
+  }
+
+  .datos-grid,
+  .confirm-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .datos-full {
+    grid-column: auto;
   }
 }

@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Manrope:wght@400;500;600;700&display=swap');
+
+.auth-page {
+  min-height: 100vh;
+  background: #f2f1ee;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #1f1b16;
+  font-family: 'Manrope', sans-serif;
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.auth-brand span {
+  color: #1f6d36;
+  font-weight: 700;
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.auth-brand p {
+  margin: 0;
+  font-size: 2.35rem;
+  line-height: 1;
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
+}
+
+.auth-brand small {
+  color: #35504b;
+  font-size: 1rem;
+}
+
+.auth-card {
+  width: min(560px, 100%);
+  background: #fff;
+  border: 1px solid #e2dcd2;
+  border-radius: 18px;
+  box-shadow: 0 14px 28px rgba(25, 16, 4, 0.08);
+  padding: 1.8rem;
+}
+
+.auth-card h1 {
+  margin: 0;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+}
+
+.auth-card > p {
+  margin: 0.5rem 0 1.1rem;
+  text-align: center;
+  color: #5f594f;
+  font-size: 1.12rem;
+}
+
+.auth-switch {
+  background: #dfdbd4;
+  border-radius: 13px;
+  padding: 0.2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem;
+}
+
+.auth-switch button {
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  padding: 0.72rem 0.7rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #2d281f;
+}
+
+.auth-switch button.is-active {
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.auth-form {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.auth-form input {
+  border: 1px solid #d8cfbf;
+  border-radius: 12px;
+  padding: 0.8rem 0.9rem;
+  font: inherit;
+  background: #fff;
+}
+
+.auth-submit {
+  margin-top: 0.4rem;
+  border: 0;
+  border-radius: 11px;
+  background: #1f702c;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 0.82rem 1rem;
+  cursor: pointer;
+}
+
+.auth-back-link {
+  margin-top: 1.15rem;
+  color: #6f6658;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .auth-page {
+    padding: 0.8rem;
+  }
+
+  .auth-brand p {
+    font-size: 1.95rem;
+  }
+
+  .auth-card {
+    padding: 1.1rem;
+  }
+
+  .auth-card h1 {
+    font-size: 2.4rem;
+  }
+}

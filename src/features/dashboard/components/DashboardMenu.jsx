@@ -1,20 +1,49 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './DashboardMenu.css';
 
 const menuItems = [
   { label: 'Inicio', to: '/dashboard#hero' },
   { label: 'Reservar', to: '/reservar' },
-  { label: 'Servicios', to: '/dashboard#hero' },
+  { label: 'Servicios', to: '/dashboard#servicios' },
   { label: 'Galeria', to: '/dashboard#gallery' },
-  { label: 'Ubicacion', to: '/dashboard#hero' },
+  { label: 'Tarifa', to: '/dashboard#tarifas' },
   { label: 'Contacto', to: '/dashboard#hero' },
 ];
 
 function DashboardMenu() {
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const closeMobileMenu = () => setMenuOpen(false);
+
+  const scrollToSection = (sectionId) => {
+    const target = document.getElementById(sectionId);
+    if (!target) {
+      return;
+    }
+
+    const top = target.getBoundingClientRect().top + window.scrollY - 110;
+    window.scrollTo({ top, behavior: 'smooth' });
+    window.history.replaceState(null, '', `/dashboard#${sectionId}`);
+  };
+
+  const handleMenuClick = (event, to) => {
+    if (!to.startsWith('/dashboard#')) {
+      closeMobileMenu();
+      return;
+    }
+
+    const sectionId = to.split('#')[1];
+    if (location.pathname === '/dashboard') {
+      event.preventDefault();
+      scrollToSection(sectionId);
+      closeMobileMenu();
+      return;
+    }
+
+    closeMobileMenu();
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -53,19 +82,19 @@ function DashboardMenu() {
 
       <nav className={`menu-nav ${menuOpen ? 'is-open' : ''}`} aria-label="Menu principal">
         {menuItems.map((item) => (
-          <Link key={item.label} to={item.to} onClick={closeMobileMenu}>
+          <Link key={item.label} to={item.to} onClick={(event) => handleMenuClick(event, item.to)}>
             {item.label}
           </Link>
         ))}
 
-        <button className="admin-btn admin-btn-mobile" type="button">
-          Admin
-        </button>
+        <Link className="admin-btn admin-btn-mobile" to="/login" onClick={closeMobileMenu}>
+          Iniciar sesion
+        </Link>
       </nav>
 
-      <button className="admin-btn" type="button">
-        Admin
-      </button>
+      <Link className="admin-btn" to="/login">
+        Iniciar sesion
+      </Link>
     </header>
   );
 }

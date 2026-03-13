@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import DashboardMenu from './components/DashboardMenu';
 import './DashboardPage.css';
 
@@ -30,7 +30,104 @@ const galleryItems = [
   },
 ];
 
+const services = [
+  {
+    id: 'finca',
+    icon: 'FR',
+    title: 'Finca Recreativa',
+    description:
+      'Espacios amplios ideales para celebraciones, reuniones familiares y eventos corporativos.',
+  },
+  {
+    id: 'cocina',
+    icon: 'CE',
+    title: 'Cocina Equipada',
+    description:
+      'Cocina completa con utensilios, estufa y nevera para preparar tus comidas.',
+  },
+  {
+    id: 'bbq',
+    icon: 'BQ',
+    title: 'Zona BBQ',
+    description:
+      'Area de barbecue techada con mesas y sillas para compartir al aire libre.',
+  },
+  {
+    id: 'senderos',
+    icon: 'SN',
+    title: 'Senderos Naturales',
+    description:
+      'Caminos rodeados de naturaleza para caminatas y avistamiento de aves.',
+  },
+  {
+    id: 'eventos',
+    icon: 'ZE',
+    title: 'Zona de Eventos',
+    description:
+      'Espacio adecuado para musica, baile y entretenimiento al aire libre.',
+  },
+  {
+    id: 'parking',
+    icon: 'PA',
+    title: 'Parqueadero Amplio',
+    description: 'Espacio amplio para vehiculos dentro de la propiedad.',
+  },
+  {
+    id: 'capacidad',
+    icon: 'C1',
+    title: 'Capacidad 100 Personas',
+    description: 'Amplios espacios para eventos grandes, reuniones y celebraciones.',
+  },
+  {
+    id: 'entorno',
+    icon: 'ET',
+    title: 'Entorno Tranquilo',
+    description:
+      'Propiedad en zona rural con ambiente campestre y tranquilo en Motavita, Boyaca.',
+  },
+];
+
+const pricingPlans = [
+  {
+    id: 'semana',
+    name: 'Entre Semana',
+    price: '$350.000',
+    per: '/ dia',
+    featured: false,
+    features: ['Lunes a Jueves', 'Hasta 50 personas', 'Zonas comunes y BBQ', 'Parqueadero'],
+  },
+  {
+    id: 'finde',
+    name: 'Fin de Semana',
+    price: '$550.000',
+    per: '/ dia',
+    featured: true,
+    features: [
+      'Viernes a Domingo',
+      'Hasta 100 personas',
+      'Zona BBQ y eventos',
+      'Parqueadero',
+      'Senderos naturales',
+    ],
+  },
+  {
+    id: 'alta',
+    name: 'Temporada Alta',
+    price: '$750.000',
+    per: '/ dia',
+    featured: false,
+    features: [
+      'Festivos y vacaciones',
+      'Hasta 100 personas',
+      'Todos los servicios',
+      'Parqueadero',
+      'Zona de eventos',
+    ],
+  },
+];
+
 function DashboardPage() {
+  const location = useLocation();
   const galleryRef = useRef(null);
   const [galleryVisible, setGalleryVisible] = useState(false);
 
@@ -54,6 +151,23 @@ function DashboardPage() {
 
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!location.hash) {
+      return;
+    }
+
+    const sectionId = location.hash.replace('#', '');
+    const target = document.getElementById(sectionId);
+    if (!target) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      const top = target.getBoundingClientRect().top + window.scrollY - 110;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  }, [location.hash]);
 
   return (
     <main className="villa-page">
@@ -82,6 +196,27 @@ function DashboardPage() {
         </div>
       </section>
 
+      <section id="servicios" className="services-section" aria-label="Servicios">
+        <p className="services-kicker">Servicios</p>
+        <h2>Todo lo que necesitas para un evento perfecto</h2>
+        <p className="services-copy">
+          Villa Encantada cuenta con amplios espacios para que tu unica preocupacion
+          sea disfrutar.
+        </p>
+
+        <div className="services-grid">
+          {services.map((service) => (
+            <article key={service.id} className="service-card">
+              <span className="service-icon" aria-hidden="true">
+                {service.icon}
+              </span>
+              <h3>{service.title}</h3>
+              <p>{service.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section
         id="gallery"
         ref={galleryRef}
@@ -93,6 +228,42 @@ function DashboardPage() {
             <img src={item.image} alt={item.alt} loading="lazy" />
           </article>
         ))}
+      </section>
+
+      <section id="tarifas" className="pricing-section" aria-label="Tarifas">
+        <h2>Precios transparentes, sin sorpresas</h2>
+        <p>
+          Consulta nuestras tarifas y reserva directamente. El precio final se calcula
+          segun tus fechas y numero de asistentes.
+        </p>
+
+        <div className="pricing-grid">
+          {pricingPlans.map((plan) => (
+            <article
+              key={plan.id}
+              className={`pricing-card ${plan.featured ? 'is-featured' : ''}`}
+            >
+              {plan.featured && <span className="pricing-badge">Popular</span>}
+
+              <h3>{plan.name}</h3>
+
+              <p className="pricing-price">
+                <strong>{plan.price}</strong>
+                <span>{plan.per}</span>
+              </p>
+
+              <ul>
+                {plan.features.map((feature) => (
+                  <li key={feature}>{feature}</li>
+                ))}
+              </ul>
+
+              <Link className={`pricing-btn ${plan.featured ? 'is-featured' : ''}`} to="/reservar">
+                Cotizar
+              </Link>
+            </article>
+          ))}
+        </div>
       </section>
     </main>
   );
