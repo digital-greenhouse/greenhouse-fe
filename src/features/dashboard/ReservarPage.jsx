@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import DashboardMenu from './components/DashboardMenu';
 import ReservaConfirmarStep from './components/reserva/ReservaConfirmarStep';
 import ReservaDatosStep from './components/reserva/ReservaDatosStep';
@@ -93,6 +93,10 @@ function buildUnavailableSet(months) {
 }
 
 function ReservarPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const today = normalizeDate(new Date());
   const [baseMonth, setBaseMonth] = useState(
     new Date(today.getFullYear(), today.getMonth(), 1)
@@ -143,6 +147,7 @@ function ReservarPage() {
   const nights = checkIn && checkOut ? Math.round((checkOut - checkIn) / DAY_MS) : 0;
   const estimatedTotal = nights > 0 ? nights * attendees * 35000 : 0;
   const canGoStep2 = Boolean(checkIn && checkOut && !rangeHasUnavailable);
+  console.log({ rangeHasUnavailable, checkIn, checkOut });
   const hasContactData =
     contactData.fullName.trim() && contactData.email.trim() && contactData.phone.trim();
   const canGoStep3 = canGoStep2 && Boolean(hasContactData);

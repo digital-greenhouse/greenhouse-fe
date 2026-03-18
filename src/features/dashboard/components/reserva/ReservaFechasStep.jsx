@@ -56,7 +56,17 @@ function ReservaFechasStep({
                   {'>'}
                 </button>
               ) : (
-                <span className="month-nav-placeholder" aria-hidden="true" />
+                <>
+                  <span className="month-nav-placeholder desktop-nav-placeholder" aria-hidden="true" />
+                  <button
+                    type="button"
+                    className="month-nav-btn mobile-only-nav"
+                    aria-label="Mes siguiente"
+                    onClick={handleNextMonth}
+                  >
+                    {'>'}
+                  </button>
+                </>
               )}
             </div>
 

@@ -35,7 +35,7 @@
 
 .brand-title {
   margin: 0;
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-serif);
   font-weight: 700;
   font-size: 1.78rem;
   letter-spacing: -0.03em;
@@ -44,7 +44,7 @@
 .brand-subtitle {
   margin: 0;
   color: var(--villa-accent);
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-serif);
   font-size: 1.55rem;
   font-weight: 500;
   letter-spacing: -0.02em;
@@ -118,7 +118,7 @@
   border: 0;
   border-radius: 12px;
   padding: 0.52rem 1.1rem;
-  background: linear-gradient(140deg, #2f7755, #1f5e42);
+  background: var(--gradient-primary);
   color: #fff;
   font-weight: 600;
   cursor: pointer;

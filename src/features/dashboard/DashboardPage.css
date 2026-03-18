@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Manrope:wght@400;500;600&display=swap');
-
 :root {
   --villa-bg: #ece3d2;
   --villa-card: #f8f4eb;
@@ -17,7 +15,7 @@
     radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.6), transparent 38%),
     linear-gradient(155deg, #f4ecdd 0%, #efe6d6 45%, #e6dbc6 100%);
   color: var(--villa-ink);
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .hero-section {
@@ -64,7 +62,7 @@
 
 .hero-content h1 {
   margin: 1rem 0;
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-serif);
   font-size: clamp(2.6rem, 5.4vw, 5.2rem);
   line-height: 1.02;
   letter-spacing: -0.03em;
@@ -93,7 +91,7 @@
 }
 
 .hero-action-primary {
-  background: linear-gradient(140deg, #2f7755, #1f5e42);
+  background: var(--gradient-primary);
   color: #fff;
 }
 
@@ -114,7 +112,7 @@
 
 .services-kicker {
   margin: 0;
-  color: #2d7a4f;
+  color: var(--color-kicker);
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -122,8 +120,8 @@
 
 .services-section h2 {
   margin: 0.65rem 0 0;
-  max-width: 640px;
-  font-family: 'Playfair Display', serif;
+  max-width: 840px;
+  font-family: var(--font-serif);
   font-size: clamp(2.05rem, 4.5vw, 4rem);
   line-height: 1.03;
   letter-spacing: -0.02em;
@@ -147,7 +145,7 @@
 .service-card {
   border: 1px solid rgba(96, 78, 38, 0.18);
   border-radius: 16px;
-  background: #f8f4eb;
+  background: var(--surface-card);
   box-shadow: 0 8px 18px rgba(45, 34, 14, 0.07);
   padding: 1.45rem 1.35rem;
 }
@@ -168,7 +166,7 @@
 .service-card h3 {
   margin: 0.85rem 0 0;
   font-size: 1.65rem;
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-serif);
   line-height: 1.1;
 }
 
@@ -238,7 +236,7 @@
 .pricing-section h2 {
   margin: 0;
   text-align: center;
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-serif);
   font-size: clamp(2.1rem, 4.4vw, 4rem);
   line-height: 1.04;
 }
@@ -263,13 +261,13 @@
   position: relative;
   border: 1px solid rgba(96, 78, 38, 0.2);
   border-radius: 18px;
-  background: #f8f4eb;
+  background: var(--surface-card);
   box-shadow: 0 8px 18px rgba(45, 34, 14, 0.07);
   padding: 1.45rem;
 }
 
 .pricing-card.is-featured {
-  border: 2px solid #2f7755;
+  border: 2px solid var(--color-primary);
 }
 
 .pricing-badge {
@@ -278,7 +276,7 @@
   left: 50%;
   transform: translateX(-50%);
   border-radius: 999px;
-  background: #2f7755;
+  background: var(--color-primary);
   color: #fff;
   font-size: 0.84rem;
   font-weight: 700;
@@ -289,7 +287,7 @@
   margin: 0.5rem 0 0;
   text-align: center;
   font-size: 2rem;
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-serif);
 }
 
 .pricing-price {
@@ -298,7 +296,7 @@
 }
 
 .pricing-price strong {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-serif);
   font-size: clamp(2rem, 3.2vw, 3rem);
 }
 
@@ -323,7 +321,7 @@
 
 .pricing-card li::before {
   content: '\2713';
-  color: #2f7755;
+  color: var(--color-primary);
   margin-right: 0.55rem;
 }
 
@@ -336,15 +334,15 @@
   border-radius: 11px;
   padding: 0.7rem 1rem;
   border: 1px solid #d5ccbc;
-  background: #f8f4eb;
+  background: var(--surface-card);
   color: #2a261d;
   font-weight: 700;
   text-decoration: none;
 }
 
 .pricing-btn.is-featured {
-  border-color: #2f7755;
-  background: #2f7755;
+  border-color: var(--color-primary);
+  background: var(--color-primary);
   color: #fff;
 }
 

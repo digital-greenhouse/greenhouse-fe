@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link, useLocation } from 'react-router-dom';
 import './DashboardMenu.css';
 
@@ -12,6 +13,7 @@ const menuItems = [
 ];
 
 function DashboardMenu() {
+  const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -43,6 +45,10 @@ function DashboardMenu() {
     }
 
     closeMobileMenu();
+  };
+
+  const loginOption = () => {
+    navigate('/login', { state: { backgroundLocation: location } });
   };
 
   useEffect(() => {
@@ -87,14 +93,19 @@ function DashboardMenu() {
           </Link>
         ))}
 
-        <Link className="admin-btn admin-btn-mobile" to="/login" onClick={closeMobileMenu}>
+        <Link
+          className="admin-btn admin-btn-mobile"
+          to="/login"
+          state={{ backgroundLocation: location }}
+          onClick={closeMobileMenu}
+        >
           Iniciar sesion
         </Link>
       </nav>
 
-      <Link className="admin-btn" to="/login">
+      <button type="button" className="admin-btn" onClick={loginOption}>
         Iniciar sesion
-      </Link>
+      </button>
     </header>
   );
 }
