@@ -1,0 +1,266 @@
+/* ///////////////////////////////////////////// MENU LATERAL //////////////////////////////////////////// */
+
+/*----- -----*/
+
+/* Título y subtítulo */
+.profile-title {
+    color: #ffffff;
+    font-weight: bold;
+    margin: 0;
+    /* Sin márgenes adicionales */
+    font-size: 0.9em;
+}
+
+.profile-subtitle {
+    color: #b0b0b0;
+    font-size: 0.5rem;
+    /* Tamaño más pequeño para el subtítulo */
+    margin: 0;
+
+}
+/* Imagen con contorno circular */
+.profile-img-user {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #fff;
+    margin-right: 15px;
+    background-color: #ffffff;
+    margin-left: 10px;
+}
+
+/* Título y subtítulo */
+.profile-title-user {
+    color: #000000;
+    font-weight: bold;
+    margin: 0;
+    /* Sin márgenes adicionales */
+    font-size: 0.9em;
+}
+
+
+
+.profile-subtitle-user {
+    color: #000000;
+    font-size: 0.5rem;
+    margin: 0;
+}
+
+
+
+/*----- -----*/
+
+.container-fluid {
+    height: 100vh;
+    overflow: hidden;
+} 
+
+
+.container-content-scrollable {
+     height: 100vh;
+    /* Ajusta la altura según lo necesario, restando la altura del encabezado o la barra superior si la tienes */ 
+
+    overflow-y: auto;       /* Habilita el desplazamiento vertical */
+    overflow-x: hidden;  /*Evita el scroll horizontal */
+    padding-right: 10px;    /* Evita que el contenido se superponga con la barra de desplazamiento */
+    padding-bottom: 25px;
+
+}
+
+.custom-row {
+    display: flex;
+    /* Asegúrate de que sea un contenedor flex */
+    flex-wrap: nowrap;
+    /* Asegura que no haya wraps (cambio de línea) */
+    height: 100%;
+    /* Asegúrate de que ocupe toda la altura */
+}
+
+
+.custom-col {
+    /* responsable de desplazamiento contededor principal donde se renderiza los contenidos  */
+    flex-grow: 1;
+    overflow: hidden;
+
+}
+
+.menuU {
+    display: flex;
+    flex-direction: column;
+    /* Alinea todos los elementos verticalmente */
+    /* justify-content: flex-start; Alinea los elementos al inicio */
+    height: 100%;
+    background-color: black;
+    justify-content: space-between;
+    overflow-x: hidden;
+    padding: 5% 0% 10% 1%;
+}
+
+.menuU .nav-item-custom {
+    padding-top:4% ;
+    background-color: black;
+    color: white;
+}
+
+.menuU .nav-item-custom:hover {
+    background-color: darkgray;
+    color: white;
+}
+
+.icon-margin {
+    margin-right: 10px;
+}
+
+
+.section-1,
+.section-2,
+.section-3 {
+    display: flex;
+    flex-direction: column;
+}
+
+.section-1 {
+    flex-basis: 60%;
+    max-height: 60%;
+    /* justify-content: space-between; */
+  
+}
+
+.section-2 {
+    flex-basis: 30%; 
+    max-height: 30%;
+    flex-direction: column-reverse;
+    /* justify-content: space-between; */
+     
+   
+}
+
+.section-3 {
+    flex-basis: 10%; 
+    max-height: 10%;
+}
+
+
+/* titulo empresa  */
+.profile-header {
+    /* border-bottom: 1px solid #404040; */
+    padding: 20px 0;
+    /* Ajustar el padding para evitar superposición */
+    display: flex;
+    /* Asegura que los elementos hijos se alineen horizontalmente */
+    align-items: center;
+    /* Centra los elementos verticalmente */
+    margin: 4px 0px 10px;
+
+}
+
+
+
+/* Imagen con contorno circular */
+.profile-img {
+    width: 40px;
+    /* Reducir el ancho de la imagen */
+    height: 40px;
+    /* Reducir la altura de la imagen */
+    border-radius: 50%;
+    /* Hace la imagen circular */
+    object-fit: cover;
+    /* Asegura que la imagen se ajuste al contorno */
+    border: 1px solid #fff;
+    /* Reducir el contorno blanco alrededor de la imagen */
+    margin-right: 15px;
+    /* Añadir margen a la derecha de la imagen */
+    background-color: #ffffff;
+    margin-left: 10px;
+}
+
+
+/* perfil*/
+.profile-header-user {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #ffffff;
+    /* Fondo negro */
+    border-radius: 5px;
+    margin: 0% 4% 2% 4%;
+}
+
+.separator-line {
+    height: 2px;
+    background-color: white;
+    margin: 3% 0;
+    width: calc(100% - 40px);
+    /* Línea centrada y más corta */
+    align-self: center;
+    /* Centra la línea dentro del contenedor */
+}
+
+
+
+/* Perfil y opciones en la parte inferior */
+.menuU .bottom-section {
+    margin-top: auto;
+    /* Empuja estos elementos al fondo */
+}
+
+
+
+.menuU.hidden {
+    transform: translateX(-100%);
+    /* Desliza el menú hacia la izquierda cuando está oculto */
+}
+
+/* ///// */
+
+.top-bar {
+    background-color: black;
+    padding: 0px;
+    margin: 0px;
+    border: none;
+}
+
+
+.menu-button {
+    color: white; /* Color del ícono en blanco */
+    background-color: transparent; /* Fondo transparente */
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  .menu-button:hover{
+    background-color: #000000 !important;
+}
+ 
+
+
+.col.custom-col {
+    position: relative;
+    /* Asegura que el overlay se posicione correctamente donde va a estar el overlay */
+}
+
+
+
+
+.content-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semitransparente */
+    z-index: 1000; /* Asegúrate de que esté sobre el contenido principal */
+    display: none; /* Inicialmente oculto */
+  }
+  
+  @media (max-width: 768px) {
+    .content-overlay.visible {
+      display: block;
+    }
+
+    .container-content-scrollable{
+        height: calc(100vh - 50px); /* Ajusta la altura según lo necesario, restando la altura del encabezado o la barra superior si la tienes */
+    }
+  }
