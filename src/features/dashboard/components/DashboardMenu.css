@@ -1,0 +1,232 @@
+.villa-header {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 0.8rem 1.1rem;
+  border: 1px solid rgba(35, 32, 25, 0.08);
+  border-radius: 18px;
+  background: rgba(248, 244, 235, 0.8);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(25, 18, 6, 0.08);
+}
+
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.brand-icon {
+  font-size: 1.45rem;
+  color: var(--villa-accent);
+  line-height: 1;
+}
+
+.brand-text {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.brand-title {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.78rem;
+  letter-spacing: -0.03em;
+}
+
+.brand-subtitle {
+  margin: 0;
+  color: var(--villa-accent);
+  font-family: 'Playfair Display', serif;
+  font-size: 1.55rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.menu-nav {
+  justify-self: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.3rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.menu-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(35, 32, 25, 0.14);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.menu-toggle span {
+  width: 20px;
+  height: 2px;
+  background: #26231a;
+  border-radius: 10px;
+  transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.menu-toggle.is-open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.menu-toggle.is-open span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.is-open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.menu-nav a {
+  color: #5a564b;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 0.8rem;
+  border-radius: 10px;
+  transition: color 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
+}
+
+.menu-nav a:hover {
+  color: #221d11;
+  background: rgba(255, 255, 255, 0.92);
+  transform: translateY(-1px);
+}
+
+.admin-btn {
+  border: 0;
+  border-radius: 12px;
+  padding: 0.52rem 1.1rem;
+  background: linear-gradient(140deg, #2f7755, #1f5e42);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 14px rgba(45, 96, 73, 0.25);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.admin-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(45, 96, 73, 0.32);
+}
+
+.admin-btn-mobile {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .villa-header {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    justify-items: stretch;
+    text-align: left;
+    position: relative;
+  }
+
+  .brand-text {
+    justify-content: flex-start;
+  }
+
+  .brand-title {
+    font-size: 1.5rem;
+  }
+
+  .brand-subtitle {
+    font-size: 1.3rem;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    justify-self: end;
+  }
+
+  .menu-nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 0.65rem);
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.2rem;
+    padding: 0.8rem;
+    border-radius: 16px;
+    border: 1px solid rgba(35, 32, 25, 0.1);
+    background: rgba(248, 244, 235, 0.98);
+    box-shadow: 0 14px 24px rgba(20, 16, 8, 0.14);
+  }
+
+  .menu-nav.is-open {
+    display: flex;
+    width: 100%;
+  }
+
+  .menu-nav a {
+    display: block;
+    width: 100%;
+    font-size: 1.2rem;
+    padding: 0.7rem 0.45rem;
+  }
+
+  .admin-btn {
+    display: none;
+  }
+
+  .admin-btn-mobile {
+    display: block;
+    margin-top: 0.45rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .villa-header {
+    top: 0.35rem;
+    border-radius: 12px;
+    padding: 0.6rem 0.7rem;
+  }
+
+  .brand-block {
+    gap: 0.45rem;
+  }
+
+  .brand-title {
+    font-size: 0.98rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.82rem;
+  }
+
+  .menu-nav {
+    border-radius: 12px;
+    padding: 0.6rem;
+  }
+
+  .menu-nav a {
+    font-size: 0.88rem;
+    padding: 0.6rem 0.3rem;
+  }
+
+  .admin-btn-mobile {
+    padding: 0.55rem 1rem;
+    font-size: 1rem;
+  }
+}
