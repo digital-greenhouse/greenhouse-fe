@@ -1,11 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import DashboardMenu from './components/DashboardMenu';
+import ReservaConfirmarStep from './components/reserva/ReservaConfirmarStep';
+import ReservaDatosStep from './components/reserva/ReservaDatosStep';
+import ReservaFechasStep from './components/reserva/ReservaFechasStep';
+import ReservaSteps from './components/reserva/ReservaSteps';
 import './ReservarPage.css';
 
 const steps = [
-  { id: 1, label: 'Fechas', active: true },
-  { id: 2, label: 'Datos', active: false },
-  { id: 3, label: 'Confirmar', active: false },
+  { id: 1, label: 'Fechas' },
+  { id: 2, label: 'Datos' },
+  { id: 3, label: 'Confirmar' },
 ];
 
 const tags = ['BBQ', 'Parqueadero', 'Eventos', 'Senderos', '100 personas'];
@@ -89,6 +93,10 @@ function buildUnavailableSet(months) {
 }
 
 function ReservarPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const today = normalizeDate(new Date());
   const [baseMonth, setBaseMonth] = useState(
     new Date(today.getFullYear(), today.getMonth(), 1)
@@ -101,6 +109,14 @@ function ReservarPage() {
   const [checkIn, setCheckIn] = useState(null);
   const [checkOut, setCheckOut] = useState(null);
   const [attendees, setAttendees] = useState(30);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [contactData, setContactData] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    eventType: 'Social',
+    notes: '',
+  });
 
   const isUnavailable = (value) => unavailableDates.has(toDateKey(value));
 
@@ -130,6 +146,21 @@ function ReservarPage() {
 
   const nights = checkIn && checkOut ? Math.round((checkOut - checkIn) / DAY_MS) : 0;
   const estimatedTotal = nights > 0 ? nights * attendees * 35000 : 0;
+  const canGoStep2 = Boolean(checkIn && checkOut && !rangeHasUnavailable);
+  console.log({ rangeHasUnavailable, checkIn, checkOut });
+  const hasContactData =
+    contactData.fullName.trim() && contactData.email.trim() && contactData.phone.trim();
+  const canGoStep3 = canGoStep2 && Boolean(hasContactData);
+
+  const canAccessStep = (stepId) => {
+    if (stepId === 1) {
+      return true;
+    }
+    if (stepId === 2) {
+      return canGoStep2;
+    }
+    return canGoStep3;
+  };
 
   const canGoPrevious =
     baseMonth.getFullYear() > today.getFullYear() ||
@@ -163,6 +194,12 @@ function ReservarPage() {
     setCheckOut(value);
   };
 
+  const handleStepChange = (stepId) => {
+    if (canAccessStep(stepId)) {
+      setCurrentStep(stepId);
+    }
+  };
+
   return (
     <main className="reservar-page">
       <DashboardMenu />
@@ -176,143 +213,62 @@ function ReservarPage() {
             Te confirmaremos en menos de 24 horas.
           </p>
 
-          <div className="reserva-steps" aria-label="Pasos de reserva">
-            {steps.map((step) => (
-              <span
-                key={step.id}
-                className={`reserva-step ${step.active ? 'is-active' : ''}`}
-              >
-                <strong>{step.id}</strong>
-                {step.label}
-              </span>
-            ))}
-          </div>
+          <ReservaSteps
+            steps={steps}
+            currentStep={currentStep}
+            onStepChange={handleStepChange}
+            canAccessStep={canAccessStep}
+          />
 
-          <section className="calendar-box" aria-label="Selecciona fechas">
-            <h2>Selecciona tus fechas</h2>
+          {currentStep === 1 && (
+            <ReservaFechasStep
+              months={months}
+              weekDays={weekDays}
+              monthFormatter={monthFormatter}
+              toDateKey={toDateKey}
+              buildCalendarCells={buildCalendarCells}
+              today={today}
+              canGoPrevious={canGoPrevious}
+              handlePrevMonth={handlePrevMonth}
+              handleNextMonth={handleNextMonth}
+              checkIn={checkIn}
+              checkOut={checkOut}
+              attendees={attendees}
+              setAttendees={setAttendees}
+              isUnavailable={isUnavailable}
+              isInRange={isInRange}
+              isSameDay={isSameDay}
+              handleDateClick={handleDateClick}
+              rangeHasUnavailable={rangeHasUnavailable}
+              onContinue={() => handleStepChange(2)}
+            />
+          )}
 
-            <div className="months-grid">
-              {months.map((monthDate, monthIndex) => (
-                <div
-                  key={toDateKey(monthDate)}
-                  className={`month-block ${monthIndex === 1 ? 'desktop-only' : ''}`}
-                >
-                  <div className="month-header">
-                    {monthIndex === 0 ? (
-                      <button
-                        type="button"
-                        className="month-nav-btn"
-                        aria-label="Mes anterior"
-                        onClick={handlePrevMonth}
-                        disabled={!canGoPrevious}
-                      >
-                        {'<'}
-                      </button>
-                    ) : (
-                      <span className="month-nav-placeholder" aria-hidden="true" />
-                    )}
+          {currentStep === 2 && (
+            <ReservaDatosStep
+              data={contactData}
+              onChange={setContactData}
+              onBack={() => setCurrentStep(1)}
+              onContinue={() => handleStepChange(3)}
+            />
+          )}
 
-                    <p>{monthFormatter.format(monthDate)}</p>
-
-                    {monthIndex === 1 ? (
-                      <button
-                        type="button"
-                        className="month-nav-btn"
-                        aria-label="Mes siguiente"
-                        onClick={handleNextMonth}
-                      >
-                        {'>'}
-                      </button>
-                    ) : (
-                      <span className="month-nav-placeholder" aria-hidden="true" />
-                    )}
-                  </div>
-
-                  <div className="days-grid" role="grid">
-                    {weekDays.map((day) => (
-                      <span key={`${toDateKey(monthDate)}-${day}`}>{day}</span>
-                    ))}
-
-                    {buildCalendarCells(monthDate).map((cell) => {
-                      const unavailable = isUnavailable(cell.date);
-                      const disabled = !cell.inMonth || cell.date < today || unavailable;
-                      const isStart = checkIn && isSameDay(cell.date, checkIn);
-                      const isEnd = checkOut && isSameDay(cell.date, checkOut);
-                      const inRange = !unavailable && isInRange(cell.date);
-                      const isToday = isSameDay(cell.date, today);
-                      const dayClasses = [
-                        'day-btn',
-                        !cell.inMonth ? 'is-outside' : '',
-                        cell.date < today ? 'is-past' : '',
-                        unavailable ? 'is-unavailable' : '',
-                        inRange ? 'is-range' : '',
-                        isStart || isEnd ? 'is-selected' : '',
-                        isToday ? 'is-today' : '',
-                      ]
-                        .filter(Boolean)
-                        .join(' ');
-
-                      return (
-                        <button
-                          key={`${toDateKey(monthDate)}-${toDateKey(cell.date)}`}
-                          type="button"
-                          className={dayClasses}
-                          disabled={disabled}
-                          onClick={() => handleDateClick(cell.date)}
-                        >
-                          {cell.date.getDate()}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="calendar-legend" aria-label="Leyenda de calendario">
-              <span>
-                <i className="dot dot-selected" /> Seleccionado
-              </span>
-              <span>
-                <i className="dot dot-range" /> Rango
-              </span>
-              <span>
-                <i className="dot dot-unavailable" /> No disponible
-              </span>
-              <span>
-                <i className="dot dot-today" /> Hoy
-              </span>
-            </div>
-
-            {rangeHasUnavailable && (
-              <p className="calendar-alert" role="alert">
-                Las fechas seleccionadas incluyen dias no disponibles. Por favor ajusta la
-                seleccion.
-              </p>
-            )}
-
-            <div className="assistants-row">
-              <label htmlFor="asistentes">Numero de asistentes</label>
-              <select
-                id="asistentes"
-                value={attendees}
-                onChange={(event) => setAttendees(Number(event.target.value))}
-              >
-                <option value={30}>30 personas</option>
-                <option value={50}>50 personas</option>
-                <option value={80}>80 personas</option>
-                <option value={100}>100 personas</option>
-              </select>
-            </div>
-
-            <button
-              className="quote-btn"
-              type="button"
-              disabled={!checkIn || !checkOut || rangeHasUnavailable}
-            >
-              Continuar con la cotizacion
-            </button>
-          </section>
+          {currentStep === 3 && (
+            <ReservaConfirmarStep
+              summary={{
+                checkIn: checkIn ? shortDateFormatter.format(checkIn) : 'Sin definir',
+                checkOut: checkOut ? shortDateFormatter.format(checkOut) : 'Sin definir',
+                nights,
+                attendees,
+                estimatedTotal: moneyFormatter.format(estimatedTotal),
+                fullName: contactData.fullName,
+                email: contactData.email,
+                phone: contactData.phone,
+                eventType: contactData.eventType,
+              }}
+              onBack={() => setCurrentStep(2)}
+            />
+          )}
         </article>
 
         <aside className="reserva-side-card">

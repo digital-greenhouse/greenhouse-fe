@@ -1,11 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap');
-
 .reservar-page {
   min-height: 100vh;
   padding: 2rem;
   background: #f1efeb;
   color: #25221b;
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .reserva-layout {
@@ -18,10 +16,10 @@
 
 .reserva-main-card,
 .reserva-side-card {
-  border: 1px solid #ddd6c8;
+  border: 1px solid var(--border-soft);
   border-radius: 16px;
-  background: #f8f6f2;
-  box-shadow: 0 8px 18px rgba(45, 33, 9, 0.06);
+  background: var(--surface-soft);
+  box-shadow: var(--shadow-soft);
 }
 
 .reserva-main-card {
@@ -30,7 +28,7 @@
 
 .reserva-kicker {
   margin: 0;
-  color: #2d7a4f;
+  color: var(--color-kicker);
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -38,7 +36,7 @@
 
 .reserva-main-card h1 {
   margin: 0.55rem 0 0;
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-serif);
   font-size: clamp(2.1rem, 4.8vw, 3.5rem);
   line-height: 1;
 }
@@ -62,12 +60,19 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
+  border: 0;
+  cursor: pointer;
   border-radius: 999px;
   padding: 0.46rem 0.92rem;
   background: #ebe7df;
   color: #6b665b;
   font-size: 0.9rem;
   font-weight: 700;
+}
+
+.reserva-step:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .reserva-step strong {
@@ -83,7 +88,7 @@
 
 .reserva-step.is-active {
   color: #fff;
-  background: #267543;
+  background: var(--color-primary);
 }
 
 .reserva-step.is-active strong {
@@ -92,7 +97,7 @@
 
 .calendar-box {
   margin-top: 1.5rem;
-  border: 1px solid #ddd6c8;
+  border: 1px solid var(--border-soft);
   border-radius: 13px;
   padding: 1.15rem;
   background: #fff;
@@ -161,6 +166,10 @@
   height: 2rem;
 }
 
+.mobile-only-nav {
+  display: none;
+}
+
 .days-grid {
   margin-top: 0.65rem;
   display: grid;
@@ -201,13 +210,13 @@
 }
 
 .day-btn.is-range {
-  color: #3c2a12;
-  background: #f2dcc2;
+  color: #fff;
+  background: var(--color-primary);
 }
 
 .day-btn.is-selected {
   color: #fff;
-  background: #23713f;
+  background: var(--color-primary);
 }
 
 .day-btn.is-today {
@@ -243,15 +252,11 @@
 }
 
 .dot-selected {
-  background: #23713f;
+  background: var(--color-primary);
 }
 
 .dot-unavailable {
   background: #c3beb5;
-}
-
-.dot-range {
-  background: #f2dcc2;
 }
 
 .dot-today {
@@ -294,7 +299,7 @@
   border: 0;
   border-radius: 10px;
   padding: 0.74rem 1rem;
-  background: linear-gradient(140deg, #2f7755, #1f5e42);
+  background: var(--gradient-primary);
   color: #fff;
   font-weight: 700;
   cursor: pointer;
@@ -303,6 +308,94 @@
 .quote-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.datos-box,
+.confirm-box {
+  margin-top: 1.5rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 13px;
+  padding: 1.15rem;
+  background: #fff;
+}
+
+.datos-box h2,
+.confirm-box h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+.datos-box p,
+.confirm-box p {
+  color: #706a5f;
+}
+
+.datos-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.datos-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: #433d31;
+}
+
+.datos-grid input,
+.datos-grid select,
+.datos-grid textarea {
+  border: 1px solid #d8d0c3;
+  border-radius: 9px;
+  background: #fff;
+  padding: 0.6rem 0.7rem;
+  font: inherit;
+}
+
+.datos-full {
+  grid-column: 1 / span 2;
+}
+
+.step-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.step-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 0.74rem 1rem;
+  background: var(--gradient-primary);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.step-btn-secondary {
+  background: #e9e4da;
+  color: #464032;
+}
+
+.confirm-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.confirm-grid p {
+  margin: 0.3rem 0;
+}
+
+.confirm-total {
+  margin-top: 1rem;
+  font-size: 1.05rem;
 }
 
 .reserva-side-card {
@@ -326,7 +419,7 @@
 
 .quote-price {
   margin-top: 0.8rem;
-  color: #2d7a4f;
+  color: var(--color-kicker);
   font-size: 1.05rem;
 }
 
@@ -372,7 +465,26 @@
     display: none;
   }
 
+  .desktop-nav-placeholder {
+    display: none;
+  }
+
+  .mobile-only-nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .calendar-box h2 {
     font-size: 1.2rem;
+  }
+
+  .datos-grid,
+  .confirm-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .datos-full {
+    grid-column: auto;
   }
 }
