@@ -1,0 +1,115 @@
+.app-toast-container {
+  z-index: 1200;
+}
+
+.app-toast {
+  min-width: 280px;
+  border: 1px solid transparent;
+  border-left-width: 6px;
+  border-radius: 14px;
+  box-shadow: 0 14px 35px rgba(25, 16, 4, 0.22);
+  overflow: hidden;
+}
+
+.app-toast .toast-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid transparent;
+  font-weight: 600;
+}
+
+.app-toast .app-toast-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.app-toast .toast-body {
+  font-weight: 500;
+}
+
+.app-toast.is-error {
+  border-color: rgba(161, 51, 51, 0.5);
+}
+
+.app-toast.is-error .toast-header {
+  background: #f8dada;
+  color: #6f1616;
+  border-bottom-color: rgba(161, 51, 51, 0.35);
+}
+
+.app-toast.is-error .toast-body {
+  background: #fff0f0;
+  color: #781f1f;
+}
+
+.app-toast.is-error .app-toast-icon {
+  background: #b92828;
+  color: #fff;
+}
+
+.app-toast.is-success {
+  border-color: rgba(31, 109, 54, 0.5);
+}
+
+.app-toast.is-success .toast-header {
+  background: #d9f2e2;
+  color: #15592c;
+  border-bottom-color: rgba(31, 109, 54, 0.35);
+}
+
+.app-toast.is-success .toast-body {
+  background: #eefcf2;
+  color: #1a5c2f;
+}
+
+.app-toast.is-success .app-toast-icon {
+  background: #198754;
+  color: #fff;
+}
+
+.app-toast.is-info {
+  border-color: rgba(41, 111, 171, 0.35);
+}
+
+.app-toast.is-info .toast-header {
+  background: #e9f4ff;
+  color: #235784;
+  border-bottom-color: rgba(41, 111, 171, 0.2);
+}
+
+.app-toast.is-info .toast-body {
+  background: #f6fbff;
+  color: #2b5f8a;
+}
+
+.app-toast.is-info .app-toast-icon {
+  background: #296fab;
+  color: #fff;
+}
+
+.app-toast.is-warning {
+  border-color: rgba(178, 125, 27, 0.35);
+}
+
+.app-toast.is-warning .toast-header {
+  background: #fff4df;
+  color: #8a6217;
+  border-bottom-color: rgba(178, 125, 27, 0.2);
+}
+
+.app-toast.is-warning .toast-body {
+  background: #fffaef;
+  color: #7a5618;
+}
+
+.app-toast.is-warning .app-toast-icon {
+  background: #b27d1b;
+  color: #fff;
+}

@@ -148,6 +148,11 @@
   cursor: pointer;
 }
 
+.auth-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 .auth-back-link {
   margin-top: 1.15rem;
   border: 0;
