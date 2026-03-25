@@ -189,9 +189,9 @@ function AdminDashboard() {
 
 
 
-  //   if (!isTokenChecked) {
-  //     return null;
-  //   }
+    if (!isTokenChecked) {
+      return null;
+    }
 
   return (
 
