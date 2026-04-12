@@ -12,6 +12,7 @@ const menuItems = [
   { label: 'Galeria', to: '/dashboard#gallery' },
   { label: 'Tarifa', to: '/dashboard#tarifas' },
   { label: 'Contacto', to: '/dashboard#hero' },
+  { label: 'Propiedades', to: '/dashboard#hero' },
 ];
 
 function DashboardMenu() {
