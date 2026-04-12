@@ -4,6 +4,7 @@ import ReservaConfirmarStep from './components/reserva/ReservaConfirmarStep';
 import ReservaDatosStep from './components/reserva/ReservaDatosStep';
 import ReservaFechasStep from './components/reserva/ReservaFechasStep';
 import ReservaSteps from './components/reserva/ReservaSteps';
+import { createQuote } from '../../../api/reservations';
 import './ReservarPage.css';
 
 const steps = [
@@ -117,6 +118,9 @@ function ReservarPage() {
     eventType: 'Social',
     notes: '',
   });
+  const [quotedTotal, setQuotedTotal] = useState(null);
+  const [isQuoting, setIsQuoting] = useState(false);
+  const [quoteError, setQuoteError] = useState('');
 
   const isUnavailable = (value) => unavailableDates.has(toDateKey(value));
 
@@ -145,9 +149,7 @@ function ReservarPage() {
   }, [checkIn, checkOut, unavailableDates]);
 
   const nights = checkIn && checkOut ? Math.round((checkOut - checkIn) / DAY_MS) : 0;
-  const estimatedTotal = nights > 0 ? nights * attendees * 35000 : 0;
-  const canGoStep2 = Boolean(checkIn && checkOut && !rangeHasUnavailable);
-  console.log({ rangeHasUnavailable, checkIn, checkOut });
+  const canGoStep2 = Boolean(checkIn && checkOut && !rangeHasUnavailable && quotedTotal !== null);
   const hasContactData =
     contactData.fullName.trim() && contactData.email.trim() && contactData.phone.trim();
   const canGoStep3 = canGoStep2 && Boolean(hasContactData);
@@ -179,6 +181,9 @@ function ReservarPage() {
   };
 
   const handleDateClick = (value) => {
+    setQuotedTotal(null);
+    setQuoteError('');
+
     if (!checkIn || (checkIn && checkOut)) {
       setCheckIn(value);
       setCheckOut(null);
@@ -193,6 +198,48 @@ function ReservarPage() {
 
     setCheckOut(value);
   };
+
+  const handleQuote = async () => {
+    if (!checkIn || !checkOut || rangeHasUnavailable || isQuoting) {
+      return;
+    }
+    setIsQuoting(true);
+    setQuoteError('');
+    try {
+      const response = await createQuote({
+        property_id: 1,
+        check_in_date: new Date(toDateKey(checkIn)).toISOString(),
+        check_out_date: new Date(toDateKey(checkOut)).toISOString(),
+        guest_count: 8,
+      })
+    
+      const total = response?.data?.calculated_total;
+      console.log('Respuesta de cotizacion:', response?.data);
+      console.log('Total extraido:', total);
+
+      if (total === null) {
+      console.log('entra');
+        setQuotedTotal(null);
+        setQuoteError('No fue posible obtener la cotizacion. Intenta nuevamente.');
+        return;
+      }
+
+      console.log('Cotizacion obtenida:', total);
+
+      setQuotedTotal(total);
+    } catch (error) {
+      console.error('Error al obtener la cotizacion:', error.request);
+      setQuotedTotal(null);
+      setQuoteError('No fue posible obtener la cotizacion. Verifica e intenta de nuevo.');
+    } finally {
+      setIsQuoting(false);
+    }
+  };
+
+  useEffect(() => {
+    setQuotedTotal(null);
+    setQuoteError('');
+  }, [attendees]);
 
   const handleStepChange = (stepId) => {
     if (canAccessStep(stepId)) {
@@ -212,13 +259,14 @@ function ReservarPage() {
             Selecciona las fechas de tu evento, revisa el precio y envia tu solicitud.
             Te confirmaremos en menos de 24 horas.
           </p>
-
+ 
           <ReservaSteps
             steps={steps}
             currentStep={currentStep}
             onStepChange={handleStepChange}
             canAccessStep={canAccessStep}
           />
+         
 
           {currentStep === 1 && (
             <ReservaFechasStep
@@ -240,6 +288,10 @@ function ReservarPage() {
               isSameDay={isSameDay}
               handleDateClick={handleDateClick}
               rangeHasUnavailable={rangeHasUnavailable}
+              onQuote={handleQuote}
+              isQuoting={isQuoting}
+              hasQuote={quotedTotal !== null}
+              quoteError={quoteError}
               onContinue={() => handleStepChange(2)}
             />
           )}
@@ -248,7 +300,7 @@ function ReservarPage() {
             <ReservaDatosStep
               data={contactData}
               onChange={setContactData}
-              onBack={() => setCurrentStep(1)}
+              onBack={() => handleStepChange(1)}
               onContinue={() => handleStepChange(3)}
             />
           )}
@@ -260,13 +312,14 @@ function ReservarPage() {
                 checkOut: checkOut ? shortDateFormatter.format(checkOut) : 'Sin definir',
                 nights,
                 attendees,
-                estimatedTotal: moneyFormatter.format(estimatedTotal),
+                estimatedTotal:
+                  quotedTotal !== null ? moneyFormatter.format(quotedTotal) : 'Sin cotizar',
                 fullName: contactData.fullName,
                 email: contactData.email,
                 phone: contactData.phone,
                 eventType: contactData.eventType,
               }}
-              onBack={() => setCurrentStep(2)}
+              onBack={() => handleStepChange(2)}
             />
           )}
         </article>
@@ -275,6 +328,10 @@ function ReservarPage() {
           <h3>Cotizacion</h3>
           {!checkIn || !checkOut ? (
             <p>Selecciona fechas de check-in y check-out para ver la cotizacion.</p>
+          ) : isQuoting ? (
+            <p>Cargando cotizacion...</p>
+          ) : quotedTotal === null ? (
+            <p>Presiona el boton Cotizar para consultar el valor en tiempo real.</p>
           ) : (
             <div className="quote-summary">
               <p>
@@ -290,10 +347,12 @@ function ReservarPage() {
                 <strong>Asistentes:</strong> {attendees}
               </p>
               <p className="quote-price">
-                <strong>Total estimado:</strong> {moneyFormatter.format(estimatedTotal)}
+                <strong>Total estimado:</strong> {moneyFormatter.format(quotedTotal)}
               </p>
             </div>
           )}
+
+          {quoteError && <p className="calendar-alert">{quoteError}</p>}
 
           <div className="tag-list">
             {tags.map((tag) => (

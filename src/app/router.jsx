@@ -22,6 +22,25 @@ function AppRouter() {
   const location = useLocation();
   const hasAuthToken = Boolean(localStorage.getItem('authToken'));
 
+  if (!hasAuthToken && location.pathname === '/reservar') {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{
+          redirectTo: '/reservar',
+          backgroundLocation: {
+            ...location,
+            pathname: '/dashboard',
+            search: '',
+            hash: '',
+            state: null,
+          },
+        }}
+      />
+    );
+  }
+
   if (hasAuthToken && location.pathname === '/login') {
     return <Navigate to="/dashboard" replace />;
   }

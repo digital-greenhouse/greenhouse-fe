@@ -1,16 +1,17 @@
 .reservar-page {
   min-height: 100vh;
-  padding: 2rem;
+  padding: 1.6rem;
   background: #f1efeb;
   color: #25221b;
   font-family: var(--font-sans);
+  font-size: 0.89rem;
 }
 
 .reserva-layout {
-  margin-top: 1.2rem;
+  margin-top: 0.9rem;
   display: grid;
   grid-template-columns: minmax(0, 1.85fr) minmax(280px, 0.9fr);
-  gap: 1.4rem;
+  gap: 1.1rem;
   align-items: start;
 }
 
@@ -23,13 +24,13 @@
 }
 
 .reserva-main-card {
-  padding: 2rem;
+  padding: 1.6rem;
 }
 
 .reserva-kicker {
   margin: 0;
   color: var(--color-kicker);
-  font-size: 0.85rem;
+  font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.14em;
 }
@@ -37,20 +38,20 @@
 .reserva-main-card h1 {
   margin: 0.55rem 0 0;
   font-family: var(--font-serif);
-  font-size: clamp(2.1rem, 4.8vw, 3.5rem);
+  font-size: clamp(1.75rem, 4vw, 2.85rem);
   line-height: 1;
 }
 
 .reserva-copy {
-  margin: 0.9rem 0 0;
+  margin: 0.75rem 0 0;
   max-width: 620px;
   color: #646056;
-  font-size: 1.03rem;
+  font-size: 0.9rem;
   line-height: 1.55;
 }
 
 .reserva-steps {
-  margin-top: 1.7rem;
+  margin-top: 1.3rem;
   display: flex;
   gap: 0.65rem;
   flex-wrap: wrap;
@@ -66,7 +67,7 @@
   padding: 0.46rem 0.92rem;
   background: #ebe7df;
   color: #6b665b;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 700;
 }
 
@@ -96,24 +97,24 @@
 }
 
 .calendar-box {
-  margin-top: 1.5rem;
+  margin-top: 1.2rem;
   border: 1px solid var(--border-soft);
   border-radius: 13px;
-  padding: 1.15rem;
+  padding: 1rem;
   background: #fff;
 }
 
 .calendar-box h2 {
   margin: 0;
-  font-size: 1.45rem;
+  font-size: 1.2rem;
   font-weight: 700;
 }
 
 .months-grid {
-  margin-top: 1rem;
+  margin-top: 0.85rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.8rem;
+  gap: 0.65rem;
 }
 
 .month-block {
@@ -175,7 +176,7 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 0.28rem;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
 .days-grid span {
@@ -230,7 +231,7 @@
 }
 
 .calendar-legend {
-  margin-top: 1rem;
+  margin-top: 0.8rem;
   display: flex;
   gap: 1.2rem;
   flex-wrap: wrap;
@@ -274,7 +275,7 @@
 }
 
 .assistants-row {
-  margin-top: 1rem;
+  margin-top: 0.8rem;
   display: flex;
   flex-direction: column;
   gap: 0.36rem;
@@ -305,6 +306,21 @@
   cursor: pointer;
 }
 
+.quote-actions {
+  margin-top: 0.8rem;
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.quote-actions .quote-btn {
+  margin-top: 0;
+}
+
+.quote-btn-secondary {
+  background: #3f382c;
+}
+
 .quote-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
@@ -312,17 +328,17 @@
 
 .datos-box,
 .confirm-box {
-  margin-top: 1.5rem;
+  margin-top: 1.2rem;
   border: 1px solid var(--border-soft);
   border-radius: 13px;
-  padding: 1.15rem;
+  padding: 1rem;
   background: #fff;
 }
 
 .datos-box h2,
 .confirm-box h2 {
   margin: 0;
-  font-size: 1.45rem;
+  font-size: 1.2rem;
   font-weight: 700;
 }
 
@@ -395,16 +411,16 @@
 
 .confirm-total {
   margin-top: 1rem;
-  font-size: 1.05rem;
+  font-size: 0.92rem;
 }
 
 .reserva-side-card {
-  padding: 1.1rem;
+  padding: 1rem;
 }
 
 .reserva-side-card h3 {
   margin: 0;
-  font-size: 1.6rem;
+  font-size: 1.32rem;
   font-weight: 700;
 }
 
@@ -420,7 +436,7 @@
 .quote-price {
   margin-top: 0.8rem;
   color: var(--color-kicker);
-  font-size: 1.05rem;
+  font-size: 0.92rem;
 }
 
 .tag-list {
@@ -433,7 +449,7 @@
   border-radius: 999px;
   background: #ece7dd;
   color: #666154;
-  font-size: 0.83rem;
+  font-size: 0.72rem;
   padding: 0.25rem 0.6rem;
   font-weight: 700;
 }
@@ -454,11 +470,114 @@
 
 @media (max-width: 640px) {
   .reservar-page {
-    padding: 0.6rem;
+    padding: 0.45rem;
+    font-size: 0.84rem;
+  }
+
+  .reserva-layout {
+    margin-top: 0.6rem;
+    gap: 0.75rem;
+  }
+
+  .reserva-main-card,
+  .reserva-side-card {
+    border-radius: 12px;
+  }
+
+  .reserva-main-card {
+    padding: 0.9rem;
+  }
+
+  .reserva-main-card h1 {
+    font-size: clamp(1.5rem, 6.5vw, 1.95rem);
+  }
+
+  .reserva-copy {
+    margin-top: 0.6rem;
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+
+  .reserva-steps {
+    margin-top: 1rem;
+    gap: 0.45rem;
+  }
+
+  .reserva-step {
+    padding: 0.38rem 0.72rem;
+    font-size: 0.74rem;
+  }
+
+  .calendar-box,
+  .datos-box,
+  .confirm-box {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    border-radius: 11px;
   }
 
   .months-grid {
     grid-template-columns: 1fr;
+    gap: 0.55rem;
+    margin-top: 0.7rem;
+  }
+
+  .month-block {
+    padding: 0.6rem;
+  }
+
+  .month-nav-btn,
+  .month-nav-placeholder {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .month-header {
+    grid-template-columns: 1.75rem 1fr 1.75rem;
+  }
+
+  .days-grid {
+    margin-top: 0.5rem;
+    gap: 0.22rem;
+    font-size: 0.66rem;
+  }
+
+  .day-btn {
+    padding: 0.2rem 0;
+    border-radius: 5px;
+  }
+
+  .calendar-legend {
+    margin-top: 0.65rem;
+    gap: 0.75rem;
+    font-size: 0.74rem;
+  }
+
+  .calendar-alert {
+    margin-top: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.76rem;
+  }
+
+  .assistants-row {
+    margin-top: 0.65rem;
+    gap: 0.28rem;
+  }
+
+  .assistants-row select {
+    padding: 0.5rem 0.6rem;
+  }
+
+  .quote-actions,
+  .step-actions {
+    margin-top: 0.7rem;
+    gap: 0.5rem;
+  }
+
+  .quote-btn,
+  .step-btn {
+    padding: 0.58rem 0.78rem;
+    font-size: 0.78rem;
   }
 
   .desktop-only {
@@ -476,12 +595,39 @@
   }
 
   .calendar-box h2 {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 
   .datos-grid,
   .confirm-grid {
     grid-template-columns: 1fr;
+  }
+
+  .confirm-grid {
+    gap: 0.35rem;
+  }
+
+  .confirm-total,
+  .quote-price {
+    font-size: 0.84rem;
+  }
+
+  .reserva-side-card {
+    padding: 0.8rem;
+  }
+
+  .reserva-side-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .reserva-side-card p {
+    margin: 0.7rem 0;
+    font-size: 0.8rem;
+  }
+
+  .tag-list span {
+    font-size: 0.66rem;
+    padding: 0.2rem 0.45rem;
   }
 
   .datos-full {

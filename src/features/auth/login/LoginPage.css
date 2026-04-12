@@ -136,6 +136,18 @@
   background: #fff;
 }
 
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinner {
+
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
 .auth-submit {
   margin-top: 0.4rem;
   border: 0;
@@ -165,24 +177,70 @@
 
 @media (max-width: 640px) {
   .auth-page {
-    padding: 0.8rem;
+    padding: 0.6rem;
+    font-size: 0.88rem;
   }
 
   .auth-brand p {
-    font-size: 1.95rem;
+    font-size: 1.55rem;
+  }
+
+  .auth-brand small {
+    font-size: 0.82rem;
   }
 
   .auth-card {
-    padding: 1.1rem;
+    padding: 0.95rem;
     border-radius: 18px;
   }
 
+  .auth-kicker {
+    font-size: 0.7rem;
+  }
+
   .auth-card h1 {
-    font-size: 2.4rem;
+    font-size: 1.9rem;
+  }
+
+  .auth-card > p {
+    font-size: 0.9rem;
+    margin: 0.4rem 0 0.9rem;
+  }
+
+  .auth-switch button {
+    font-size: 0.88rem;
+    padding: 0.58rem 0.6rem;
+  }
+
+  .auth-form {
+    margin-top: 1rem;
+    gap: 0.72rem;
+  }
+
+  .auth-form label {
+    font-size: 0.86rem;
+  }
+
+  .auth-form input {
+    padding: 0.65rem 0.74rem;
+    border-radius: 10px;
+  }
+
+  .auth-submit {
+    font-size: 0.9rem;
+    padding: 0.68rem 0.82rem;
+  }
+
+  .auth-back-link {
+    margin-top: 0.9rem;
+    font-size: 0.84rem;
   }
 
   .auth-close-btn {
     top: 0.75rem;
     right: 0.75rem;
+    width: 2.1rem;
+    height: 2.1rem;
+    font-size: 1.1rem;
   }
 }
