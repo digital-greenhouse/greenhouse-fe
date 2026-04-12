@@ -13,6 +13,11 @@ function LoginPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const hasBackgroundApp = Boolean(location.state?.backgroundLocation);
+  const backgroundLocation = location.state?.backgroundLocation;
+  const requestedPath = location.state?.redirectTo;
+  const nextPath = requestedPath || (backgroundLocation
+    ? `${backgroundLocation.pathname || '/dashboard'}${backgroundLocation.search || ''}${backgroundLocation.hash || ''}`
+    : '/dashboard');
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
@@ -79,7 +84,7 @@ function LoginPage() {
           localStorage.setItem('userName', name);
           window.dispatchEvent(new Event('auth-state-changed'));
           if (hasBackgroundApp) {
-            navigate(-1);
+            navigate(nextPath, { replace: true });
           } else {
             navigate('/dashboard', { replace: true });
           }
@@ -239,7 +244,10 @@ function LoginPage() {
                 placeholder="Tu contrasena"
                 value={loginData.password}
                 onChange={(event) =>
-                  setLoginData((prev) => ({ ...prev, password: event.target.value }))
+                  setLoginData((prev) => ({
+                    ...prev,
+                    password: event.target.value.replace(/\s/g, ''),
+                  }))
                 }
                 required
               />
@@ -280,13 +288,39 @@ function LoginPage() {
             <label>
               Celular
               <input
-                type="tel"
+                type="number"
+                className="no-spinner"
                 placeholder="Tu numero de contacto"
                 value={registerData.phoneNumber}
-                onChange={(event) =>
-                  setRegisterData((prev) => ({ ...prev, phoneNumber: event.target.value }))
-                }
+                onChange={(event) => {
+                  let value = event.target.value;
+                  value = value.replace(/[eE+\-]/g, "");
+                  if (value.length <= 10) {
+                    setRegisterData((prev) => ({
+                      ...prev,
+                      phoneNumber: value
+                    }));
+                  }
+                }}
+                onWheel={(event) => event.currentTarget.blur()}
+                onKeyDown={(e) => {
+                  const value = e.target.value;
+                  if (["e", "E", "+", "-"].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                  if (value.length >= 10 && e.key !== "Backspace") {
+                    e.preventDefault();
+                  }
+                }}
+                min="1000000000"
+                max="9999999999"
                 required
+                onInvalid={(e) => {
+                  e.target.setCustomValidity("Ingresa un número de celular válido de 10 dígitos.");
+                }}
+                onInput={(e) => {
+                  e.target.setCustomValidity("");
+                }}
               />
             </label>
 
@@ -297,7 +331,10 @@ function LoginPage() {
                 placeholder="Minimo 6 caracteres"
                 value={registerData.password}
                 onChange={(event) =>
-                  setRegisterData((prev) => ({ ...prev, password: event.target.value }))
+                  setRegisterData((prev) => ({
+                    ...prev,
+                    password: event.target.value.replace(/\s/g, ''),
+                  }))
                 }
                 minLength={6}
                 required
@@ -311,7 +348,10 @@ function LoginPage() {
                 placeholder="Repite tu contrasena"
                 value={registerData.confirmPassword}
                 onChange={(event) =>
-                  setRegisterData((prev) => ({ ...prev, confirmPassword: event.target.value }))
+                  setRegisterData((prev) => ({
+                    ...prev,
+                    confirmPassword: event.target.value.replace(/\s/g, ''),
+                  }))
                 }
                 required
               />

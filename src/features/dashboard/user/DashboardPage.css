@@ -54,7 +54,7 @@
 
 .hero-location {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -63,7 +63,7 @@
 .hero-content h1 {
   margin: 1rem 0;
   font-family: var(--font-serif);
-  font-size: clamp(2.6rem, 5.4vw, 5.2rem);
+  font-size: clamp(2.3rem, 5vw, 4.6rem);
   line-height: 1.02;
   letter-spacing: -0.03em;
 }
@@ -71,7 +71,7 @@
 .hero-content p {
   margin: 0;
   max-width: 620px;
-  font-size: clamp(1.05rem, 1.7vw, 1.85rem);
+  font-size: clamp(0.96rem, 1.45vw, 1.55rem);
   line-height: 1.46;
 }
 
@@ -87,6 +87,7 @@
   border-radius: 13px;
   padding: 0.75rem 1.35rem;
   font-weight: 600;
+  font-size: 0.94rem;
   text-decoration: none;
 }
 
@@ -381,7 +382,7 @@
   }
 
   .hero-location {
-    font-size: 1rem;
+    font-size: 0.92rem;
   }
 
   .gallery-card.main {
@@ -402,6 +403,19 @@
   .hero-section {
     min-height: 78vh;
     padding: 2rem 1.2rem;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(1.9rem, 8.2vw, 2.6rem);
+  }
+
+  .hero-content p {
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+
+  .hero-location {
+    font-size: 0.82rem;
   }
 
   .hero-actions {

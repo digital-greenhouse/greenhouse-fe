@@ -79,7 +79,7 @@ function DashboardMenu() {
           email: data.email || '',
           roles: data.roles || data.role || [],
         });
-        
+
       } else {
         localStorage.removeItem('authToken');
         console.log("Token inválido o expirado. Redirigiendo a login.");
@@ -188,7 +188,10 @@ function DashboardMenu() {
     <header className="villa-header">
       <div className="brand-block">
         <span className="brand-icon" aria-hidden="true">
-          ^
+          <svg viewBox="0 0 21 21" role="img" focusable="false">
+            <path d="m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z">
+            </path>
+          </svg>
         </span>
         <div className="brand-text">
           <p className="brand-title">Villa Encantada</p>
@@ -280,7 +283,7 @@ function DashboardMenu() {
             <button type="button" className="admin-secondary-btn" onClick={userOption} role="menuitem">
               Mi cuenta
             </button>
- 
+
             <button
               type="button"
               className="admin-secondary-btn"

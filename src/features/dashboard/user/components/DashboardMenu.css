@@ -21,9 +21,24 @@
 }
 
 .brand-icon {
-  font-size: 1.45rem;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--villa-accent);
   line-height: 1;
+  align-self: center;
+}
+
+.brand-icon svg {
+  width: 100%;
+  height: 100%;
+ 
+}
+
+.brand-icon svg path {
+  fill: currentColor;
 }
 
 .brand-text {
@@ -345,6 +360,11 @@
 
   .brand-block {
     gap: 0.45rem;
+  }
+
+  .brand-icon {
+    width: 1.48rem;
+    height: 1.48rem;
   }
 
   .brand-title {

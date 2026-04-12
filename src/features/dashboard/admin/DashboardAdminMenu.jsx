@@ -248,7 +248,7 @@ function AdminDashboard() {
 
             <div className="section-3">
 
-              <Nav.Link className="nav-item-custom" onClick={() => handleNavigation('/dashboard')}>
+              <Nav.Link className="nav-item-custom" onClick={() => navigate(-1)}>
 
                 <FontAwesomeIcon className="icon-margin" icon={faGear} />
                 Volver al sitio
