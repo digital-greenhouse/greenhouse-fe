@@ -17,6 +17,10 @@ function ReservaFechasStep({
   isSameDay,
   handleDateClick,
   rangeHasUnavailable,
+  onQuote,
+  isQuoting,
+  hasQuote,
+  quoteError,
   onContinue,
 }) {
   return (
@@ -144,14 +148,33 @@ function ReservaFechasStep({
         </select>
       </div>
 
-      <button
-        className="quote-btn"
-        type="button"
-        disabled={!checkIn || !checkOut || rangeHasUnavailable}
-        onClick={onContinue}
-      >
-        Continuar con tus datos
-      </button>
+      {quoteError && (
+        <p className="calendar-alert" role="alert">
+          {quoteError}
+        </p>
+      )}
+
+      <div className="quote-actions">
+        <button
+          className="quote-btn quote-btn-secondary"
+          type="button"
+          disabled={!checkIn || !checkOut || rangeHasUnavailable || isQuoting}
+          onClick={onQuote}
+        >
+          {isQuoting ? 'Cotizando...' : 'Cotizar'}
+        </button>
+
+        {hasQuote && (
+          <button
+            className="quote-btn"
+            type="button"
+            disabled={!checkIn || !checkOut || rangeHasUnavailable}
+            onClick={onContinue}
+          >
+            Continuar con tus datos
+          </button>
+        )}
+      </div>
     </section>
   );
 }
