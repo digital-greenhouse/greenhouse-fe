@@ -1,7 +1,22 @@
+import { useState } from 'react';
+
 function ReservaDatosStep({ data, onChange, onBack, onContinue }) {
+  const [isEventTypeOpen, setIsEventTypeOpen] = useState(false);
+
   const handleInput = (event) => {
     const { name, value } = event.target;
     onChange((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleEventTypeChange = (event) => {
+    handleInput(event);
+    setIsEventTypeOpen(false);
+  };
+
+  const handleEventTypeKeyDown = (event) => {
+    if (event.key === 'Escape' || event.key === 'Enter' || event.key === 'Tab') {
+      setIsEventTypeOpen(false);
+    }
   };
 
   return (
@@ -10,47 +25,24 @@ function ReservaDatosStep({ data, onChange, onBack, onContinue }) {
       <p>Completa tus datos para continuar con la confirmacion de la reserva.</p>
 
       <div className="datos-grid">
-        <label>
-          Nombre completo
-          <input
-            name="fullName"
-            type="text"
-            value={data.fullName}
-            onChange={handleInput}
-            placeholder="Ej. Laura Martinez"
-          />
-        </label>
-
-        <label>
-          Correo electronico
-          <input
-            name="email"
-            type="email"
-            value={data.email}
-            onChange={handleInput}
-            placeholder="correo@dominio.com"
-          />
-        </label>
-
-        <label>
-          Telefono
-          <input
-            name="phone"
-            type="tel"
-            value={data.phone}
-            onChange={handleInput}
-            placeholder="3001234567"
-          />
-        </label>
-
-        <label>
+        <label className="datos-full">
           Tipo de evento
-          <select name="eventType" value={data.eventType} onChange={handleInput}>
-            <option value="Social">Social</option>
-            <option value="Corporativo">Corporativo</option>
-            <option value="Cumpleanos">Cumpleanos</option>
-            <option value="Boda">Boda</option>
-          </select>
+          <span className={`custom-select-wrapper ${isEventTypeOpen ? 'is-open' : ''}`}>
+            <select
+              name="eventType"
+              value={data.eventType}
+              onChange={handleEventTypeChange}
+              onKeyDown={handleEventTypeKeyDown}
+              onFocus={() => setIsEventTypeOpen(true)}
+              onBlur={() => setIsEventTypeOpen(false)}
+              className="custom-select"
+            >
+              <option value="Social">Social</option>
+              <option value="Corporativo">Corporativo</option>
+              <option value="Cumpleanos">Cumpleanos</option>
+              <option value="Boda">Boda</option>
+            </select>
+          </span>
         </label>
 
         <label className="datos-full">

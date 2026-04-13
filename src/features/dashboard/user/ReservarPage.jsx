@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import DashboardMenu from './components/DashboardMenu';
 import ReservaConfirmarStep from './components/reserva/ReservaConfirmarStep';
 import ReservaDatosStep from './components/reserva/ReservaDatosStep';
 import ReservaFechasStep from './components/reserva/ReservaFechasStep';
 import ReservaSteps from './components/reserva/ReservaSteps';
 import { createQuote } from '../../../api/reservations';
+import { getHistory } from '../../../api/reservations';
 import './ReservarPage.css';
 
 const steps = [
@@ -16,6 +18,7 @@ const steps = [
 const tags = ['BBQ', 'Parqueadero', 'Eventos', 'Senderos', '100 personas'];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const RESERVA_DRAFT_KEY = 'reserva-draft-v1';
 const weekDays = ['lu', 'ma', 'mi', 'ju', 'vi', 'sa', 'do'];
 
 const monthFormatter = new Intl.DateTimeFormat('es-CO', {
@@ -52,6 +55,32 @@ function toDateKey(value) {
   return `${value.getFullYear()}-${month}-${day}`;
 }
 
+function fromDateKey(value) {
+  if (!value || typeof value !== 'string') {
+    return null;
+  }
+
+  const [year, month, day] = value.split('-').map(Number);
+  if (!year || !month || !day) {
+    return null;
+  }
+
+  return new Date(year, month - 1, day);
+}
+
+function getSavedDraft() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  try {
+    const raw = sessionStorage.getItem(RESERVA_DRAFT_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 function isSameDay(a, b) {
   return toDateKey(a) === toDateKey(b);
 }
@@ -70,30 +99,53 @@ function buildCalendarCells(monthDate) {
   });
 }
 
-function buildUnavailableSet(months) {
-  const entries = [];
-  const pushDate = (year, month, day) => {
-    const value = new Date(year, month, day);
-    if (value.getMonth() === month) {
-      entries.push(toDateKey(value));
+function parseBackendDate(dateValue) {
+  if (!dateValue || typeof dateValue !== 'string' || dateValue.length < 10) {
+    return null;
+  }
+
+  const [year, month, day] = dateValue.slice(0, 10).split('-').map(Number);
+  if (!year || !month || !day) {
+    return null;
+  }
+
+  return new Date(year, month - 1, day);
+}
+
+function buildUnavailableSetFromBookings(bookings) {
+  const entries = new Set();
+
+  bookings.forEach((booking) => {
+    const start = parseBackendDate(booking?.check_in_date);
+    const end = parseBackendDate(booking?.check_out_date);
+
+    if (!start || !end || end < start) {
+      return;
     }
-  };
 
-  const firstMonth = months[0];
-  const secondMonth = months[1];
+    let current = start;
+    while (current <= end) {
+      entries.add(toDateKey(current));
+      current = addDays(current, 1);
+    }
+  });
 
-  [16, 17, 18, 19, 20, 21, 22, 24, 25].forEach((day) =>
-    pushDate(firstMonth.getFullYear(), firstMonth.getMonth(), day)
-  );
+  return entries;
+}
 
-  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].forEach((day) =>
-    pushDate(secondMonth.getFullYear(), secondMonth.getMonth(), day)
-  );
+function parseStepFromSearch(searchParams) {
+  const rawStep = Number(searchParams.get('step'));
+  if (!Number.isInteger(rawStep) || rawStep < 1 || rawStep > 3) {
+    return 1;
+  }
 
-  return new Set(entries);
+  return rawStep;
 }
 
 function ReservarPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [savedDraft] = useState(() => getSavedDraft());
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -104,23 +156,57 @@ function ReservarPage() {
   );
 
   const months = useMemo(() => [baseMonth, addMonths(baseMonth, 1)], [baseMonth]);
+  const [unavailableDates, setUnavailableDates] = useState(new Set());
 
-  const unavailableDates = useMemo(() => buildUnavailableSet(months), [months]);
-
-  const [checkIn, setCheckIn] = useState(null);
-  const [checkOut, setCheckOut] = useState(null);
-  const [attendees, setAttendees] = useState(30);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [checkIn, setCheckIn] = useState(() => fromDateKey(savedDraft?.checkIn) || null);
+  const [checkOut, setCheckOut] = useState(() => fromDateKey(savedDraft?.checkOut) || null);
+  const [attendees, setAttendees] = useState(() => Number(savedDraft?.attendees) || 30);
+  const [quote, setQuote] = useState();
   const [contactData, setContactData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    eventType: 'Social',
-    notes: '',
+    id_quote: "",
+    fullName: savedDraft?.contactData?.fullName || '',
+    email: savedDraft?.contactData?.email || '',
+    phone: savedDraft?.contactData?.phone || '',
+    eventType: savedDraft?.contactData?.eventType || 'Social',
+    notes: savedDraft?.contactData?.notes || '',
   });
-  const [quotedTotal, setQuotedTotal] = useState(null);
+  const [quotedTotal, setQuotedTotal] = useState(
+    savedDraft?.quotedTotal !== null && savedDraft?.quotedTotal !== undefined
+      ? Number(savedDraft.quotedTotal)
+      : null
+  );
   const [isQuoting, setIsQuoting] = useState(false);
   const [quoteError, setQuoteError] = useState('');
+  const [paymentProof, setPaymentProof] = useState(null);
+  const [paymentProofError, setPaymentProofError] = useState('');
+  const previousAttendeesRef = useRef(attendees);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadUnavailableDates = async () => {
+      try {
+        const response = await getHistory();
+        const bookings = Array.isArray(response?.data) ? response.data : [];
+        console.log('Reservas obtenidas:', response);
+
+        if (!cancelled) {
+          setUnavailableDates(buildUnavailableSetFromBookings(bookings));
+        }
+      } catch (error) {
+        console.error('Error al obtener historial de reservas:', error);
+        if (!cancelled) {
+          setUnavailableDates(new Set());
+        }
+      }
+    };
+
+    loadUnavailableDates();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const isUnavailable = (value) => unavailableDates.has(toDateKey(value));
 
@@ -150,9 +236,44 @@ function ReservarPage() {
 
   const nights = checkIn && checkOut ? Math.round((checkOut - checkIn) / DAY_MS) : 0;
   const canGoStep2 = Boolean(checkIn && checkOut && !rangeHasUnavailable && quotedTotal !== null);
-  const hasContactData =
-    contactData.fullName.trim() && contactData.email.trim() && contactData.phone.trim();
-  const canGoStep3 = canGoStep2 && Boolean(hasContactData);
+  const canGoStep3 = canGoStep2;
+  const currentStep = parseStepFromSearch(searchParams);
+
+  useEffect(() => {
+    const stepIsInvalid =
+      (currentStep === 2 && !canGoStep2) ||
+      (currentStep === 3 && !canGoStep3);
+
+    if (stepIsInvalid) {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.set('step', '1');
+      setSearchParams(nextParams, { replace: true });
+    }
+  }, [currentStep, canGoStep2, canGoStep3, searchParams, setSearchParams]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const draft = {
+      checkIn: checkIn ? toDateKey(checkIn) : null,
+      checkOut: checkOut ? toDateKey(checkOut) : null,
+      attendees,
+      quotedTotal,
+      contactData,
+    };
+
+    sessionStorage.setItem(RESERVA_DRAFT_KEY, JSON.stringify(draft));
+  }, [checkIn, checkOut, attendees, quotedTotal, contactData]);
+
+  useEffect(() => {
+    if (!searchParams.get('step')) {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.set('step', String(currentStep));
+      setSearchParams(nextParams, { replace: true });
+    }
+  }, [searchParams, currentStep, setSearchParams]);
 
   const canAccessStep = (stepId) => {
     if (stepId === 1) {
@@ -212,19 +333,15 @@ function ReservarPage() {
         check_out_date: new Date(toDateKey(checkOut)).toISOString(),
         guest_count: 8,
       })
-    
       const total = response?.data?.calculated_total;
-      console.log('Respuesta de cotizacion:', response?.data);
-      console.log('Total extraido:', total);
-
+    
+      setQuote(response?.data);
       if (total === null) {
-      console.log('entra');
+  
         setQuotedTotal(null);
         setQuoteError('No fue posible obtener la cotizacion. Intenta nuevamente.');
         return;
       }
-
-      console.log('Cotizacion obtenida:', total);
 
       setQuotedTotal(total);
     } catch (error) {
@@ -237,13 +354,48 @@ function ReservarPage() {
   };
 
   useEffect(() => {
+    if (previousAttendeesRef.current === attendees) {
+      return;
+    }
+
+    previousAttendeesRef.current = attendees;
+
     setQuotedTotal(null);
     setQuoteError('');
   }, [attendees]);
 
+  const handlePaymentProofChange = (file) => {
+    if (!file) {
+      setPaymentProof(null);
+      setPaymentProofError('');
+      return;
+    }
+
+    const isPdf = file.type === 'application/pdf';
+    const isImage = file.type.startsWith('image/');
+    const maxSize = 5 * 1024 * 1024;
+
+    if (!isPdf && !isImage) {
+      setPaymentProof(null);
+      setPaymentProofError('El archivo debe ser una imagen o un PDF.');
+      return;
+    }
+
+    if (file.size > maxSize) {
+      setPaymentProof(null);
+      setPaymentProofError('El archivo supera el tamano maximo de 5 MB.');
+      return;
+    }
+
+    setPaymentProof(file);
+    setPaymentProofError('');
+  };
+
   const handleStepChange = (stepId) => {
     if (canAccessStep(stepId)) {
-      setCurrentStep(stepId);
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.set('step', String(stepId));
+      setSearchParams(nextParams, { replace: true });
     }
   };
 
@@ -308,6 +460,7 @@ function ReservarPage() {
           {currentStep === 3 && (
             <ReservaConfirmarStep
               summary={{
+                idQuote: quote?.id || '',
                 checkIn: checkIn ? shortDateFormatter.format(checkIn) : 'Sin definir',
                 checkOut: checkOut ? shortDateFormatter.format(checkOut) : 'Sin definir',
                 nights,
@@ -318,7 +471,11 @@ function ReservarPage() {
                 email: contactData.email,
                 phone: contactData.phone,
                 eventType: contactData.eventType,
+                notes: contactData.notes,
               }}
+              paymentProof={paymentProof}
+              paymentProofError={paymentProofError}
+              onPaymentProofChange={handlePaymentProofChange}
               onBack={() => handleStepChange(2)}
             />
           )}

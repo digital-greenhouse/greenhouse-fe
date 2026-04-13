@@ -295,6 +295,51 @@
   font: inherit;
 }
 
+.custom-select-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+}
+
+.custom-select-wrapper::after {
+  content: '';
+  position: absolute;
+  right: 0.95rem;
+  top: 50%;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-right: 2px solid #655f54;
+  border-bottom: 2px solid #655f54;
+  transform: translateY(-62%) rotate(45deg);
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+
+.custom-select-wrapper.is-open::after {
+  transform: translateY(-34%) rotate(-135deg);
+}
+
+.custom-select {
+  width: 100%;
+  border: 1px solid #d8d0c3;
+  border-radius: 9px;
+  background: #fff;
+  padding: 0.6rem 2rem 0.6rem 0.7rem;
+  font: inherit;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+}
+
+.custom-select::-ms-expand {
+  display: none;
+}
+
+.assistants-row .custom-select-wrapper {
+  width: min(260px, 100%);
+}
+
 .quote-btn {
   margin-top: 1rem;
   border: 0;
@@ -372,6 +417,10 @@
   font: inherit;
 }
 
+.datos-grid .custom-select {
+  border: 1px solid #d8d0c3;
+}
+
 .datos-full {
   grid-column: 1 / span 2;
 }
@@ -414,8 +463,35 @@
   font-size: 0.92rem;
 }
 
+.payment-proof-box {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.payment-proof-label {
+  font-weight: 700;
+  color: #433d31;
+}
+
+.payment-proof-box input[type='file'] {
+  border: 1px solid #d8d0c3;
+  border-radius: 9px;
+  background: #fff;
+  padding: 0.52rem 0.65rem;
+  font: inherit;
+}
+
+.payment-proof-name {
+  margin: 0;
+  color: #5f584c;
+}
+
 .reserva-side-card {
   padding: 1rem;
+  position: sticky;
+  top: 6.1rem;
 }
 
 .reserva-side-card h3 {
@@ -465,6 +541,11 @@
 
   .reserva-main-card {
     padding: 1.2rem;
+  }
+
+  .reserva-side-card {
+    position: static;
+    top: auto;
   }
 }
 

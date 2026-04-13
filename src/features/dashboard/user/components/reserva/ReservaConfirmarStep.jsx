@@ -1,4 +1,120 @@
-function ReservaConfirmarStep({ summary, onBack }) {
+import { useRef, useState } from 'react';
+import GenericFileDropzone from '../../../../../components/loadFile/GenericFileDropzone';
+import { createBooking } from '../../../../../api/bookings';
+import FeedbackToast from '../../../../../components/ui/FeedbackToast';
+import ConfirmModal from '../../../../../components/ui/ConfirmModal';
+
+const RESERVA_DRAFT_KEY = 'reserva-draft-v1';
+
+function ReservaConfirmarStep({
+  summary,
+  paymentProof,
+  paymentProofError,
+  onPaymentProofChange,
+  onBack,
+}) {
+  const [isDragActive, setIsDragActive] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
+  const [feedback, setFeedback] = useState({ type: '', message: '' });
+  const fileInputRef = useRef(null);
+
+  const handleFileSelect = (file) => {
+    onPaymentProofChange(file || null);
+  };
+
+  const getRootProps = (extra = {}) => ({
+    ...extra,
+    role: 'button',
+    tabIndex: 0,
+    onClick: (event) => {
+      extra.onClick?.(event);
+      if (!event.defaultPrevented) {
+        fileInputRef.current?.click();
+      }
+    },
+    onKeyDown: (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        fileInputRef.current?.click();
+      }
+    },
+    onDragEnter: (event) => {
+      extra.onDragEnter?.(event);
+      event.preventDefault();
+      setIsDragActive(true);
+    },
+    onDragOver: (event) => {
+      extra.onDragOver?.(event);
+      event.preventDefault();
+    },
+    onDragLeave: (event) => {
+      extra.onDragLeave?.(event);
+      setIsDragActive(false);
+    },
+    onDrop: (event) => {
+      extra.onDrop?.(event);
+      event.preventDefault();
+      setIsDragActive(false);
+      const file = event.dataTransfer?.files?.[0] || null;
+      handleFileSelect(file);
+    },
+  });
+
+  const handleSaveBooking = async () => {
+    const quoteId = summary.idQuote || summary.quoteId;
+
+    if (!quoteId) {
+      setFeedback({
+        type: 'error',
+        message: 'No se encontro la cotizacion para crear la reserva.',
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    setFeedback({ type: '', message: '' });
+
+    try {
+      await createBooking({
+        quote_id: quoteId,
+        special_requests: summary.notes || '',
+      });
+
+      setFeedback({
+        type: 'success',
+        message: 'Reserva creada correctamente. Te contactaremos para confirmar el pago.',
+      });
+
+      window.setTimeout(() => {
+        sessionStorage.removeItem(RESERVA_DRAFT_KEY);
+        const nextUrl = `${window.location.pathname}?step=1`;
+        window.history.replaceState(null, '', nextUrl);
+        window.location.reload();
+      }, 2000);
+    } catch (error) {
+      console.error('Error al crear la reserva:', error);
+      setFeedback({
+        type: 'error',
+        message: 'No fue posible crear la reserva. Intenta nuevamente.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const getInputProps = (extra = {}) => ({
+    ...extra,
+    ref: fileInputRef,
+    type: 'file',
+    style: { display: 'none' },
+    onChange: (event) => {
+      extra.onChange?.(event);
+      const file = event.target.files?.[0] || null;
+      handleFileSelect(file);
+    },
+  });
+
   return (
     <section className="confirm-box" aria-label="Confirmar reserva">
       <h2>Confirmar solicitud</h2>
@@ -18,16 +134,19 @@ function ReservaConfirmarStep({ summary, onBack }) {
           <strong>Asistentes:</strong> {summary.attendees}
         </p>
         <p>
-          <strong>Nombre:</strong> {summary.fullName || 'Sin definir'}
+          <strong>Nombre:</strong> {'Sin definir'}
         </p>
         <p>
-          <strong>Correo:</strong> {summary.email || 'Sin definir'}
+          <strong>Correo:</strong> {'Sin definir'}
         </p>
         <p>
-          <strong>Telefono:</strong> {summary.phone || 'Sin definir'}
+          <strong>Telefono:</strong> {'Sin definir'}
         </p>
         <p>
           <strong>Evento:</strong> {summary.eventType}
+        </p>
+        <p>
+          <strong>Comentarios:</strong> {summary.notes || 'Sin comentarios'}
         </p>
       </div>
 
@@ -35,14 +154,67 @@ function ReservaConfirmarStep({ summary, onBack }) {
         <strong>Total estimado:</strong> {summary.estimatedTotal}
       </p>
 
+      <div className="payment-proof-box">
+        <p className="payment-proof-label">
+          Comprobante de pago (imagen o PDF, max 5 MB)
+        </p>
+        <GenericFileDropzone
+          getRootProps={getRootProps}
+          getInputProps={getInputProps}
+          isDragActive={isDragActive}
+          file={paymentProof}
+          accept="image/*,.pdf"
+          emptyLabel="Haga clic para cargar o arrastre y suelte (imagen o PDF, max 5 MB)"
+          activeLabel="Suelta el comprobante aqui..."
+        />
+
+        {paymentProof && (
+          <p className="payment-proof-name">
+            Archivo seleccionado: <strong>{paymentProof.name}</strong>
+          </p>
+        )}
+
+        {paymentProofError && (
+          <p className="calendar-alert" role="alert">
+            {paymentProofError}
+          </p>
+        )}
+      </div>
+
       <div className="step-actions">
         <button type="button" className="step-btn step-btn-secondary" onClick={onBack}>
           Volver a datos
         </button>
-        <button type="button" className="step-btn">
-          Enviar solicitud
+        <button
+          type="button"
+          className="step-btn"
+          onClick={() => setShowSubmitConfirm(true)}
+          //disabled={!paymentProof || Boolean(paymentProofError) || isSubmitting}
+        >
+          {isSubmitting ? 'Enviando...' : 'Enviar solicitud'}
         </button>
       </div>
+
+      <ConfirmModal
+        show={showSubmitConfirm}
+        title="Enviar solicitud"
+        message="Se enviara tu solicitud de reserva con el comprobante cargado. Deseas continuar?"
+        confirmText="Si, enviar"
+        cancelText="Cancelar"
+        onConfirm={() => {
+          setShowSubmitConfirm(false);
+          handleSaveBooking();
+        }}
+        onCancel={() => setShowSubmitConfirm(false)}
+        variant="primary"
+      />
+
+      <FeedbackToast
+        show={Boolean(feedback.message)}
+        type={feedback.type}
+        message={feedback.message}
+        onClose={() => setFeedback({ type: '', message: '' })}
+      />
     </section>
   );
 }
