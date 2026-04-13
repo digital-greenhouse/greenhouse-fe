@@ -34,7 +34,7 @@
 .brand-icon svg {
   width: 100%;
   height: 100%;
- 
+
 }
 
 .brand-icon svg path {
@@ -155,6 +155,7 @@
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
+  margin-right: 10px;
   justify-content: center;
   font-size: 0.82rem;
   font-weight: 700;
@@ -261,6 +262,7 @@
   color: #ffffff;
   background: var(--gradient-primary);
   box-shadow: 0 8px 14px rgba(45, 96, 73, 0.22);
+  padding-left: 20px;
 }
 
 .menu-nav a.admin-btn-mobile:hover {

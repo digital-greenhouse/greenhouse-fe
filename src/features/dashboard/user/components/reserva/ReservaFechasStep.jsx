@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 function ReservaFechasStep({
   months,
   weekDays,
@@ -23,6 +25,19 @@ function ReservaFechasStep({
   quoteError,
   onContinue,
 }) {
+  const [isAttendeesOpen, setIsAttendeesOpen] = useState(false);
+
+  const handleAttendeesChange = (event) => {
+    setAttendees(Number(event.target.value));
+    setIsAttendeesOpen(false);
+  };
+
+  const handleAttendeesKeyDown = (event) => {
+    if (event.key === 'Escape' || event.key === 'Enter' || event.key === 'Tab') {
+      setIsAttendeesOpen(false);
+    }
+  };
+
   return (
     <section className="calendar-box" aria-label="Selecciona fechas">
       <h2>Selecciona tus fechas</h2>
@@ -136,16 +151,22 @@ function ReservaFechasStep({
 
       <div className="assistants-row">
         <label htmlFor="asistentes">Numero de asistentes</label>
-        <select
-          id="asistentes"
-          value={attendees}
-          onChange={(event) => setAttendees(Number(event.target.value))}
-        >
-          <option value={30}>30 personas</option>
-          <option value={50}>50 personas</option>
-          <option value={80}>80 personas</option>
-          <option value={100}>100 personas</option>
-        </select>
+        <span className={`custom-select-wrapper ${isAttendeesOpen ? 'is-open' : ''}`}>
+          <select
+            id="asistentes"
+            value={attendees}
+            onChange={handleAttendeesChange}
+            onKeyDown={handleAttendeesKeyDown}
+            onFocus={() => setIsAttendeesOpen(true)}
+            onBlur={() => setIsAttendeesOpen(false)}
+            className="custom-select"
+          >
+            <option value={30}>30 personas</option>
+            <option value={50}>50 personas</option>
+            <option value={80}>80 personas</option>
+            <option value={100}>100 personas</option>
+          </select>
+        </span>
       </div>
 
       {quoteError && (

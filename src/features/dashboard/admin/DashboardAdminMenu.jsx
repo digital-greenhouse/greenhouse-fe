@@ -210,12 +210,12 @@ function AdminDashboard() {
                 </div>
               </Nav.Link>
 
-              <Nav.Link className="nav-item-custom" onClick={() => handleNavigation('/welcome')}>
+              <Nav.Link className="nav-item-custom" >  {/* onClick={() => handleNavigation('/welcome')} */}
                 <FontAwesomeIcon className="icon-margin" icon={faHome} />
                 Reservas
               </Nav.Link>
 
-              <Nav.Link className="nav-item-custom" onClick={() => handleNavigation('/users')}>
+              <Nav.Link className="nav-item-custom"> {/*onClick={() => handleNavigation('/users')} */}
                 <FontAwesomeIcon className="icon-margin" icon={faUsers} />
                 Reportes
               </Nav.Link>

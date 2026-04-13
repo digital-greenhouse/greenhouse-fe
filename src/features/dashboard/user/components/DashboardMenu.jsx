@@ -12,6 +12,7 @@ const menuItems = [
   { label: 'Galeria', to: '/dashboard#gallery' },
   { label: 'Tarifa', to: '/dashboard#tarifas' },
   { label: 'Contacto', to: '/dashboard#hero' },
+  { label: 'Propiedades', to: '/' },
 ];
 
 function DashboardMenu() {
@@ -22,6 +23,7 @@ function DashboardMenu() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [hasAuthToken, setHasAuthToken] = useState(Boolean(localStorage.getItem('authToken')));
   const userName = localStorage.getItem('userName') || 'Usuario';
+  const displayUserName = userName.length > 15 ? `${userName.slice(0, 15)}...` : userName;
   const authActionsRef = useRef(null);
   const [userData, setUserData] = useState({
     //name: '', 
@@ -113,6 +115,11 @@ function DashboardMenu() {
   const adminOption = () => {
     setProfileMenuOpen(false);
     navigate('/admin');
+  };
+
+  const myBookingsOption = () => {
+    setProfileMenuOpen(false);
+    navigate('/reservar');
   };
 
   const logoutOption = () => {
@@ -230,18 +237,32 @@ function DashboardMenu() {
               aria-label="Ir a mi cuenta"
             >
               <span className="user-avatar" aria-hidden="true">{userName.charAt(0).toUpperCase()}</span>
-              <span className="user-label">{userName}</span>
+              <span className="user-label" title={userName}>{displayUserName}</span>
             </button>
+
+            {isSuperAdmin && (
+              <button
+                type="button"
+                className="admin-secondary-btn admin-btn-mobile"
+                onClick={() => {
+                  closeMobileMenu();
+                  adminOption();
+                }}
+                disabled={!isSuperAdmin}
+              >
+                Administrador
+              </button>
+            )}
 
             <button
               type="button"
               className="admin-secondary-btn admin-btn-mobile"
               onClick={() => {
                 closeMobileMenu();
-                adminOption();
+                myBookingsOption();
               }}
             >
-              Administrador
+              Mis reservas
             </button>
 
             <button
@@ -275,7 +296,7 @@ function DashboardMenu() {
             aria-haspopup="menu"
           >
             <span className="user-avatar" aria-hidden="true">{userName.charAt(0).toUpperCase()}</span>
-            <span className="user-label">{userName}</span>
+            <span className="user-label" title={userName}>{displayUserName}</span>
             <span className="user-caret" aria-hidden="true">▾</span>
           </button>
 
@@ -287,12 +308,23 @@ function DashboardMenu() {
             <button
               type="button"
               className="admin-secondary-btn"
-              onClick={adminOption}
-              disabled={!isSuperAdmin}
+              onClick={myBookingsOption}
               role="menuitem"
             >
-              Administrador
+              Mis reservas
             </button>
+
+            {isSuperAdmin && (
+              <button
+                type="button"
+                className="admin-secondary-btn"
+                onClick={adminOption}
+                disabled={!isSuperAdmin}
+                role="menuitem"
+              >
+                Administrador
+              </button>
+            )}
 
             <button type="button" className="logout-btn" onClick={requestLogout} role="menuitem">
               Cerrar sesion
