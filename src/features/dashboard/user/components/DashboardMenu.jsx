@@ -22,7 +22,7 @@ function DashboardMenu() {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [hasAuthToken, setHasAuthToken] = useState(Boolean(localStorage.getItem('authToken')));
-  const userName = localStorage.getItem('userName') || 'Usuario';
+  const userName = JSON.parse(localStorage.getItem("user"))?.name || 'Usuario';
   const displayUserName = userName.length > 15 ? `${userName.slice(0, 15)}...` : userName;
   const authActionsRef = useRef(null);
   const [userData, setUserData] = useState({
@@ -37,6 +37,24 @@ function DashboardMenu() {
   const isSuperAdmin = roleNames.includes('SUPERADMIN');
 
   const closeMobileMenu = () => setMenuOpen(false);
+
+  const clearSessionAndGoLogin = () => {
+    const isOnLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login';
+
+    localStorage.clear();
+    window.dispatchEvent(new Event('auth-state-changed'));
+    setHasAuthToken(false);
+    setMenuOpen(false);
+    setProfileMenuOpen(false);
+    setUserData({
+      email: '',
+      roles: [],
+    });
+
+    if (!isOnLoginPage) {
+      navigate('/login', { replace: true, state: { backgroundLocation: location } });
+    }
+  };
 
   const scrollToSection = (sectionId) => {
     const target = document.getElementById(sectionId);
@@ -67,41 +85,35 @@ function DashboardMenu() {
   };
 
   useEffect(() => {
+    const isOnLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login';
+    if (isOnLoginPage) {
+      return;
+    }
+
     try {
       const token = localStorage.getItem('authToken');
-      console.log("Token encontrado en localStorage:", token);
-      if (token !== null) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (token !== null && user !== null) {
         const data = jwtDecode(token);
         if (!data?.exp || data.exp * 1000 <= Date.now()) {
           throw new Error('Token expirado');
         }
         //setIsTokenChecked(true);
-        console.log("Token válido encontrado en localStorage", data);
         setUserData({
           email: data.email || '',
           roles: data.roles || data.role || [],
         });
 
       } else {
-        localStorage.removeItem('authToken');
-        console.log("Token inválido o expirado. Redirigiendo a login.");
-        localStorage.clear();
-        setUserData({
-          email: '',
-          roles: [],
-        });
-        //window.location.href = '/login';
+        clearSessionAndGoLogin();
+        sessionStorage.clear();
       }
     } catch (error) {
       console.error('Error al verificar el token:', error);
-      localStorage.removeItem('authToken');
-      setUserData({
-        email: '',
-        roles: [],
-      });
-      //window.location.href = '/login';
+      clearSessionAndGoLogin();
+      sessionStorage.clear();
     }
-  }, [hasAuthToken]);
+  }, [hasAuthToken, navigate]);
 
   const loginOption = () => {
     navigate('/login', { state: { backgroundLocation: location } });
@@ -129,7 +141,18 @@ function DashboardMenu() {
     closeMobileMenu();
     setProfileMenuOpen(false);
     setShowLogoutConfirm(false);
-    navigate('/dashboard', { replace: true });
+    navigate('/login', {
+      replace: true,
+      state: {
+        backgroundLocation: {
+          pathname: '/dashboard',
+          search: '',
+          hash: '',
+          state: null,
+          key: 'logout-dashboard-background',
+        },
+      },
+    });
   };
 
   const requestLogout = () => {
