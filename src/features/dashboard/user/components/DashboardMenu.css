@@ -393,20 +393,18 @@
   }
 
   .admin-btn.user-btn {
-    width: 2.4rem;
-    min-width: 2.4rem;
-    height: 2.4rem;
-    padding: 0;
-    border-radius: 999px;
-  }
-
-  .admin-btn.user-btn .user-label {
-    display: none;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    padding: 0.55rem 1rem;
+    border-radius: 12px;
+    justify-content: flex-start;
+    gap: 0.5rem;
   }
 
   .admin-btn.user-btn .user-avatar {
-    width: 1.65rem;
-    height: 1.65rem;
+    width: 1.45rem;
+    height: 1.45rem;
     font-size: 0.8rem;
   }
 }

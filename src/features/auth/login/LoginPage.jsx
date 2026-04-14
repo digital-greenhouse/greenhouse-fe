@@ -1,6 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { publicClient } from '../../../api/config/apiFactory';
 import { AuthContext } from './AuthContext';
 import { createUser } from '../../../api/users'
 import FeedbackToast from '../../../components/ui/FeedbackToast';
@@ -34,11 +33,6 @@ function LoginPage() {
   const [showRegisterConfirm, setShowRegisterConfirm] = useState(false);
 
   const handleClose = () => {
-    if (hasBackgroundApp) {
-      navigate(-1);
-      return;
-    }
-
     navigate('/dashboard', { replace: true });
   };
 
@@ -72,16 +66,16 @@ function LoginPage() {
     setFeedback({ type: '', message: '' });
     setIsSubmitting(true);
     const response = await handleLogin(loginData.email, loginData.password);
-    console.log('Login response:', response?.data?.user?.name);
 
     try {
       if (response?.ok) {
-        const token = response?.data?.token;
-        const name = response?.data?.user?.name;
 
-        if (token) {
+        const token = response?.data?.token;
+        const user = response?.data?.user;
+
+        if (token && user) {
           localStorage.setItem('authToken', token);
-          localStorage.setItem('userName', name);
+          localStorage.setItem('user', JSON.stringify(user));
           window.dispatchEvent(new Event('auth-state-changed'));
           if (hasBackgroundApp) {
             navigate(nextPath, { replace: true });
@@ -89,7 +83,7 @@ function LoginPage() {
             navigate('/dashboard', { replace: true });
           }
         } else {
-          setFeedback({ type: 'error', message: 'No se pudo obtener el token de acceso.' });
+          setFeedback({ type: 'error', message: 'No se pudo obtener la informacion del usuario.' });
         }
         return;
       }
