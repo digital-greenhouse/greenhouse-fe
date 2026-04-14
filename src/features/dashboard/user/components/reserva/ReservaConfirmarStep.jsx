@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import GenericFileDropzone from '../../../../../components/loadFile/GenericFileDropzone';
+import GenericFileDropzone from '../../../../../components/ui/loadFile/GenericFileDropzone';
 import { createBooking } from '../../../../../api/bookings';
 import FeedbackToast from '../../../../../components/ui/FeedbackToast';
 import ConfirmModal from '../../../../../components/ui/ConfirmModal';
@@ -18,6 +18,7 @@ function ReservaConfirmarStep({
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const fileInputRef = useRef(null);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleFileSelect = (file) => {
     onPaymentProofChange(file || null);
@@ -63,6 +64,7 @@ function ReservaConfirmarStep({
 
   const handleSaveBooking = async () => {
     const quoteId = summary.idQuote || summary.quoteId;
+   
 
     if (!quoteId) {
       setFeedback({
@@ -134,13 +136,13 @@ function ReservaConfirmarStep({
           <strong>Asistentes:</strong> {summary.attendees}
         </p>
         <p>
-          <strong>Nombre:</strong> {'Sin definir'}
+          <strong>Nombre:</strong> {user?.name || 'Sin definir'}
         </p>
         <p>
-          <strong>Correo:</strong> {'Sin definir'}
+          <strong>Correo:</strong> {user?.email || 'Sin definir'}
         </p>
         <p>
-          <strong>Telefono:</strong> {'Sin definir'}
+          <strong>Telefono:</strong> {user?.phone || 'Sin definir'}
         </p>
         <p>
           <strong>Evento:</strong> {summary.eventType}
