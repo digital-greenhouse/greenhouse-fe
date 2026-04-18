@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
 import { Link, useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import ConfirmModal from '../../../../components/ui/ConfirmModal';
@@ -131,7 +131,8 @@ function DashboardMenu() {
 
   const myBookingsOption = () => {
     setProfileMenuOpen(false);
-    navigate('/reservar');
+    console.log('navegando a mis reservas');
+    navigate('/dashboard/booking-actual');
   };
 
   const logoutOption = () => {
