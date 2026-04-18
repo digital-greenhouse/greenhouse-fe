@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import DashboardMenu from './components/DashboardMenu';
 import './DashboardPage.css';
 
@@ -128,8 +128,10 @@ const pricingPlans = [
 
 function DashboardPage() {
   const location = useLocation();
+  const actualLocation = window.location.pathname;
   const galleryRef = useRef(null);
   const [galleryVisible, setGalleryVisible] = useState(false);
+  console.log('ddd', actualLocation);
 
   useEffect(() => {
     const section = galleryRef.current;
@@ -172,99 +174,104 @@ function DashboardPage() {
   return (
     <main className="villa-page">
       <DashboardMenu />
+      {actualLocation.includes('/dashboard/booking-actual') ? <Outlet /> : (
+        <>
+          <section id="hero" className="hero-section" aria-label="Presentacion principal">
+            <div className="hero-overlay" />
 
-      <section id="hero" className="hero-section" aria-label="Presentacion principal">
-        <div className="hero-overlay" />
-
-        <div className="hero-content">
-          <p className="hero-location">Motavita, Boyaca - Colombia</p>
-          <h1>Tu escape rural te espera</h1>
-          <p>
-            Celebra tus eventos en un entorno natural unico. Villa Encantada La Villa
-            del Amor, finca recreativa con capacidad hasta 100 personas. Planifica tu
-            evento y vive una experiencia inolvidable.
-          </p>
-
-          <div className="hero-actions">
-            <Link className="hero-action-primary" to="/reservar">
-              Reservar Ahora
-            </Link>
-            <a className="hero-action-secondary" href="#gallery">
-              Ver Galeria
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <section id="servicios" className="services-section" aria-label="Servicios">
-        <p className="services-kicker">Servicios</p>
-        <h2>Todo lo que necesitas para un evento perfecto</h2>
-        <p className="services-copy">
-          Villa Encantada cuenta con amplios espacios para que tu unica preocupacion
-          sea disfrutar.
-        </p>
-
-        <div className="services-grid">
-          {services.map((service) => (
-            <article key={service.id} className="service-card">
-              <span className="service-icon" aria-hidden="true">
-                {service.icon}
-              </span>
-              <h3>{service.title}</h3>
-              <p>{service.description}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section
-        id="gallery"
-        ref={galleryRef}
-        className={`gallery-grid ${galleryVisible ? 'is-visible' : ''}`}
-        aria-label="Galeria principal de la villa"
-      >
-        {galleryItems.map((item) => (
-          <article key={item.id} className={`gallery-card ${item.id}`}>
-            <img src={item.image} alt={item.alt} loading="lazy" />
-          </article>
-        ))}
-      </section>
-
-      <section id="tarifas" className="pricing-section" aria-label="Tarifas">
-        <h2>Precios transparentes, sin sorpresas</h2>
-        <p>
-          Consulta nuestras tarifas y reserva directamente. El precio final se calcula
-          segun tus fechas y numero de asistentes.
-        </p>
-
-        <div className="pricing-grid">
-          {pricingPlans.map((plan) => (
-            <article
-              key={plan.id}
-              className={`pricing-card ${plan.featured ? 'is-featured' : ''}`}
-            >
-              {plan.featured && <span className="pricing-badge">Popular</span>}
-
-              <h3>{plan.name}</h3>
-
-              <p className="pricing-price">
-                <strong>{plan.price}</strong>
-                <span>{plan.per}</span>
+            <div className="hero-content">
+              <p className="hero-location">Motavita, Boyaca - Colombia</p>
+              <h1>Tu escape rural te espera</h1>
+              <p>
+                Celebra tus eventos en un entorno natural unico. Villa Encantada La Villa
+                del Amor, finca recreativa con capacidad hasta 100 personas. Planifica tu
+                evento y vive una experiencia inolvidable.
               </p>
 
-              <ul>
-                {plan.features.map((feature) => (
-                  <li key={feature}>{feature}</li>
-                ))}
-              </ul>
+              <div className="hero-actions">
+                <Link className="hero-action-primary" to="/reservar">
+                  Reservar Ahora
+                </Link>
+                <a className="hero-action-secondary" href="#gallery">
+                  Ver Galeria
+                </a>
+              </div>
+            </div>
+          </section>
 
-              <Link className={`pricing-btn ${plan.featured ? 'is-featured' : ''}`} to="/reservar">
-                Cotizar
-              </Link>
-            </article>
-          ))}
-        </div>
-      </section>
+          <section id="servicios" className="services-section" aria-label="Servicios">
+            <p className="services-kicker">Servicios</p>
+            <h2>Todo lo que necesitas para un evento perfecto</h2>
+            <p className="services-copy">
+              Villa Encantada cuenta con amplios espacios para que tu unica preocupacion
+              sea disfrutar.
+            </p>
+
+            <div className="services-grid">
+              {services.map((service) => (
+                <article key={service.id} className="service-card">
+                  <span className="service-icon" aria-hidden="true">
+                    {service.icon}
+                  </span>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section
+            id="gallery"
+            ref={galleryRef}
+            className={`gallery-grid ${galleryVisible ? 'is-visible' : ''}`}
+            aria-label="Galeria principal de la villa"
+          >
+            {galleryItems.map((item) => (
+              <article key={item.id} className={`gallery-card ${item.id}`}>
+                <img src={item.image} alt={item.alt} loading="lazy" />
+              </article>
+            ))}
+          </section>
+
+          <section id="tarifas" className="pricing-section" aria-label="Tarifas">
+            <h2>Precios transparentes, sin sorpresas</h2>
+            <p>
+              Consulta nuestras tarifas y reserva directamente. El precio final se calcula
+              segun tus fechas y numero de asistentes.
+            </p>
+
+            <div className="pricing-grid">
+              {pricingPlans.map((plan) => (
+                <article
+                  key={plan.id}
+                  className={`pricing-card ${plan.featured ? 'is-featured' : ''}`}
+                >
+                  {plan.featured && <span className="pricing-badge">Popular</span>}
+
+                  <h3>{plan.name}</h3>
+
+                  <p className="pricing-price">
+                    <strong>{plan.price}</strong>
+                    <span>{plan.per}</span>
+                  </p>
+
+                  <ul>
+                    {plan.features.map((feature) => (
+                      <li key={feature}>{feature}</li>
+                    ))}
+                  </ul>
+
+                  <Link className={`pricing-btn ${plan.featured ? 'is-featured' : ''}`} to="/reservar">
+                    Cotizar
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </section>
+        </>
+      )}
+
+
     </main>
   );
 }
