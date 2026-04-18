@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import GenericFileDropzone from '../../../../../components/ui/loadFile/GenericFileDropzone';
 import { createBooking } from '../../../../../api/bookings';
 import FeedbackToast from '../../../../../components/ui/FeedbackToast';
@@ -19,6 +19,25 @@ function ReservaConfirmarStep({
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const fileInputRef = useRef(null);
   const user = JSON.parse(localStorage.getItem("user"));
+
+    const [draftData, setDraftData] = useState(null);
+
+  useEffect(() => {
+    const savedDraft = sessionStorage.getItem(RESERVA_DRAFT_KEY);
+    if (savedDraft) {
+      setDraftData(JSON.parse(savedDraft));
+      console.log(JSON.parse(savedDraft).contactData.id_quote);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (paymentProofError) {
+      setFeedback({
+        type: 'error',
+        message: paymentProofError,
+      });
+    }
+  }, [paymentProofError]);
 
   const handleFileSelect = (file) => {
     onPaymentProofChange(file || null);
@@ -63,9 +82,9 @@ function ReservaConfirmarStep({
   });
 
   const handleSaveBooking = async () => {
-    const quoteId = summary.idQuote || summary.quoteId;
-   
+    const quoteId = summary?.idQuote || draftData?.contactData?.id_quote;
 
+    console.log('Creando reserva con quoteId:',draftData?.contactData?.id_quote, 'y notas:', summary.notes);
     if (!quoteId) {
       setFeedback({
         type: 'error',
@@ -76,16 +95,17 @@ function ReservaConfirmarStep({
 
     setIsSubmitting(true);
     setFeedback({ type: '', message: '' });
-
+    console.log('Creando reserva con quoteId:', quoteId, 'y notas:', summary.notes);
     try {
-      await createBooking({
+      const booking = await createBooking({
         quote_id: quoteId,
         special_requests: summary.notes || '',
       });
+      console.log('Reserva creada:', booking);
 
       setFeedback({
         type: 'success',
-        message: 'Reserva creada correctamente. Te contactaremos para confirmar el pago.',
+        message: `Reserva creada correctamente. Te contactaremos para confirmar el pago. Id de la reserva: ${booking.data.id}`,
       });
 
       window.setTimeout(() => {
@@ -93,15 +113,14 @@ function ReservaConfirmarStep({
         const nextUrl = `${window.location.pathname}?step=1`;
         window.history.replaceState(null, '', nextUrl);
         window.location.reload();
-      }, 2000);
+      }, 6000);
+      sessionStorage.clear();
     } catch (error) {
       console.error('Error al crear la reserva:', error);
       setFeedback({
         type: 'error',
         message: 'No fue posible crear la reserva. Intenta nuevamente.',
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -184,14 +203,14 @@ function ReservaConfirmarStep({
       </div>
 
       <div className="step-actions">
-        <button type="button" className="step-btn step-btn-secondary" onClick={onBack}>
+        <button type="button" className="step-btn step-btn-secondary" onClick={onBack} disabled={isSubmitting}>
           Volver a datos
         </button>
         <button
           type="button"
           className="step-btn"
           onClick={() => setShowSubmitConfirm(true)}
-          //disabled={!paymentProof || Boolean(paymentProofError) || isSubmitting}
+          disabled={isSubmitting}
         >
           {isSubmitting ? 'Enviando...' : 'Enviar solicitud'}
         </button>

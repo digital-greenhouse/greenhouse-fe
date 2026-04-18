@@ -3,13 +3,16 @@ import LoginPage from '../features/auth/login/LoginPage';
 import DashboardPage from '../features/dashboard/user/DashboardPage';
 import ReservarPage from '../features/dashboard/user/ReservarPage';
 import DashboardAdminMenu from '../features/dashboard/admin/DashboardAdminMenu';
+import BokingMenu from '../features/booking/BookingMenu';
 
 function AppRoutes({ location, includeLoginRoute }) {
   return (
     <Routes location={location}>
-      <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/dashboard" element={<DashboardPage />}>
+        <Route path="booking-actual" element={<BokingMenu />} />
+      </Route>
       <Route path="/reservar" element={<ReservarPage />} />
-      <Route path="/admin" element={<DashboardAdminMenu />} />
+      <Route path="admin" element={<DashboardAdminMenu />} />
       {includeLoginRoute && <Route path="/login" element={<LoginPage />} />}
       <Route index element={<Navigate to="/dashboard" />} />
       <Route path="*" element={<h2>404 Not Found</h2>} />
@@ -49,13 +52,13 @@ function AppRouter() {
   const showLoginModal = location.pathname === '/login';
   const appLocation = showLoginModal
     ? backgroundLocation || {
-        ...location,
-        pathname: '/dashboard',
-        search: '',
-        hash: '',
-        state: null,
-        key: `${location.key}-background`,
-      }
+      ...location,
+      pathname: '/dashboard',
+      search: '',
+      hash: '',
+      state: null,
+      key: `${location.key}-background`,
+    }
     : location;
 
   return (

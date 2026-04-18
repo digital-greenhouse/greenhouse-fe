@@ -23,7 +23,7 @@ function FeedbackToast({
   title,
   message,
   onClose,
-  delay = 3800,
+  delay = 5800,
   position = 'top-end',
 }) {
   if (!show || !message) {

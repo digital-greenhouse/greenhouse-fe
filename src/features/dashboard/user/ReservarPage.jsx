@@ -163,7 +163,7 @@ function ReservarPage() {
   const [attendees, setAttendees] = useState(() => Number(savedDraft?.attendees) || 30);
   const [quote, setQuote] = useState();
   const [contactData, setContactData] = useState({
-    id_quote: "",
+    id_quote: savedDraft?.contactData?.id_quote || 0,
     fullName: savedDraft?.contactData?.fullName || '',
     email: savedDraft?.contactData?.email || '',
     phone: savedDraft?.contactData?.phone || '',
@@ -264,6 +264,8 @@ function ReservarPage() {
       contactData,
     };
 
+    console.log('Guardando borrador:', draft);
+
     sessionStorage.setItem(RESERVA_DRAFT_KEY, JSON.stringify(draft));
   }, [checkIn, checkOut, attendees, quotedTotal, contactData]);
 
@@ -324,20 +326,25 @@ function ReservarPage() {
     if (!checkIn || !checkOut || rangeHasUnavailable || isQuoting) {
       return;
     }
+    const user = JSON.parse(localStorage.getItem('user') || {});
     setIsQuoting(true);
     setQuoteError('');
     try {
       const response = await createQuote({
-        property_id: 1,
+        property_id: user?.id || 0,
         check_in_date: new Date(toDateKey(checkIn)).toISOString(),
         check_out_date: new Date(toDateKey(checkOut)).toISOString(),
-        guest_count: 8,
+        guest_count: 1,
       })
       const total = response?.data?.calculated_total;
-    
+      setContactData(prev => ({
+        ...prev,
+        id_quote: response?.data?.id || 0,
+      }));
+
       setQuote(response?.data);
       if (total === null) {
-  
+
         setQuotedTotal(null);
         setQuoteError('No fue posible obtener la cotizacion. Intenta nuevamente.');
         return;
@@ -411,14 +418,14 @@ function ReservarPage() {
             Selecciona las fechas de tu evento, revisa el precio y envia tu solicitud.
             Te confirmaremos en menos de 24 horas.
           </p>
- 
+
           <ReservaSteps
             steps={steps}
             currentStep={currentStep}
             onStepChange={handleStepChange}
             canAccessStep={canAccessStep}
           />
-         
+
 
           {currentStep === 1 && (
             <ReservaFechasStep
