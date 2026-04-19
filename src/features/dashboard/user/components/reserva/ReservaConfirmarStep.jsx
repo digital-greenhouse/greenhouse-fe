@@ -26,7 +26,6 @@ function ReservaConfirmarStep({
     const savedDraft = sessionStorage.getItem(RESERVA_DRAFT_KEY);
     if (savedDraft) {
       setDraftData(JSON.parse(savedDraft));
-      console.log(JSON.parse(savedDraft).contactData.id_quote);
     }
   }, []);
 
@@ -84,7 +83,6 @@ function ReservaConfirmarStep({
   const handleSaveBooking = async () => {
     const quoteId = summary?.idQuote || draftData?.contactData?.id_quote;
 
-    console.log('Creando reserva con quoteId:',draftData?.contactData?.id_quote, 'y notas:', summary.notes);
     if (!quoteId) {
       setFeedback({
         type: 'error',
@@ -95,13 +93,11 @@ function ReservaConfirmarStep({
 
     setIsSubmitting(true);
     setFeedback({ type: '', message: '' });
-    console.log('Creando reserva con quoteId:', quoteId, 'y notas:', summary.notes);
     try {
       const booking = await createBooking({
         quote_id: quoteId,
         special_requests: summary.notes || '',
       });
-      console.log('Reserva creada:', booking);
 
       setFeedback({
         type: 'success',

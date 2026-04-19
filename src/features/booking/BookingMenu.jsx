@@ -44,66 +44,23 @@ function BokingMenu({
     return (
         <main>
             <section
-                style={{
-                    width: '100%',
-                    maxWidth: 760,
-                    marginTop: 16,
-                    marginBottom: 14,
-                }}
+                className="booking-summary"
                 aria-label="Resumen de reservas"
             >
-                <p
-                    style={{
-                        margin: 0,
-                        marginBottom: 6,
-                        fontSize: 12,
-                        fontWeight: 700,
-                        letterSpacing: 1.2,
-                        color: '#0f766e',
-                        textTransform: 'uppercase',
-                    }}
-                >
+                <p className="booking-summary-kicker">
                     Gestion de reservas
                 </p>
-                <h1
-                    style={{
-                        margin: 0,
-                        fontSize: 'clamp(1.4rem, 2.6vw, 2rem)',
-                        lineHeight: 1.2,
-                        color: '#102a43',
-                        fontWeight: 800,
-                    }}
-                >
+                <h1 className="booking-summary-title">
                     Controla tus reservas en un solo panel
                 </h1>
-                <p
-                    style={{
-                        margin: 0,
-                        marginTop: 8,
-                        fontSize: 15,
-                        lineHeight: 1.6,
-                        color: '#486581',
-                        maxWidth: 680,
-                    }}
-                >
+                <p className="booking-summary-copy">
                     {/* {selectedDescription} */}
                 </p>
             </section>
 
             <div
-                className={className}
-                style={{
-                    width: '100%',
-                    background: '#ffffff',
-                    border: '1px solid #d9e2ec',
-                    borderRadius: 12,
-                    padding: 6,
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: 6,
-                    boxSizing: 'border-box',
-                    ...style,
-                }}
+                className={`booking-tabs ${className}`.trim()}
+                style={style}
                 role="tablist"
                 aria-label="Filtro de reservas"
             >
@@ -112,18 +69,9 @@ function BokingMenu({
                     role="tab"
                     aria-selected={selectedOption === BOOKING_MENU_OPTIONS.MADE_BY_ME}
                     onClick={() => handleSelect(BOOKING_MENU_OPTIONS.MADE_BY_ME)}
-                    style={{
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '10px 14px',
-                        cursor: 'pointer',
-                        fontSize: 14,
-                        fontWeight: 600,
-                        transition: 'all 0.2s ease',
-                        background:
-                            selectedOption === BOOKING_MENU_OPTIONS.MADE_BY_ME ? '#2f7755' : 'transparent',
-                        color: selectedOption === BOOKING_MENU_OPTIONS.MADE_BY_ME ? '#ffffff' : '#334155',
-                    }}
+                    className={`booking-tab ${
+                        selectedOption === BOOKING_MENU_OPTIONS.MADE_BY_ME ? 'is-active' : ''
+                    }`}
                 >
                     {mergedLabels[BOOKING_MENU_OPTIONS.MADE_BY_ME]}
                 </button>
@@ -133,18 +81,9 @@ function BokingMenu({
                     role="tab"
                     aria-selected={selectedOption === BOOKING_MENU_OPTIONS.ON_MY_PROPERTY}
                     onClick={() => handleSelect(BOOKING_MENU_OPTIONS.ON_MY_PROPERTY)}
-                    style={{
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '10px 14px',
-                        cursor: 'pointer',
-                        fontSize: 14,
-                        fontWeight: 600,
-                        transition: 'all 0.2s ease',
-                        background:
-                            selectedOption === BOOKING_MENU_OPTIONS.ON_MY_PROPERTY ? '#2f7755' : 'transparent',
-                        color: selectedOption === BOOKING_MENU_OPTIONS.ON_MY_PROPERTY ? '#ffffff' : '#334155',
-                    }}
+                    className={`booking-tab ${
+                        selectedOption === BOOKING_MENU_OPTIONS.ON_MY_PROPERTY ? 'is-active' : ''
+                    }`}
                 >
                     {mergedLabels[BOOKING_MENU_OPTIONS.ON_MY_PROPERTY]}
                 </button>
@@ -154,16 +93,7 @@ function BokingMenu({
                 {selectedOption === BOOKING_MENU_OPTIONS.MADE_BY_ME ? (
                     <MyBooking />
                 ) : (
-                    <div
-                        style={{
-                            border: '1px dashed #cbd5e1',
-                            borderRadius: 12,
-                            background: '#f8fafc',
-                            color: '#475569',
-                            padding: '16px 18px',
-                            fontSize: 14,
-                        }}
-                    >
+                    <div className="booking-placeholder">
                         Aqui veras las reservas recibidas en tus propiedades.
                     </div>
                 )}
