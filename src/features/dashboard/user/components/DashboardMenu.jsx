@@ -131,7 +131,6 @@ function DashboardMenu() {
 
   const myBookingsOption = () => {
     setProfileMenuOpen(false);
-    console.log('navegando a mis reservas');
     navigate('/dashboard/booking-actual');
   };
 

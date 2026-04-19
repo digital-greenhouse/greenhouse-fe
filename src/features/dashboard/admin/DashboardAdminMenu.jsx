@@ -70,12 +70,9 @@ function AdminDashboard() {
             'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Si necesitas enviar el token de autenticación
           }
         });
-        console.log('Logout successful:', response.data);
         localStorage.removeItem('authToken');  // Eliminar el token de localStorage
-        console.log("sale correctamente")
         navigate('/login');    // Redirigir a la página de login
       } catch (error) {
-        console.log("sale por error")
         if (error.response && error.response.status === 403) {
           console.error('Token vencido:', error);
           localStorage.removeItem('authToken');
@@ -88,11 +85,6 @@ function AdminDashboard() {
         setLoading(false);  // Ocultar el spinner cuando termine
       }
     };
-
-
-
-    console.log("logout: ", logout);
-
 
 
 
@@ -145,8 +137,6 @@ function AdminDashboard() {
           userStatus: userData.userStatus,
           roles: userData.roles && userData.roles.length > 0 ? userData.roles[0].name : null
         };
-
-        console.log("Respuesta: ", formattedData);
 
         // Navegar y pasar los datos en el estado
         navigate(`${path}`, { state: { user: formattedData } });

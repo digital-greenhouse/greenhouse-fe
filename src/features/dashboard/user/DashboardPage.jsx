@@ -131,8 +131,6 @@ function DashboardPage() {
   const actualLocation = window.location.pathname;
   const galleryRef = useRef(null);
   const [galleryVisible, setGalleryVisible] = useState(false);
-  console.log('ddd', actualLocation);
-
   useEffect(() => {
     const section = galleryRef.current;
     if (!section) {

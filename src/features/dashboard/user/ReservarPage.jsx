@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Spinner } from 'react-bootstrap';
 import DashboardMenu from './components/DashboardMenu';
 import ReservaConfirmarStep from './components/reserva/ReservaConfirmarStep';
 import ReservaDatosStep from './components/reserva/ReservaDatosStep';
@@ -162,6 +163,7 @@ function ReservarPage() {
   const [checkOut, setCheckOut] = useState(() => fromDateKey(savedDraft?.checkOut) || null);
   const [attendees, setAttendees] = useState(() => Number(savedDraft?.attendees) || 30);
   const [quote, setQuote] = useState();
+  const [loadingDates, setLoadingDates] = useState(false);
   const [contactData, setContactData] = useState({
     id_quote: savedDraft?.contactData?.id_quote || 0,
     fullName: savedDraft?.contactData?.fullName || '',
@@ -183,12 +185,12 @@ function ReservarPage() {
 
   useEffect(() => {
     let cancelled = false;
+    setLoadingDates(true);
 
     const loadUnavailableDates = async () => {
       try {
         const response = await getHistory();
         const bookings = Array.isArray(response?.data) ? response.data : [];
-        console.log('Reservas obtenidas:', response);
 
         if (!cancelled) {
           setUnavailableDates(buildUnavailableSetFromBookings(bookings));
@@ -198,6 +200,10 @@ function ReservarPage() {
         if (!cancelled) {
           setUnavailableDates(new Set());
         }
+      } finally {
+        setTimeout(() => {
+          setLoadingDates(false);
+        }, 900);
       }
     };
 
@@ -263,8 +269,6 @@ function ReservarPage() {
       quotedTotal,
       contactData,
     };
-
-    console.log('Guardando borrador:', draft);
 
     sessionStorage.setItem(RESERVA_DRAFT_KEY, JSON.stringify(draft));
   }, [checkIn, checkOut, attendees, quotedTotal, contactData]);
@@ -486,6 +490,11 @@ function ReservarPage() {
               onBack={() => handleStepChange(2)}
             />
           )}
+          {loadingDates && (
+            <div className="loading-overlay">
+              <Spinner animation="grow" size="lg" />
+            </div>
+          )}
         </article>
 
         <aside className="reserva-side-card">
@@ -525,6 +534,7 @@ function ReservarPage() {
           </div>
         </aside>
       </section>
+
     </main>
   );
 }

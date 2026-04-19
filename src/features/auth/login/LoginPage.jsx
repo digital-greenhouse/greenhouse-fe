@@ -127,7 +127,6 @@ function LoginPage() {
     }
 
     ).then((res) => {
-      console.log('Register response:', res.data);
       setFeedback({ type: 'success', message: 'Cuenta creada correctamente. Ahora puedes iniciar sesion.' });
       setMode('login');
       setLoginData((prev) => ({ ...prev, email: registerData.email, password: '' }));

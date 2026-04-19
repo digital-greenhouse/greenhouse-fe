@@ -160,9 +160,7 @@ function MyBooking() {
             cell: row => {
                 const hoy = new Date();
                 const checkIn = new Date(row.check_in_date);
-
                 const showButton = hoy < checkIn;
-
                 return (
                     <div className="booking-actions-cell">
                         {showButton && row.status === 'PENDING_PAYMENT' && (
@@ -179,10 +177,9 @@ function MyBooking() {
                     </div>
                 );
             },
+            grow: 1.3
         }
     ];
-
-    console.log('bookings', bookings);
 
     return (
         <div>
@@ -198,7 +195,6 @@ function MyBooking() {
                         <Spinner animation="border" size="lg" />
                     </div>
                 )}
-               
             />
             <FeedbackToast
                 show={Boolean(feedback.message)}
