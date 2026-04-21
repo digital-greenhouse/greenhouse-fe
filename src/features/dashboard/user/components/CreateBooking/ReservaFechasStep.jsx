@@ -96,7 +96,7 @@ function ReservaFechasStep({
 
               {buildCalendarCells(monthDate).map((cell) => {
                 const unavailable = isUnavailable(cell.date);
-                const disabled = !cell.inMonth || cell.date < today || unavailable;
+                const disabled = !cell.inMonth || cell.date <= today || unavailable;
                 const isStart = checkIn && isSameDay(cell.date, checkIn);
                 const isEnd = checkOut && isSameDay(cell.date, checkOut);
                 const inRange = !unavailable && isInRange(cell.date);

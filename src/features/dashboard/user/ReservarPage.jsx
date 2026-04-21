@@ -2,10 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 import DashboardMenu from './components/DashboardMenu';
-import ReservaConfirmarStep from './components/reserva/ReservaConfirmarStep';
-import ReservaDatosStep from './components/reserva/ReservaDatosStep';
-import ReservaFechasStep from './components/reserva/ReservaFechasStep';
-import ReservaSteps from './components/reserva/ReservaSteps';
+import ReservaConfirmarStep from './components/CreateBooking/ReservaConfirmarStep';
+import ReservaDatosStep from './components/CreateBooking/ReservaDatosStep';
+import ReservaFechasStep from './components/CreateBooking/ReservaFechasStep';
+import ReservaSteps from './components/CreateBooking/ReservaSteps';
 import { createQuote } from '../../../api/reservations';
 import { getHistory } from '../../../api/reservations';
 import './ReservarPage.css';
@@ -113,7 +113,7 @@ function parseBackendDate(dateValue) {
   return new Date(year, month - 1, day);
 }
 
-function buildUnavailableSetFromBookings(bookings) {
+function buildUnavailableSetFromBookings(bookings, today) {
   const entries = new Set();
 
   bookings.forEach((booking) => {
@@ -126,7 +126,9 @@ function buildUnavailableSetFromBookings(bookings) {
 
     let current = start;
     while (current <= end) {
-      entries.add(toDateKey(current));
+      if (current > today) {
+        entries.add(toDateKey(current));
+      }
       current = addDays(current, 1);
     }
   });
@@ -193,7 +195,7 @@ function ReservarPage() {
         const bookings = Array.isArray(response?.data) ? response.data : [];
 
         if (!cancelled) {
-          setUnavailableDates(buildUnavailableSetFromBookings(bookings));
+          setUnavailableDates(buildUnavailableSetFromBookings(bookings, today));
         }
       } catch (error) {
         console.error('Error al obtener historial de reservas:', error);
@@ -308,6 +310,10 @@ function ReservarPage() {
   };
 
   const handleDateClick = (value) => {
+    if (value <= today) {
+      return;
+    }
+
     setQuotedTotal(null);
     setQuoteError('');
 
