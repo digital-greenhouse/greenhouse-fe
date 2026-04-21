@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Spinner } from 'react-bootstrap';
 import DashboardMenu from './components/DashboardMenu';
-import ReservaConfirmarStep from './components/reserva/ReservaConfirmarStep';
-import ReservaDatosStep from './components/reserva/ReservaDatosStep';
-import ReservaFechasStep from './components/reserva/ReservaFechasStep';
-import ReservaSteps from './components/reserva/ReservaSteps';
+import ReservaConfirmarStep from './components/CreateBooking/ReservaConfirmarStep';
+import ReservaDatosStep from './components/CreateBooking/ReservaDatosStep';
+import ReservaFechasStep from './components/CreateBooking/ReservaFechasStep';
+import ReservaSteps from './components/CreateBooking/ReservaSteps';
 import { createQuote } from '../../../api/reservations';
 import { getHistory } from '../../../api/reservations';
 import './ReservarPage.css';
@@ -112,7 +113,7 @@ function parseBackendDate(dateValue) {
   return new Date(year, month - 1, day);
 }
 
-function buildUnavailableSetFromBookings(bookings) {
+function buildUnavailableSetFromBookings(bookings, today) {
   const entries = new Set();
 
   bookings.forEach((booking) => {
@@ -125,7 +126,9 @@ function buildUnavailableSetFromBookings(bookings) {
 
     let current = start;
     while (current <= end) {
-      entries.add(toDateKey(current));
+      if (current > today) {
+        entries.add(toDateKey(current));
+      }
       current = addDays(current, 1);
     }
   });
@@ -162,6 +165,7 @@ function ReservarPage() {
   const [checkOut, setCheckOut] = useState(() => fromDateKey(savedDraft?.checkOut) || null);
   const [attendees, setAttendees] = useState(() => Number(savedDraft?.attendees) || 30);
   const [quote, setQuote] = useState();
+  const [loadingDates, setLoadingDates] = useState(false);
   const [contactData, setContactData] = useState({
     id_quote: savedDraft?.contactData?.id_quote || 0,
     fullName: savedDraft?.contactData?.fullName || '',
@@ -183,21 +187,25 @@ function ReservarPage() {
 
   useEffect(() => {
     let cancelled = false;
+    setLoadingDates(true);
 
     const loadUnavailableDates = async () => {
       try {
         const response = await getHistory();
         const bookings = Array.isArray(response?.data) ? response.data : [];
-        console.log('Reservas obtenidas:', response);
 
         if (!cancelled) {
-          setUnavailableDates(buildUnavailableSetFromBookings(bookings));
+          setUnavailableDates(buildUnavailableSetFromBookings(bookings, today));
         }
       } catch (error) {
         console.error('Error al obtener historial de reservas:', error);
         if (!cancelled) {
           setUnavailableDates(new Set());
         }
+      } finally {
+        setTimeout(() => {
+          setLoadingDates(false);
+        }, 900);
       }
     };
 
@@ -264,8 +272,6 @@ function ReservarPage() {
       contactData,
     };
 
-    console.log('Guardando borrador:', draft);
-
     sessionStorage.setItem(RESERVA_DRAFT_KEY, JSON.stringify(draft));
   }, [checkIn, checkOut, attendees, quotedTotal, contactData]);
 
@@ -304,6 +310,10 @@ function ReservarPage() {
   };
 
   const handleDateClick = (value) => {
+    if (value <= today) {
+      return;
+    }
+
     setQuotedTotal(null);
     setQuoteError('');
 
@@ -486,6 +496,11 @@ function ReservarPage() {
               onBack={() => handleStepChange(2)}
             />
           )}
+          {loadingDates && (
+            <div className="loading-overlay">
+              <Spinner animation="grow" size="lg" />
+            </div>
+          )}
         </article>
 
         <aside className="reserva-side-card">
@@ -525,6 +540,7 @@ function ReservarPage() {
           </div>
         </aside>
       </section>
+
     </main>
   );
 }

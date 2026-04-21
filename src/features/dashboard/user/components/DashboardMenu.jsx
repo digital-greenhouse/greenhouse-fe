@@ -42,6 +42,7 @@ function DashboardMenu() {
     const isOnLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login';
 
     localStorage.clear();
+    sessionStorage.clear();
     window.dispatchEvent(new Event('auth-state-changed'));
     setHasAuthToken(false);
     setMenuOpen(false);
@@ -80,6 +81,10 @@ function DashboardMenu() {
       closeMobileMenu();
       return;
     }
+    if(location.pathname.includes('/reservar')) {
+      console.log('No se esta en dashboard ni en reservar, no se hace scroll');
+      sessionStorage.clear();
+    }
 
     closeMobileMenu();
   };
@@ -106,12 +111,10 @@ function DashboardMenu() {
 
       } else {
         clearSessionAndGoLogin();
-        sessionStorage.clear();
       }
     } catch (error) {
       console.error('Error al verificar el token:', error);
       clearSessionAndGoLogin();
-      sessionStorage.clear();
     }
   }, [hasAuthToken, navigate]);
 
@@ -131,12 +134,12 @@ function DashboardMenu() {
 
   const myBookingsOption = () => {
     setProfileMenuOpen(false);
-    console.log('navegando a mis reservas');
     navigate('/dashboard/booking-actual');
   };
 
   const logoutOption = () => {
     localStorage.clear();
+    sessionStorage.clear();
     window.dispatchEvent(new Event('auth-state-changed'));
     setHasAuthToken(false);
     closeMobileMenu();

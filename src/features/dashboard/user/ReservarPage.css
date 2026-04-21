@@ -24,7 +24,24 @@
 }
 
 .reserva-main-card {
+  position: relative;
   padding: 1.6rem;
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  background: rgba(248, 246, 242, 0.72);
+  backdrop-filter: blur(2px);
+}
+
+.loading-overlay .spinner-grow {
+  color: var(--color-primary);
 }
 
 .reserva-kicker {
