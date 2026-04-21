@@ -1,8 +1,10 @@
 import DataTable from 'react-data-table-component';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUpload, faCircleXmark} from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect } from 'react';
 import { getBookings } from '../../api/bookings';
 import FeedbackToast from '../../components/ui/FeedbackToast';
-import { Spinner } from 'react-bootstrap';
+import { OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
 import './BookingMenu.css';
 
 
@@ -110,8 +112,10 @@ function MyBooking() {
 
     const dataBooking = async () => {
         setIsLoading(true);
-        await getBookings().then((response) => {
-            setBookings(response?.data);
+        const user = JSON.parse(localStorage.getItem("user"));
+        await getBookings(user?.id).then((response) => {
+            console.log('Bookings fetched:',response?.data.filter(item => item.client_id === user.id));
+            setBookings(response?.data.filter(item => item.client_id === user.id));
         }).catch((error) => {
             console.error('Error fetching bookings:', error);
             setFeedback({
@@ -128,7 +132,7 @@ function MyBooking() {
             name: 'id',
             selector: (row) => row?.id,
             sortable: true,
-            grow: 0.09
+            grow: 0.3
         },
         {
             name: 'Requerimiento adicional',
@@ -162,22 +166,62 @@ function MyBooking() {
                 const checkIn = new Date(row.check_in_date);
                 const showButton = hoy < checkIn;
                 return (
-                    <div className="booking-actions-cell">
+                //     <div className="booking-actions-cell">
+                //         {showButton && row.status === 'PENDING_PAYMENT' && (
+                //             <button className="booking-action-btn booking-action-btn--primary" type="button">
+                //                 Cargar Comprobante
+                //             </button>
+                //         )}
+
+                //         {showButton && row.status !== 'CANCELLED' && (
+                //             <button className="booking-action-btn booking-action-btn--danger" type="button">
+                //                 Cancelar Reserva
+                //             </button>
+                //         )}
+                //     </div>
+                // );
+                <div className="booking-actions-cell">
                         {showButton && row.status === 'PENDING_PAYMENT' && (
-                            <button className="booking-action-btn booking-action-btn--primary" type="button">
-                                Cargar Comprobante
-                            </button>
+                            <OverlayTrigger
+                                placement="top"
+                                overlay={
+                                    <Tooltip id={`tip-upload-${row.id}`}>
+                                        Cargar comprobante
+                                    </Tooltip>
+                                }
+                            >
+                                <button
+                                    className="booking-action-btn booking-action-btn--primary"
+                                    type="button"
+                                    aria-label="Cargar comprobante"
+                                >
+                                    <FontAwesomeIcon className='icon-upload' icon={faUpload} />
+                                </button>
+                            </OverlayTrigger>
                         )}
 
                         {showButton && row.status !== 'CANCELLED' && (
-                            <button className="booking-action-btn booking-action-btn--danger" type="button">
-                                Cancelar Reserva
-                            </button>
+                            <OverlayTrigger
+                                placement="top"
+                                overlay={
+                                    <Tooltip id={`tip-cancel-${row.id}`}>
+                                        Cancelar reserva
+                                    </Tooltip>
+                                }
+                            >
+                                <button
+                                    className="booking-action-btn booking-action-btn--danger"
+                                    type="button"
+                                    aria-label="Cancelar reserva"
+                                >
+                                    <FontAwesomeIcon className='icon-circle-xmark' icon={faCircleXmark} />
+                                </button>
+                            </OverlayTrigger>
                         )}
                     </div>
                 );
             },
-            grow: 1.3
+            grow: 1
         }
     ];
 

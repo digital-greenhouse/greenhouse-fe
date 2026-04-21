@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faHome, faGear, faRightFromBracket, faHardDrive, faBars, faFileLines, faScrewdriverWrench, faBuildingUser } from '@fortawesome/free-solid-svg-icons';
+import { faChartColumn, faHome, faBars, faRightFromBracket, faCalendarDays, faCircleArrowLeft, faScrewdriverWrench, faBuildingUser } from '@fortawesome/free-solid-svg-icons';
 import { Nav, Spinner } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
 //import logo from "../../assets/logo.png";
@@ -23,19 +23,11 @@ function AdminDashboard() {
   const navigate = useNavigate();
   const [isMenuVisible, setMenuVisible] = useState(true);
   const [isOverlayVisible, setOverlayVisible] = useState(false);
-  
+
   const loadInfoUser = async () => {
-    const token = localStorage.getItem('authToken');
-    let response;
     try {
-      response = await getUserById(jwtDecode(token).id, token);
-      setUserData({
-        name: response.name,
-        lastName: response.lastName,
-        email: response.email,
-        pathImage: response.pathImage
-      });
-      return response;
+      const user = JSON.parse(localStorage.getItem('user'));
+      setUserData(user);
     } catch (error) {
       console.error("Error al cargar los datos del usuario", error);
       return {};
@@ -179,9 +171,9 @@ function AdminDashboard() {
 
 
 
-    if (!isTokenChecked) {
-      return null;
-    }
+  if (!isTokenChecked) {
+    return null;
+  }
 
   return (
 
@@ -201,12 +193,12 @@ function AdminDashboard() {
               </Nav.Link>
 
               <Nav.Link className="nav-item-custom" >  {/* onClick={() => handleNavigation('/welcome')} */}
-                <FontAwesomeIcon className="icon-margin" icon={faHome} />
+                <FontAwesomeIcon className="icon-margin" icon={faCalendarDays} />
                 Reservas
               </Nav.Link>
 
               <Nav.Link className="nav-item-custom"> {/*onClick={() => handleNavigation('/users')} */}
-                <FontAwesomeIcon className="icon-margin" icon={faUsers} />
+                <FontAwesomeIcon className="icon-margin" icon={faChartColumn} />
                 Reportes
               </Nav.Link>
 
@@ -222,13 +214,13 @@ function AdminDashboard() {
                 <FontAwesomeIcon className="icon-margin" icon={faScrewdriverWrench} />
                 Mantenimientos
               </Nav.Link> */}
-              <div className="separator-line" />
+              {/* <div className="separator-line" /> */}
             </div>
 
             <div className="section-2">
               <div className="separator-line" />
               <Nav.Link className='profile-header-user' onClick={() => handleNavigation('/profile-info')}>
-                <img src={userData.pathImage} alt="Admin" className="profile-img-user" />
+                <span className="user-avatar" aria-hidden="true">{userData.name.charAt(0).toUpperCase()}</span>
                 <div className="title-profile">
                   <h5 className="profile-title-user">{userData.name} {userData.lastName}</h5>
                   <p className="profile-subtitle-user">{userData.email}</p>
@@ -240,7 +232,7 @@ function AdminDashboard() {
 
               <Nav.Link className="nav-item-custom" onClick={() => navigate(-1)}>
 
-                <FontAwesomeIcon className="icon-margin" icon={faGear} />
+                <FontAwesomeIcon className="icon-margin" icon={faCircleArrowLeft} />
                 Volver al sitio
               </Nav.Link>
 
