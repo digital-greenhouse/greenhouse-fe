@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import { createUser } from '../../../api/users'
+import { getPropertieById } from '../../../api/properties';
 import FeedbackToast from '../../../components/ui/FeedbackToast';
 import ConfirmModal from '../../../components/ui/ConfirmModal';
 import './LoginPage.css';
@@ -61,12 +62,21 @@ function LoginPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [hasBackgroundApp, navigate]);
 
+  const getActualProperty = async () => {   
+    const propertie = await getPropertieById(4).then((res) => res.data)
+      .catch((error) => {
+        console.error('Error fetching property:', error);
+        return null;
+      });
+
+    return propertie;
+  }
+
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setFeedback({ type: '', message: '' });
     setIsSubmitting(true);
     const response = await handleLogin(loginData.email, loginData.password);
-
     try {
       if (response?.ok) {
 
@@ -76,6 +86,7 @@ function LoginPage() {
         if (token && user) {
           localStorage.setItem('authToken', token);
           localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('property', JSON.stringify(await getActualProperty()));
           window.dispatchEvent(new Event('auth-state-changed'));
           if (hasBackgroundApp) {
             navigate(nextPath, { replace: true });
