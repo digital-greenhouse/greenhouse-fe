@@ -337,14 +337,15 @@ function ReservarPage() {
       return;
     }
     const user = JSON.parse(localStorage.getItem('user') || {});
+    const property = JSON.parse(localStorage.getItem('property') || {});
     setIsQuoting(true);
     setQuoteError('');
     try {
       const response = await createQuote({
-        property_id: user?.id || 0,
+        property_id: property.id || 0,
         check_in_date: new Date(toDateKey(checkIn)).toISOString(),
         check_out_date: new Date(toDateKey(checkOut)).toISOString(),
-        guest_count: 1,
+        guest_count: attendees,
       })
       const total = response?.data?.calculated_total;
       setContactData(prev => ({
@@ -462,6 +463,7 @@ function ReservarPage() {
               hasQuote={quotedTotal !== null}
               quoteError={quoteError}
               onContinue={() => handleStepChange(2)}
+              maxAttendees={localStorage.getItem('property').max_capacity || 0}
             />
           )}
 
