@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Form, Modal } from 'react-bootstrap';
 import './CancelBooking.css';
 
@@ -86,5 +87,16 @@ function CancelBooking({
 		</Modal>
 	);
 }
+
+CancelBooking.propTypes = {
+	show: PropTypes.bool,
+	title: PropTypes.string,
+	message: PropTypes.string,
+	acceptText: PropTypes.string,
+	cancelText: PropTypes.string,
+	onAccept: PropTypes.func,
+	onCancel: PropTypes.func,
+	loading: PropTypes.bool,
+};
 
 export default CancelBooking;

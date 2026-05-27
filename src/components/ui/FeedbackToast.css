@@ -35,6 +35,11 @@
   font-weight: 600;
 }
 
+.app-toast .toast-header small {
+  color: #413a2f;
+  font-weight: 600;
+}
+
 .app-toast .app-toast-icon {
   width: 22px;
   height: 22px;
@@ -116,13 +121,13 @@
 
 .app-toast.is-warning .toast-header {
   background: #fff4df;
-  color: #8a6217;
+  color: #6f4d11;
   border-bottom-color: rgba(178, 125, 27, 0.2);
 }
 
 .app-toast.is-warning .toast-body {
   background: #fffaef;
-  color: #7a5618;
+  color: #5f430f;
 }
 
 .app-toast.is-warning .app-toast-icon {

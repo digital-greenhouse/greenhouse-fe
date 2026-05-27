@@ -1,4 +1,5 @@
-import { use, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import GenericFileDropzone from '../../../../../components/ui/loadFile/GenericFileDropzone';
 import { createBooking } from '../../../../../api/bookings';
 import FeedbackToast from '../../../../../components/ui/FeedbackToast';
@@ -217,11 +218,11 @@ function ReservaConfirmarStep({
         message: `Reserva creada correctamente. Te contactaremos para confirmar el pago. Id de la reserva: ${booking.data.id}`,
       });
 
-      window.setTimeout(() => {
+      globalThis.setTimeout(() => {
         sessionStorage.removeItem(RESERVA_DRAFT_KEY);
-        const nextUrl = `${window.location.pathname}?step=1`;
-        window.history.replaceState(null, '', nextUrl);
-        window.location.reload();
+        const nextUrl = `${globalThis.location.pathname}?step=1`;
+        globalThis.history.replaceState(null, '', nextUrl);
+        globalThis.location.reload();
       }, 4000);
       sessionStorage.clear();
     } catch (error) {
@@ -375,5 +376,24 @@ function ReservaConfirmarStep({
     </section>
   );
 }
+
+ReservaConfirmarStep.propTypes = {
+  summary: PropTypes.shape({
+    estimatedTotal: PropTypes.string,
+    idQuote: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    notes: PropTypes.string,
+    checkIn: PropTypes.string,
+    checkOut: PropTypes.string,
+    nights: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    attendees: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    eventType: PropTypes.string,
+  }),
+  paymentProof: PropTypes.shape({
+    name: PropTypes.string,
+  }),
+  paymentProofError: PropTypes.string,
+  onPaymentProofChange: PropTypes.func,
+  onBack: PropTypes.func,
+};
 
 export default ReservaConfirmarStep;

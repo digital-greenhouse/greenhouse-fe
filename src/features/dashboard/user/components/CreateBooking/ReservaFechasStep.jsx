@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 const MIN_ATTENDEES = 1;
 
@@ -282,5 +283,32 @@ function ReservaFechasStep({
     </section>
   );
 }
+
+ReservaFechasStep.propTypes = {
+  months: PropTypes.arrayOf(PropTypes.instanceOf(Date)),
+  weekDays: PropTypes.arrayOf(PropTypes.string),
+  monthFormatter: PropTypes.shape({ format: PropTypes.func }),
+  toDateKey: PropTypes.func,
+  buildCalendarCells: PropTypes.func,
+  today: PropTypes.instanceOf(Date),
+  canGoPrevious: PropTypes.bool,
+  handlePrevMonth: PropTypes.func,
+  handleNextMonth: PropTypes.func,
+  checkIn: PropTypes.instanceOf(Date),
+  checkOut: PropTypes.instanceOf(Date),
+  attendees: PropTypes.number,
+  setAttendees: PropTypes.func,
+  isUnavailable: PropTypes.func,
+  isInRange: PropTypes.func,
+  isSameDay: PropTypes.func,
+  handleDateClick: PropTypes.func,
+  rangeHasUnavailable: PropTypes.bool,
+  onQuote: PropTypes.func,
+  isQuoting: PropTypes.bool,
+  hasQuote: PropTypes.bool,
+  quoteError: PropTypes.string,
+  onContinue: PropTypes.func,
+  maxAttendees: PropTypes.number,
+};
 
 export default ReservaFechasStep;

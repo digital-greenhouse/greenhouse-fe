@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Modal, Spinner } from 'react-bootstrap';
 import { getPayment } from '../../../api/payment';
 import './ViewPayment.css';
@@ -72,7 +73,7 @@ function ViewPaymentModal({
                     throw new Error('La respuesta no contiene un archivo.');
                 }
 
-                objectUrl = window.URL.createObjectURL(blob);
+                objectUrl = globalThis.URL.createObjectURL(blob);
 
                 if (isMounted) {
                     setProofUrl(objectUrl);
@@ -98,7 +99,7 @@ function ViewPaymentModal({
         return () => {
             isMounted = false;
             if (objectUrl) {
-                window.URL.revokeObjectURL(objectUrl);
+                globalThis.URL.revokeObjectURL(objectUrl);
             }
         };
     }, [payment?.payment_id, show]);
@@ -184,6 +185,19 @@ function ViewPaymentModal({
         </Modal>
     );
 }
+
+ViewPaymentModal.propTypes = {
+    show: PropTypes.bool,
+    onHide: PropTypes.func,
+    payment: PropTypes.shape({
+        payment_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        file_name: PropTypes.string,
+        filename: PropTypes.string,
+        name: PropTypes.string,
+    }),
+    onFeedback: PropTypes.func,
+    title: PropTypes.string,
+};
 
 export default ViewPaymentModal;
 

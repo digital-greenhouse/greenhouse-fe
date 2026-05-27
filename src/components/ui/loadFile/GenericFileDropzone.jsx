@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
+import PropTypes from 'prop-types';
 import './FileDropzone.css';
 
 function GenericFileDropzone({
@@ -57,5 +58,20 @@ function GenericFileDropzone({
     </div>
   );
 }
+
+GenericFileDropzone.propTypes = {
+  getRootProps: PropTypes.func.isRequired,
+  getInputProps: PropTypes.func.isRequired,
+  isDragActive: PropTypes.bool,
+  file: PropTypes.shape({
+    name: PropTypes.string,
+    type: PropTypes.string,
+    size: PropTypes.number,
+  }),
+  disabled: PropTypes.bool,
+  accept: PropTypes.string,
+  emptyLabel: PropTypes.string,
+  activeLabel: PropTypes.string,
+};
 
 export default GenericFileDropzone;

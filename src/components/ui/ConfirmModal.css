@@ -28,15 +28,11 @@
   display: block !important;
   width: auto;
   height: auto;
-  opacity: 0.6;
+  opacity: 0.9;
   background: none !important;
-}
-
-.confirm-modal .btn-close::after {
-  content: '✕';
-  font-size: 1.5rem;
-  color: #3b3328;
-  line-height: 1;
+  border: none !important;
+  padding: 0.25rem 0.25rem 0 0 !important;
+  margin-left: auto;
 }
 
 .confirm-modal .btn-close:hover,
@@ -128,15 +124,6 @@
   filter: brightness(0.96);
 }
 
-/* Restore the close X specifically while keeping other pseudo-elements hidden */
-.confirm-modal .btn-close {
-  display: block !important;
-  background: none !important;
-  border: none !important;
-  padding: 0.25rem 0.25rem 0 0 !important;
-  margin-left: auto;
-  opacity: 0.9;
-}
 .confirm-modal .btn-close::before,
 .confirm-modal .btn-close::after {
   display: none !important;

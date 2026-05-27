@@ -128,7 +128,7 @@ const pricingPlans = [
 
 function DashboardPage() {
   const location = useLocation();
-  const actualLocation = window.location.pathname;
+  const actualLocation = globalThis.location.pathname;
   const galleryRef = useRef(null);
   const [galleryVisible, setGalleryVisible] = useState(false);
   useEffect(() => {
@@ -164,8 +164,8 @@ function DashboardPage() {
     }
 
     requestAnimationFrame(() => {
-      const top = target.getBoundingClientRect().top + window.scrollY - 110;
-      window.scrollTo({ top, behavior: 'smooth' });
+      const top = target.getBoundingClientRect().top + globalThis.scrollY - 110;
+      globalThis.scrollTo({ top, behavior: 'smooth' });
     });
   }, [location.hash]);
 

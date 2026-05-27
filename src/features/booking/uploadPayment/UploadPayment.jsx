@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
 import GenericFileDropzone from '../../../components/ui/loadFile/GenericFileDropzone';
 import './UploadPayment.css';
@@ -66,9 +67,9 @@ function UploadPaymentModal({
         }
     }, [show]);
 
-    const acceptedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+    const acceptedMimeTypes = new Set(['application/pdf', 'image/jpeg', 'image/png', 'image/webp']);
 
-    const isValidFile = (selectedFile) => acceptedMimeTypes.includes(selectedFile?.type || '');
+    const isValidFile = (selectedFile) => acceptedMimeTypes.has(selectedFile?.type || '');
 
     const setSelectedFile = (selectedFile) => {
         if (!selectedFile) {
@@ -131,7 +132,7 @@ function UploadPaymentModal({
             const selectedFile = event.target.files?.[0];
             setSelectedFile(selectedFile);
         },
-        style: { ...(extraProps.style || {}), display: 'none' },
+        style: { ...extraProps.style, display: 'none' },
     });
 
     const handleBlurAmount = () => {
@@ -149,7 +150,6 @@ function UploadPaymentModal({
             return;
         }
 
-        setAmountError('');
         setAmountError('');
     };
 
@@ -225,6 +225,12 @@ function UploadPaymentModal({
                         <strong>{CURRENCY_FORMATTER.format(amount)}</strong>
                     </div>
 
+                    {amountError && (
+                        <p className="upload-payment-modal__error" role="alert">
+                            {amountError}
+                        </p>
+                    )}
+
                     <GenericFileDropzone
                         getRootProps={getRootProps}
                         getInputProps={getInputProps}
@@ -249,5 +255,18 @@ function UploadPaymentModal({
         </Modal>
     );
 }
+
+UploadPaymentModal.propTypes = {
+    show: PropTypes.bool,
+    onHide: PropTypes.func,
+    onSubmit: PropTypes.func,
+    onFeedback: PropTypes.func,
+    payment: PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        total_price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    }),
+    isSubmitting: PropTypes.bool,
+    title: PropTypes.string,
+};
 
 export default UploadPaymentModal;
