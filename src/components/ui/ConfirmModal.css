@@ -6,9 +6,44 @@
   overflow: hidden;
 }
 
+/* Remove any pseudo-elements or background icons inside the modal */
+.confirm-modal *::before,
+.confirm-modal *::after {
+  display: none !important;
+  content: none !important;
+}
+
 .confirm-modal .modal-header {
   border-bottom: 1px solid rgba(35, 32, 25, 0.1);
   padding: 0.95rem 1rem;
+  background: transparent;
+}
+
+.confirm-modal .modal-header::after,
+.confirm-modal .modal-header::before {
+  display: none !important;
+}
+
+.confirm-modal .btn-close {
+  display: block !important;
+  width: auto;
+  height: auto;
+  opacity: 0.6;
+  background: none !important;
+}
+
+.confirm-modal .btn-close::after {
+  content: '✕';
+  font-size: 1.5rem;
+  color: #3b3328;
+  line-height: 1;
+}
+
+.confirm-modal .btn-close:hover,
+.confirm-modal .btn-close:focus-visible {
+  opacity: 1;
+  background: none !important;
+  text-decoration: none;
 }
 
 .confirm-modal .modal-title {
@@ -17,10 +52,18 @@
   color: #2d281f;
 }
 
+.confirm-modal .modal-title::after,
+.confirm-modal .modal-title::before,
+.confirm-modal .modal-body::after,
+.confirm-modal .modal-body::before {
+  display: none !important;
+}
+
 .confirm-modal .modal-body {
   color: #5a564b;
   font-size: 1.02rem;
-  padding: 1rem;
+  padding: 2.5rem 1rem;
+  min-height: 100px;
 }
 
 .confirm-modal .modal-footer {
@@ -36,6 +79,22 @@
   min-width: 108px;
   font-weight: 600;
   box-shadow: none;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  padding-right: 1rem;
+  position: relative;
+  overflow: visible;
+}
+
+.confirm-cancel-btn::after,
+.confirm-cancel-btn::before,
+.confirm-action-btn::after,
+.confirm-action-btn::before,
+.confirm-modal .modal-footer .btn::after,
+.confirm-modal .modal-footer .btn::before {
+  display: none !important;
+  content: none !important;
 }
 
 .confirm-cancel-btn {
@@ -67,4 +126,27 @@
 .confirm-action-btn.is-primary:hover,
 .confirm-action-btn.is-primary:focus-visible {
   filter: brightness(0.96);
+}
+
+/* Restore the close X specifically while keeping other pseudo-elements hidden */
+.confirm-modal .btn-close {
+  display: block !important;
+  background: none !important;
+  border: none !important;
+  padding: 0.25rem 0.25rem 0 0 !important;
+  margin-left: auto;
+  opacity: 0.9;
+}
+.confirm-modal .btn-close::before,
+.confirm-modal .btn-close::after {
+  display: none !important;
+  content: none !important;
+}
+.confirm-modal .btn-close::after {
+  /* re-add a single X using ::after and override previous rules */
+  display: inline-block !important;
+  content: '✕' !important;
+  font-size: 1.35rem !important;
+  color: #3b3328 !important;
+  line-height: 1 !important;
 }

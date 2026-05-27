@@ -1,6 +1,7 @@
 [role="tablist"][aria-label="Filtro de reservas"] {
 	margin-top: 6px;
-	width: min(100%, 860px) !important;
+	width: fit-content !important;
+	max-width: 100%;
 }
 
 [role="tablist"][aria-label="Filtro de reservas"] [role="tab"] {
@@ -43,20 +44,24 @@
 }
 
 .booking-tabs {
-	width: 100%;
+	width: fit-content;
+	margin-bottom: 10px;
+	height: 44px;
 	background: #ffffff;
 	border: 1px solid #d9e2ec;
-	border-radius: 12px;
-	padding: 6px;
-	display: grid;
-	grid-template-columns: 1fr 1fr;
+	border-radius: 5px;
+	display: inline-grid;
+	grid-auto-flow: column;
+	grid-auto-columns: max-content;
 	gap: 6px;
 	box-sizing: border-box;
 }
 
 .booking-tab {
+	width: auto;
+	height: 100%;
 	border: none;
-	border-radius: 8px;
+	border-radius: 5px 0px 0px 5px;
 	padding: 10px 14px;
 	cursor: pointer;
 	font-size: 14px;
@@ -64,11 +69,22 @@
 	transition: all 0.2s ease;
 	background: transparent;
 	color: #334155;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	white-space: nowrap;
 }
 
 .booking-tab.is-active {
 	background: #2f7755;
 	color: #ffffff;
+}
+
+.icon-calendar-days,
+.icon-house {
+	font-size: 18px;
+	margin-right: 8px;
 }
 
 .booking-placeholder {
@@ -159,7 +175,7 @@
 
 @media (max-width: 768px) {
 	.booking-tabs {
-		padding: 4px;
+		padding: 0px;
 		gap: 4px;
 	}
 
