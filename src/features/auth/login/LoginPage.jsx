@@ -63,7 +63,7 @@ function LoginPage() {
   }, [hasBackgroundApp, navigate]);
 
   const getActualProperty = async () => {   
-    const propertie = await getPropertieById(4).then((res) => res.data)
+    const propertie = await getPropertieById(2).then((res) => res.data)
       .catch((error) => {
         console.error('Error fetching property:', error);
         return null;

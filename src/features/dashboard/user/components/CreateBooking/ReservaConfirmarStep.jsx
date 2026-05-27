@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import GenericFileDropzone from '../../../../../components/ui/loadFile/GenericFileDropzone';
 import { createBooking } from '../../../../../api/bookings';
 import FeedbackToast from '../../../../../components/ui/FeedbackToast';
 import ConfirmModal from '../../../../../components/ui/ConfirmModal';
+import { convertToBase64 } from '../../../../../components/utils/ConvertBase64File';
+import { sendPayment } from '../../../../../api/payment';
 
 const RESERVA_DRAFT_KEY = 'reserva-draft-v1';
 
@@ -17,17 +19,20 @@ function ReservaConfirmarStep({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
+  const [paymentAmount, setPaymentAmount] = useState('');
+  const [paymentAmountError, setPaymentAmountError] = useState('');
   const fileInputRef = useRef(null);
   const user = JSON.parse(localStorage.getItem("user"));
-
-    const [draftData, setDraftData] = useState(null);
+  const [draftData, setDraftData] = useState(null);
+  const property = JSON.parse(localStorage.getItem("property"));
 
   useEffect(() => {
     const savedDraft = sessionStorage.getItem(RESERVA_DRAFT_KEY);
     if (savedDraft) {
       setDraftData(JSON.parse(savedDraft));
     }
-  }, []);
+    setPaymentAmount(JSON.parse(savedDraft)?.quotedTotal * 0.5);
+  }, [paymentAmount]);
 
   useEffect(() => {
     if (paymentProofError) {
@@ -37,6 +42,73 @@ function ReservaConfirmarStep({
       });
     }
   }, [paymentProofError]);
+
+  const extractNumericPrice = (priceString) => {
+    if (!priceString) return 0;
+    const cleaned = priceString.replace(/[^0-9]/g, '');
+    return Number(cleaned) || 0;
+  };
+
+  const totalAmount = extractNumericPrice(summary?.estimatedTotal);
+  const minPayment = Math.round(totalAmount * 0.5);
+  const maxPayment = totalAmount;
+
+  const validatePaymentAmount = (value) => {
+    if (value === '' || value === null) {
+      return 'Ingresa el monto de pago';
+    }
+
+    const numValue = Number(value);
+    if (Number.isNaN(numValue)) {
+      return 'Ingresa un monto valido';
+    }
+
+    if (numValue < minPayment) {
+      return `El minimo permitido es ${minPayment.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}`;
+    }
+
+    if (numValue > maxPayment) {
+      return `El maximo permitido es ${maxPayment.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}`;
+    }
+
+    return '';
+  };
+
+  const formatCurrency = (value) => {
+    if (!value) return '';
+    const numValue = Number(value);
+    if (Number.isNaN(numValue)) return value;
+    return numValue.toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  };
+
+  const extractNumericFromCurrency = (value) => {
+    if (!value) return '';
+    const cleaned = value.replace(/[^0-9]/g, '');
+    return cleaned;
+  };
+
+  const handlePaymentAmountChange = (event) => {
+    const value = event.target.value;
+    const numericValue = extractNumericFromCurrency(value);
+    setPaymentAmount(numericValue);
+
+    if (numericValue === '') {
+      setPaymentAmountError('');
+      return;
+    }
+
+    const error = validatePaymentAmount(numericValue);
+    setPaymentAmountError(error);
+  };
+
+  const handlePaymentAmountBlur = () => {
+    const error = validatePaymentAmount(paymentAmount);
+    if (error) {
+      const clampedValue = Math.min(Math.max(Number(paymentAmount) || minPayment, minPayment), maxPayment);
+      setPaymentAmount(clampedValue.toString());
+      setPaymentAmountError('');
+    }
+  };
 
   const handleFileSelect = (file) => {
     onPaymentProofChange(file || null);
@@ -80,6 +152,32 @@ function ReservaConfirmarStep({
     },
   });
 
+  useEffect(() => {
+    const saveData = async () => {
+      console.log(await saveFile(5));
+    }
+    saveData();
+  }, [paymentProof]);
+
+  const saveFile = async (bookingId) => {
+    try {
+      if (paymentProof) {
+        const base64 = await convertToBase64(paymentProof);
+
+        return {
+          booking_id: bookingId || 0,
+          amount: paymentAmount,
+          payment_method: "TRANSFERENCIA",
+          proof_data: base64?.base64,
+          proof_mime_type: base64?.mimeType,
+        };
+      }
+      return {};
+    } catch (error) {
+      console.error('Error al convertir el archivo a base64:', error);
+    }
+  }
+
   const handleSaveBooking = async () => {
     const quoteId = summary?.idQuote || draftData?.contactData?.id_quote;
 
@@ -87,6 +185,16 @@ function ReservaConfirmarStep({
       setFeedback({
         type: 'error',
         message: 'No se encontro la cotizacion para crear la reserva.',
+      });
+      return;
+    }
+
+
+    const paymentError = validatePaymentAmount(paymentAmount);
+    if (paymentError && !paymentProof) {
+      setFeedback({
+        type: 'error',
+        message: paymentError,
       });
       return;
     }
@@ -99,6 +207,11 @@ function ReservaConfirmarStep({
         special_requests: summary.notes || '',
       });
 
+      if (paymentProof) {
+        const fileData = await saveFile(booking?.data?.id);
+        await sendPayment(fileData);
+      }
+
       setFeedback({
         type: 'success',
         message: `Reserva creada correctamente. Te contactaremos para confirmar el pago. Id de la reserva: ${booking.data.id}`,
@@ -109,15 +222,17 @@ function ReservaConfirmarStep({
         const nextUrl = `${window.location.pathname}?step=1`;
         window.history.replaceState(null, '', nextUrl);
         window.location.reload();
-      }, 6000);
+      }, 4000);
       sessionStorage.clear();
     } catch (error) {
+      setIsSubmitting(false);
       console.error('Error al crear la reserva:', error);
       setFeedback({
         type: 'error',
         message: 'No fue posible crear la reserva. Intenta nuevamente.',
       });
     }
+
   };
 
   const getInputProps = (extra = {}) => ({
@@ -173,6 +288,31 @@ function ReservaConfirmarStep({
 
       <div className="payment-proof-box">
         <p className="payment-proof-label">
+          Monto de pago: Si deseas asegurar tu reserva, puedes realizar un abono mínimo del 50% del total estimado. También puedes continuar sin pagar en este momento.        </p>
+        <div className="payment-amount-input-group">
+          <input
+            type="text"
+            inputMode="numeric"
+            value={formatCurrency(paymentAmount)}
+            onChange={handlePaymentAmountChange}
+            onBlur={handlePaymentAmountBlur}
+            placeholder="$ 0"
+            className="payment-amount-input"
+            aria-invalid={Boolean(paymentAmountError)}
+            aria-describedby="payment-amount-help payment-amount-error"
+          />
+          <span className="payment-amount-currency">COP</span>
+        </div>
+        <p id="payment-amount-help" className="payment-amount-help-text">
+          Minimo: {minPayment.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })} | Maximo: {maxPayment.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}
+        </p>
+        {paymentAmountError && (
+          <p id="payment-amount-error" className="payment-amount-error-text" role="alert">
+            {paymentAmountError}
+          </p>
+        )}
+
+        <p className="payment-proof-label" style={{ marginTop: '1rem' }}>
           Comprobante de pago (imagen o PDF, max 5 MB)
         </p>
         <GenericFileDropzone

@@ -21,8 +21,8 @@ function ReservaDatosStep({ data, onChange, onBack, onContinue }) {
 
   return (
     <section className="datos-box" aria-label="Datos del solicitante">
-      <h2>Datos de contacto</h2>
-      <p>Completa tus datos para continuar con la confirmacion de la reserva.</p>
+      <h2>Datos adicionales</h2>
+      <p>Agrégale detalles importantes a tu evento para continuar con la confirmación de la reserva.</p>
 
       <div className="datos-grid">
         <label className="datos-full">

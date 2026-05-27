@@ -7,7 +7,7 @@ import ReservaDatosStep from './components/CreateBooking/ReservaDatosStep';
 import ReservaFechasStep from './components/CreateBooking/ReservaFechasStep';
 import ReservaSteps from './components/CreateBooking/ReservaSteps';
 import { createQuote } from '../../../api/reservations';
-import { getHistory } from '../../../api/reservations';
+import { GetBlockedDates } from '../../../api/bookings';
 import './ReservarPage.css';
 
 const steps = [
@@ -16,7 +16,9 @@ const steps = [
   { id: 3, label: 'Confirmar' },
 ];
 
-const tags = ['BBQ', 'Parqueadero', 'Eventos', 'Senderos', '100 personas'];
+const property = JSON.parse(localStorage.getItem('property') || '{}');
+
+const tags = ['BBQ', 'Parqueadero', 'Eventos', 'Senderos', `${property?.max_capacity || 0} personas`];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const RESERVA_DRAFT_KEY = 'reserva-draft-v1';
@@ -117,8 +119,8 @@ function buildUnavailableSetFromBookings(bookings, today) {
   const entries = new Set();
 
   bookings.forEach((booking) => {
-    const start = parseBackendDate(booking?.check_in_date);
-    const end = parseBackendDate(booking?.check_out_date);
+    const start = parseBackendDate(booking?.check_in_date || booking?.check_in);
+    const end = parseBackendDate(booking?.check_out_date || booking?.check_out);
 
     if (!start || !end || end < start) {
       return;
@@ -184,6 +186,7 @@ function ReservarPage() {
   const [paymentProof, setPaymentProof] = useState(null);
   const [paymentProofError, setPaymentProofError] = useState('');
   const previousAttendeesRef = useRef(attendees);
+  const property = JSON.parse(localStorage.getItem('property') || '{}');
 
   useEffect(() => {
     let cancelled = false;
@@ -191,14 +194,14 @@ function ReservarPage() {
 
     const loadUnavailableDates = async () => {
       try {
-        const response = await getHistory();
+        const response = await GetBlockedDates(property.id || 0);
         const bookings = Array.isArray(response?.data) ? response.data : [];
 
         if (!cancelled) {
           setUnavailableDates(buildUnavailableSetFromBookings(bookings, today));
         }
       } catch (error) {
-        console.error('Error al obtener historial de reservas:', error);
+        console.error('Error al obtener fechas bloqueadas:', error);
         if (!cancelled) {
           setUnavailableDates(new Set());
         }
@@ -337,7 +340,6 @@ function ReservarPage() {
       return;
     }
     const user = JSON.parse(localStorage.getItem('user') || {});
-    const property = JSON.parse(localStorage.getItem('property') || {});
     setIsQuoting(true);
     setQuoteError('');
     try {
@@ -463,7 +465,7 @@ function ReservarPage() {
               hasQuote={quotedTotal !== null}
               quoteError={quoteError}
               onContinue={() => handleStepChange(2)}
-              maxAttendees={localStorage.getItem('property').max_capacity || 0}
+              maxAttendees={property.max_capacity || 0}
             />
           )}
 
