@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, Outlet } from 'react-router-dom';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import ConfirmModal from '../../../../components/ui/ConfirmModal';
 import UserInfo from './userInfo/UserInfo';
@@ -41,11 +40,11 @@ function DashboardMenu() {
   const closeMobileMenu = () => setMenuOpen(false);
 
   const clearSessionAndGoLogin = () => {
-    const isOnLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login';
+    const isOnLoginPage = typeof globalThis !== 'undefined' && globalThis.location.pathname === '/login';
 
     localStorage.clear();
     sessionStorage.clear();
-    window.dispatchEvent(new Event('auth-state-changed'));
+    globalThis.dispatchEvent(new Event('auth-state-changed'));
     setHasAuthToken(false);
     setMenuOpen(false);
     setProfileMenuOpen(false);
@@ -66,9 +65,9 @@ function DashboardMenu() {
       return;
     }
 
-    const top = target.getBoundingClientRect().top + window.scrollY - 110;
-    window.scrollTo({ top, behavior: 'smooth' });
-    window.history.replaceState(null, '', `/dashboard#${sectionId}`);
+    const top = target.getBoundingClientRect().top + globalThis.scrollY - 110;
+    globalThis.scrollTo({ top, behavior: 'smooth' });
+    globalThis.history.replaceState(null, '', `/dashboard#${sectionId}`);
   };
 
   const handleMenuClick = (event, to) => {
@@ -93,7 +92,7 @@ function DashboardMenu() {
   };
 
   useEffect(() => {
-    const isOnLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login';
+    const isOnLoginPage = typeof globalThis !== 'undefined' && globalThis.location.pathname === '/login';
     if (isOnLoginPage) {
       return;
     }
@@ -143,7 +142,7 @@ function DashboardMenu() {
   const logoutOption = () => {
     localStorage.clear();
     sessionStorage.clear();
-    window.dispatchEvent(new Event('auth-state-changed'));
+    globalThis.dispatchEvent(new Event('auth-state-changed'));
     setHasAuthToken(false);
     closeMobileMenu();
     setProfileMenuOpen(false);
@@ -178,26 +177,26 @@ function DashboardMenu() {
       setHasAuthToken(Boolean(localStorage.getItem('authToken')));
     };
 
-    window.addEventListener('auth-state-changed', syncAuthState);
-    window.addEventListener('storage', syncAuthState);
-    window.addEventListener('focus', syncAuthState);
+    globalThis.addEventListener('auth-state-changed', syncAuthState);
+    globalThis.addEventListener('storage', syncAuthState);
+    globalThis.addEventListener('focus', syncAuthState);
 
     return () => {
-      window.removeEventListener('auth-state-changed', syncAuthState);
-      window.removeEventListener('storage', syncAuthState);
-      window.removeEventListener('focus', syncAuthState);
+      globalThis.removeEventListener('auth-state-changed', syncAuthState);
+      globalThis.removeEventListener('storage', syncAuthState);
+      globalThis.removeEventListener('focus', syncAuthState);
     };
   }, []);
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 1024) {
+      if (globalThis.innerWidth > 1024) {
         setMenuOpen(false);
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    globalThis.addEventListener('resize', handleResize);
+    return () => globalThis.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
@@ -214,11 +213,11 @@ function DashboardMenu() {
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    window.addEventListener('keydown', handleEscape);
+    globalThis.addEventListener('keydown', handleEscape);
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('keydown', handleEscape);
+      globalThis.removeEventListener('keydown', handleEscape);
     };
   }, []);
 

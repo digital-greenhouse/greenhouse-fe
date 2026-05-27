@@ -1,8 +1,8 @@
 import DataTable from 'react-data-table-component';
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload, faCircleXmark, faEye } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect } from 'react';
-import { getBookings } from '../../api/bookings';
 import FeedbackToast from '../../components/ui/FeedbackToast';
 import { OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
 import { cancelBooking, getBookingByUser } from '../../api/bookings';
@@ -97,11 +97,11 @@ const customStyles = {
 };
 
 
-function MyBooking({ statusLabels,
-    searchQuery,
-    selectedStatus,
-    selectedDate,
-    selectedDateMode
+function MyBooking({ statusLabels = {},
+    searchQuery = '',
+    selectedStatus = '',
+    selectedDate = '',
+    selectedDateMode = 'day'
 }) {
 
     const [bookings, setBookings] = useState([]);
@@ -126,18 +126,6 @@ function MyBooking({ statusLabels,
     const dataBooking = async () => {
         setIsLoading(true);
         const user = JSON.parse(localStorage.getItem("user"));
-        // await getBookings(user?.id).then((response) => {
-        //     console.log('Bookings fetched:', response?.data.filter(item => item.client_id === user.id));
-        //     setBookings(response?.data.filter(item => item.client_id === user.id));
-        // }).catch((error) => {
-        //     console.error('Error fetching bookings:', error);
-        //     setFeedback({
-        //         type: 'error',
-        //         message: 'No se pudieron cargar las reservas. Intentalo de nuevo.',
-        //     });
-        // }).finally(() => {
-        //     setIsLoading(false);
-        // });
         await getBookingByUser(user?.id).then((response) => {
             setBookings(response?.data);
             setRecords(response?.data);
@@ -196,20 +184,6 @@ function MyBooking({ statusLabels,
                 const checkIn = new Date(row.check_in_date);
                 const showButton = hoy < checkIn;
                 return (
-                    //     <div className="booking-actions-cell">
-                    //         {showButton && row.status === 'PENDING_PAYMENT' && (
-                    //             <button className="booking-action-btn booking-action-btn--primary" type="button">
-                    //                 Cargar Comprobante
-                    //             </button>
-                    //         )}
-
-                    //         {showButton && row.status !== 'CANCELLED' && (
-                    //             <button className="booking-action-btn booking-action-btn--danger" type="button">
-                    //                 Cancelar Reserva
-                    //             </button>
-                    //         )}
-                    //     </div>
-                    // );
                     <div className="booking-actions-cell">
                         {showButton && row.status === 'PENDING_PAYMENT' && !row.payment_id && (
                             <OverlayTrigger
@@ -409,7 +383,7 @@ function MyBooking({ statusLabels,
             }
         }
         handleSearch();
-    }, [searchQuery, selectedStatus, selectedDate, selectedDateMode]);
+    }, [bookings, searchQuery, selectedStatus, selectedDate, selectedDateMode]);
 
 
 
@@ -472,3 +446,11 @@ function MyBooking({ statusLabels,
 
 
 export default MyBooking;
+
+MyBooking.propTypes = {
+    statusLabels: PropTypes.object,
+    searchQuery: PropTypes.string,
+    selectedStatus: PropTypes.string,
+    selectedDate: PropTypes.string,
+    selectedDateMode: PropTypes.oneOf(['day', 'month', 'year']),
+};

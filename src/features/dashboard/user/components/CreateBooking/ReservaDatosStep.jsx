@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 function ReservaDatosStep({ data, onChange, onBack, onContinue }) {
   const [isEventTypeOpen, setIsEventTypeOpen] = useState(false);
@@ -68,5 +69,15 @@ function ReservaDatosStep({ data, onChange, onBack, onContinue }) {
     </section>
   );
 }
+
+ReservaDatosStep.propTypes = {
+  data: PropTypes.shape({
+    eventType: PropTypes.string,
+    notes: PropTypes.string,
+  }),
+  onChange: PropTypes.func,
+  onBack: PropTypes.func,
+  onContinue: PropTypes.func,
+};
 
 export default ReservaDatosStep;

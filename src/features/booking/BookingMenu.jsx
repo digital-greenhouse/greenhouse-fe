@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarDays, faHouse, faMagnifyingGlass, faXmark, faChevronDown, faSliders } from '@fortawesome/free-solid-svg-icons';
 
@@ -43,14 +44,14 @@ function BokingMenu({
     const [selectedStatus, setSelectedStatus] = useState('');
     const [selectedDateMode, setSelectedDateMode] = useState('day');
     const [selectedDate, setSelectedDate] = useState('');
-
-    const selectedDescription =
-        selectedOption === BOOKING_MENU_OPTIONS.MADE_BY_ME
-            ? 'Consulta el estado de tus solicitudes, revisa fechas confirmadas y mantente al dia con cada reserva que realizaste.'
-            : 'Administra las solicitudes enviadas a tu propiedad, valida disponibilidad y responde a cada evento en un solo lugar.';
+    const selectedDateLabel = selectedDateMode === 'day'
+        ? 'Fecha'
+        : selectedDateMode === 'month'
+            ? 'Mes'
+            : 'Año';
 
     const handleYearChange = (value) => {
-        const digitsOnly = value.replace(/\D/g, '').slice(0, 4);
+        const digitsOnly = String(value ?? '').replace(/\D/g, '').slice(0, 4);
         setSelectedDate(digitsOnly);
     };
 
@@ -75,7 +76,7 @@ function BokingMenu({
     };
 
 
-    const handleClearFilters = (e) => {
+    const handleClearFilters = () => {
         setSearchQuery('');
         setSelectedStatus('');
         setSelectedDate('');
@@ -97,9 +98,7 @@ function BokingMenu({
                 <h1 className="booking-summary-title">
                     Controla tus reservas en un solo panel
                 </h1>
-                <p className="booking-summary-copy">
-                    {/* {selectedDescription} */}
-                </p>
+                <p className="booking-summary-copy" />
             </section>
 
             <div
@@ -182,9 +181,7 @@ function BokingMenu({
                 </div>
 
                 <div className="filter-date">
-                    <span>
-                        {selectedDateMode === 'day' ? 'Fecha' : selectedDateMode === 'month' ? 'Mes' : 'Año'}
-                    </span>
+                    <span>{selectedDateLabel}</span>
                     {selectedDateMode === 'day' && (
                         <input
                             type="date"
@@ -212,14 +209,6 @@ function BokingMenu({
                         />
                     )}
                 </div>
-
-                {/* <div>
-                    <span>Ordenar por</span>
-                    <select>
-                        <option>Más recientes</option>
-                    </select>
-                </div> */}
-
 
                 <button className="clear-btn" onClick={handleClearFilters} >
                     Limpiar
@@ -305,9 +294,7 @@ function BokingMenu({
                         </div>
 
                         <div className="filter-date">
-                            <span>
-                                {selectedDateMode === 'day' ? 'Fecha' : selectedDateMode === 'month' ? 'Mes' : 'Año'}
-                            </span>
+                            <span>{selectedDateLabel}</span>
                             {selectedDateMode === 'day' && (
                                 <input
                                     type="date"
@@ -335,13 +322,6 @@ function BokingMenu({
                                 />
                             )}
                         </div>
-
-                        {/* <div>
-                            <span>Ordenar por</span>
-                            <select>
-                                <option>Más recientes</option>
-                            </select>
-                        </div> */}
 
                         <button className="apply-btn" onClick={() => setShowMobileFilters(false)}>
                             Aplicar filtros
@@ -375,3 +355,11 @@ function BokingMenu({
 
 export { BOOKING_MENU_OPTIONS };
 export default BokingMenu;
+
+BokingMenu.propTypes = {
+    value: PropTypes.string,
+    onChange: PropTypes.func,
+    labels: PropTypes.object,
+    className: PropTypes.string,
+    style: PropTypes.object,
+};

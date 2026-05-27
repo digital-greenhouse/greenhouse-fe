@@ -8,6 +8,15 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    test: {
+      environment: 'jsdom',
+      setupFiles: './src/test/setup.js',
+      globals: true,
+      coverage: {
+        provider: 'v8',
+        reporter: ['text', 'html', 'json-summary'],
+      },
+    },
     server: {
       proxy: {
         '/api': {

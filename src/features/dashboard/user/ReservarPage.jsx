@@ -72,7 +72,7 @@ function fromDateKey(value) {
 }
 
 function getSavedDraft() {
-  if (typeof window === 'undefined') {
+  if (typeof globalThis === 'undefined') {
     return null;
   }
 
@@ -152,7 +152,7 @@ function ReservarPage() {
   const [savedDraft] = useState(() => getSavedDraft());
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    globalThis.scrollTo(0, 0);
   }, []);
 
   const today = normalizeDate(new Date());
@@ -263,7 +263,7 @@ function ReservarPage() {
   }, [currentStep, canGoStep2, canGoStep3, searchParams, setSearchParams]);
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (typeof globalThis === 'undefined') {
       return;
     }
 

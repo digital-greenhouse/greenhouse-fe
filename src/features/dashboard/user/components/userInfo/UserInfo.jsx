@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
 import './UserInfo.css';
 
@@ -59,15 +60,19 @@ function UserInfo({
 		return safeParseUser(localStorage.getItem('user'));
 	}, [user, show]);
 
+	const statusValue =
+		storedUser?.is_active === true
+			? 'Activo'
+			: storedUser?.is_active === false
+				? 'Inactivo'
+				: 'No disponible';
+
 	const summaryItems = [
 		{ label: 'Nombre', value: storedUser?.name || 'No disponible' },
 		{ label: 'Correo', value: storedUser?.email || 'No disponible' },
 		{ label: 'Teléfono', value: storedUser?.phone || 'No disponible' },
 		{ label: 'Rol', value: normalizeRole(storedUser?.role ?? storedUser?.roles) },
-		{
-			label: 'Estado',
-			value: storedUser?.is_active === true ? 'Activo' : storedUser?.is_active === false ? 'Inactivo' : 'No disponible',
-		},
+		{ label: 'Estado', value: statusValue },
 		{ label: 'Creado el', value: formatDate(storedUser?.created_at) },
 	].filter(Boolean);
 
@@ -105,5 +110,12 @@ function UserInfo({
 		</Modal>
 	);
 }
+
+UserInfo.propTypes = {
+	show: PropTypes.bool,
+	onHide: PropTypes.func,
+	user: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+	title: PropTypes.string,
+};
 
 export default UserInfo;

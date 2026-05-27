@@ -1,4 +1,5 @@
 import { Modal, Button } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import './ConfirmModal.css';
 
 function ConfirmModal({
@@ -39,5 +40,16 @@ function ConfirmModal({
     </Modal>
   );
 }
+
+ConfirmModal.propTypes = {
+  show: PropTypes.bool,
+  title: PropTypes.string,
+  message: PropTypes.string,
+  confirmText: PropTypes.string,
+  cancelText: PropTypes.string,
+  onConfirm: PropTypes.func,
+  onCancel: PropTypes.func,
+  variant: PropTypes.oneOf(['danger', 'primary']),
+};
 
 export default ConfirmModal;
