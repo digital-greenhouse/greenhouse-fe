@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 function ReservaSteps({ steps, currentStep, onStepChange, canAccessStep }) {
   return (
     <div className="reserva-steps" aria-label="Pasos de reserva">
@@ -21,5 +23,17 @@ function ReservaSteps({ steps, currentStep, onStepChange, canAccessStep }) {
     </div>
   );
 }
+
+ReservaSteps.propTypes = {
+  canAccessStep: PropTypes.func,
+  steps: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      label: PropTypes.string.isRequired,
+    })
+  ),
+  currentStep: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onStepChange: PropTypes.func,
+};
 
 export default ReservaSteps;

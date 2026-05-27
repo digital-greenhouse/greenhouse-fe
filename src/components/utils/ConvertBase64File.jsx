@@ -1,7 +1,7 @@
 export const convertToBase64 = (file) => {
   return new Promise((resolve, reject) => {
     if (!file) {
-      reject("No se recibió ningún archivo");
+      reject(new Error('No se recibio ningun archivo'));
       return;
     }
 
@@ -13,13 +13,24 @@ export const convertToBase64 = (file) => {
       // reader.result devuelve algo como:
       // data:image/jpeg;base64,/9j/4AAQSk...
 
-      const resultado = reader.result;
+      const resultado = String(reader.result || '');
 
       // Separar metadata y base64
-      const [metadata, base64] = resultado.split(",");
+      const [metadata, base64] = resultado.split(',');
+
+      if (!metadata || !base64) {
+        reject(new Error('No fue posible leer el contenido del archivo'));
+        return;
+      }
 
       // Obtener mime type
-      const mimeType = metadata.match(/data:(.*);base64/)[1];
+      const mimeTypeMatch = metadata.match(/data:(.*);base64/);
+      if (!mimeTypeMatch) {
+        reject(new Error('No se pudo identificar el tipo MIME del archivo'));
+        return;
+      }
+
+      const mimeType = mimeTypeMatch[1];
 
       resolve({
         base64,
@@ -27,8 +38,8 @@ export const convertToBase64 = (file) => {
       });
     };
 
-    reader.onerror = (error) => {
-      reject(error);
+    reader.onerror = () => {
+      reject(new Error('Error al leer el archivo'));
     };
   });
 };

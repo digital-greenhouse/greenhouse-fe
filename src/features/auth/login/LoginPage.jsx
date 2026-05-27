@@ -57,9 +57,9 @@ function LoginPage() {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    globalThis.addEventListener('keydown', handleKeyDown);
 
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => globalThis.removeEventListener('keydown', handleKeyDown);
   }, [hasBackgroundApp, navigate]);
 
   const getActualProperty = async () => {   
@@ -87,7 +87,7 @@ function LoginPage() {
           localStorage.setItem('authToken', token);
           localStorage.setItem('user', JSON.stringify(user));
           localStorage.setItem('property', JSON.stringify(await getActualProperty()));
-          window.dispatchEvent(new Event('auth-state-changed'));
+          globalThis.dispatchEvent(new Event('auth-state-changed'));
           if (hasBackgroundApp) {
             navigate(nextPath, { replace: true });
           } else {
@@ -164,8 +164,15 @@ function LoginPage() {
   return (
     <main
       className="auth-page"
+      role="button"
+      tabIndex={0}
       onClick={(event) => {
         if (event.target === event.currentTarget) {
+          handleClose();
+        }
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
           handleClose();
         }
       }}
@@ -185,6 +192,7 @@ function LoginPage() {
         aria-labelledby="auth-title"
         aria-label="Acceso de usuario"
         onClick={(event) => event.stopPropagation()}
+        onKeyDown={(event) => event.stopPropagation()}
       >
         <button
           type="button"
@@ -298,7 +306,7 @@ function LoginPage() {
                 value={registerData.phoneNumber}
                 onChange={(event) => {
                   let value = event.target.value;
-                  value = value.replace(/[eE+\-]/g, "");
+                  value = value.replace(/[eE+-]/g, "");
                   if (value.length <= 10) {
                     setRegisterData((prev) => ({
                       ...prev,

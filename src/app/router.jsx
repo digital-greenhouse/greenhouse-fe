@@ -1,4 +1,5 @@
 import { Route, Routes, Navigate, useLocation } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import LoginPage from '../features/auth/login/LoginPage';
 import DashboardPage from '../features/dashboard/user/DashboardPage';
 import ReservarPage from '../features/dashboard/user/ReservarPage';
@@ -22,6 +23,17 @@ function AppRoutes({ location, includeLoginRoute }) {
     </Routes>
   );
 }
+
+AppRoutes.propTypes = {
+  location: PropTypes.shape({
+    pathname: PropTypes.string,
+    search: PropTypes.string,
+    hash: PropTypes.string,
+    key: PropTypes.string,
+    state: PropTypes.any,
+  }),
+  includeLoginRoute: PropTypes.bool,
+};
 
 
 function AppRouter() {

@@ -198,7 +198,7 @@
 
 .days-grid span {
   text-align: center;
-  color: #8a8478;
+  color: #5f584c;
   font-weight: 600;
 }
 
@@ -219,7 +219,7 @@
 
 .day-btn.is-outside,
 .day-btn.is-past {
-  color: #bdb5a7;
+  color: #7a7265;
 }
 
 .day-btn.is-unavailable {
@@ -252,7 +252,7 @@
   display: flex;
   gap: 1.2rem;
   flex-wrap: wrap;
-  color: #6d675b;
+  color: #4f493d;
   font-weight: 600;
 }
 

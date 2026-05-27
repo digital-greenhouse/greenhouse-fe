@@ -1,9 +1,10 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import { apiFactory } from '../../../api/config/apiFactory';
 
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
-    const [authToken, setAuthToken] = useState(null);
+    const [authToken] = useState(null);
 
 
     const handleLogin = async (email, password) => {
@@ -15,9 +16,15 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const contextValue = useMemo(() => ({ authToken, handleLogin }), [authToken]);
+
     return (
-        <AuthContext.Provider value={{ authToken, handleLogin }}>
+        <AuthContext.Provider value={contextValue}>
             {children}
         </AuthContext.Provider>
     );
+};
+
+AuthProvider.propTypes = {
+    children: PropTypes.node,
 };

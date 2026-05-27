@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartColumn, faHome, faBars, faRightFromBracket, faCalendarDays, faCircleArrowLeft, faScrewdriverWrench, faBuildingUser } from '@fortawesome/free-solid-svg-icons';
-import { Nav, Spinner } from 'react-bootstrap';
+import { faChartColumn, faBars, faRightFromBracket, faCalendarDays, faCircleArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { Nav } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
-//import logo from "../../assets/logo.png";
 import './DashboardAdminMenu.css';
-// import { getUserById } from '../../api/UserService';
-import axios from 'axios';
 import ConfirmModal from '../../../components/ui/ConfirmModal';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 
@@ -44,12 +41,12 @@ function AdminDashboard() {
       } else {
         localStorage.removeItem('authToken');
         localStorage.clear();
-        window.location.href = '/login';
+        globalThis.location.href = '/login';
       }
     } catch (error) {
       console.error('Error al verificar el token:', error);
       localStorage.removeItem('authToken');
-      window.location.href = '/login';
+      globalThis.location.href = '/login';
     }
 
   }, []);
@@ -57,20 +54,19 @@ function AdminDashboard() {
   useEffect(() => {
     const handleLogout = async () => {
       try {
-        setLoading(true);  // Mostrar el spinner
-        localStorage.removeItem('authToken');  // Eliminar el token de localStorage
-        navigate('/login');    // Redirigir a la página de login
+        setLoading(true);
+        localStorage.removeItem('authToken');
+        navigate('/login');
       } catch (error) {
         if (error.response && error.response.status === 403) {
           console.error('Token vencido:', error);
           localStorage.removeItem('authToken');
-          // Eliminar el token de localStorage
-          navigate(`/login`); // Redirigir a la página de login
+          navigate('/login');
         } else {
           console.error('Error durante el logout:', error);
         }
       } finally {
-        setLoading(false);  // Ocultar el spinner cuando termine
+        setLoading(false);
       }
     };
 
@@ -84,16 +80,16 @@ function AdminDashboard() {
 
 
   const handleLogoutClick = () => {
-    setShowLogoutModal(true);  // Mostrar el modal de confirmación
+    setShowLogoutModal(true);
   };
 
   const handleConfirmLogout = () => {
-    setShowLogoutModal(false);  // Ocultar el modal
-    setLogout(true);  // Iniciar el proceso de logout
+    setShowLogoutModal(false);
+    setLogout(true);
   };
 
   const handleCancelLogout = () => {
-    setShowLogoutModal(false);  // Ocultar el modal sin hacer logout
+    setShowLogoutModal(false);
   };
 
 
@@ -108,7 +104,7 @@ function AdminDashboard() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
+      if (globalThis.innerWidth >= 768) {
         setMenuVisible(true);
         setOverlayVisible(false);
       } else if (isMenuVisible) {
@@ -124,7 +120,7 @@ function AdminDashboard() {
   const toggleMenu = () => {
     setMenuVisible((prevState) => {
       const newMenuState = !prevState;
-      if (newMenuState && window.innerWidth < 768) {
+      if (newMenuState && globalThis.innerWidth < 768) {
         setOverlayVisible(true);
       } else {
         setOverlayVisible(false);
@@ -145,13 +141,11 @@ function AdminDashboard() {
 
     <div className="container-fluid "  >
       <div className="row custom-row">
-        {/* Menú lateral */}
         <div className={`col-2 ${isMenuVisible ? '' : 'd-none'}`} style={{ minWidth: '265px', padding: 0, }}>
 
           <Nav className=" menuU h-100">
             <div className="section-1">
               <Nav.Link className="profile-header" style={{ padding: 0 }} >
-                {/* <img src={logo} alt="Profile" className="profile-img" /> */}
                 <div className="title-profile">
                   <h5 className="profile-title">Villa Encantada</h5>
                   <p className="profile-subtitle">La Villa del Amor</p>
@@ -166,24 +160,10 @@ function AdminDashboard() {
                 Reservas
               </Nav.Link>
 
-              <Nav.Link className="nav-item-custom"> {/*onClick={() => handleNavigation('/users')} */}
+              <Nav.Link className="nav-item-custom">
                 <FontAwesomeIcon className="icon-margin" icon={faChartColumn} />
                 Reportes
               </Nav.Link>
-
-              {/* <Nav.Link className="nav-item-custom" onClick={() => handleNavigation('/equipments')}>
-                <FontAwesomeIcon className="icon-margin" icon={faHardDrive} />
-                Equipos
-              </Nav.Link>
-              <Nav.Link className="nav-item-custom" onClick={() => handleNavigation('/clients')}>
-                <FontAwesomeIcon className="icon-margin" icon={faBuildingUser} />
-                Clientes
-              </Nav.Link>
-              <Nav.Link className="nav-item-custom" onClick={() => handleNavigation('/requestMaintenance')}>
-                <FontAwesomeIcon className="icon-margin" icon={faScrewdriverWrench} />
-                Mantenimientos
-              </Nav.Link> */}
-              {/* <div className="separator-line" /> */}
             </div>
 
             <div className="section-2">
@@ -214,10 +194,6 @@ function AdminDashboard() {
 
 
         </div>
-
-
-        {/* Contenido principal */}
-
         <div className="col custom-col">
           <div className="row ">
 
@@ -232,7 +208,12 @@ function AdminDashboard() {
             </div>
           </div>
 
-          <div className={`content-overlay ${isOverlayVisible ? 'visible' : ''}`} onClick={toggleMenu}></div>
+          <button
+            type="button"
+            className={`content-overlay ${isOverlayVisible ? 'visible' : ''}`}
+            onClick={toggleMenu}
+            aria-label="Cerrar menú lateral"
+          />
         </div>
       </div>
 

@@ -14,9 +14,8 @@
 .profile-subtitle {
     color: #b0b0b0;
     font-size: 0.6rem;
-    margin-left: 18px !important;
+    margin: 0 0 0 18px;
     /* Tamaño más pequeño para el subtítulo */
-    margin: 0;
 
 }
 /* Imagen con contorno circular */
@@ -100,10 +99,9 @@
 
 .menuU .nav-item-custom {
     padding-top:4% ;
-    padding-left: 10px !important;
     background-color: black;
-      padding-left: 20px;
-         border-radius: 7px;
+    padding-left: 20px;
+    border-radius: 7px;
     color: white;
 }
 
