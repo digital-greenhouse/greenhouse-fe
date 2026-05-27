@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Modal, Spinner } from 'react-bootstrap';
 import { getPayment } from '../../../api/payment';
-import './Vfix: corregir ruta de importación del archivo CSS en ViewPaymentModaliewPayment.css';
+import './ViewPayment.css';
 
 function detectFileKind(fileUrl = '', mimeType = '') {
     const normalizedUrl = String(fileUrl).toLowerCase();
