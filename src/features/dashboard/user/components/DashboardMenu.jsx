@@ -3,6 +3,7 @@ import { useNavigate, Outlet } from 'react-router-dom';
 import { Link, useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import ConfirmModal from '../../../../components/ui/ConfirmModal';
+import UserInfo from './userInfo/UserInfo';
 import './DashboardMenu.css';
 
 const menuItems = [
@@ -11,8 +12,8 @@ const menuItems = [
   { label: 'Servicios', to: '/dashboard#servicios' },
   { label: 'Galeria', to: '/dashboard#gallery' },
   { label: 'Tarifa', to: '/dashboard#tarifas' },
-  { label: 'Contacto', to: '/dashboard#hero' },
-  { label: 'Propiedades', to: '/' },
+  { label: 'Contacto', to: '/dashboard#contacto' }
+  // { label: 'Propiedades', to: '/' },
 ];
 
 function DashboardMenu() {
@@ -21,6 +22,7 @@ function DashboardMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showUserInfo, setShowUserInfo] = useState(false);
   const [hasAuthToken, setHasAuthToken] = useState(Boolean(localStorage.getItem('authToken')));
   const userName = JSON.parse(localStorage.getItem("user"))?.name || 'Usuario';
   const displayUserName = userName.length > 15 ? `${userName.slice(0, 15)}...` : userName;
@@ -47,6 +49,7 @@ function DashboardMenu() {
     setHasAuthToken(false);
     setMenuOpen(false);
     setProfileMenuOpen(false);
+    setShowUserInfo(false);
     setUserData({
       email: '',
       roles: [],
@@ -124,12 +127,12 @@ function DashboardMenu() {
 
   const userOption = () => {
     setProfileMenuOpen(false);
-    navigate('/dashboard');
+    setShowUserInfo(true);
   };
 
   const adminOption = () => {
     setProfileMenuOpen(false);
-    navigate('/admin');
+    navigate('/admin/history-bookings');
   };
 
   const myBookingsOption = () => {
@@ -144,6 +147,7 @@ function DashboardMenu() {
     setHasAuthToken(false);
     closeMobileMenu();
     setProfileMenuOpen(false);
+    setShowUserInfo(false);
     setShowLogoutConfirm(false);
     navigate('/login', {
       replace: true,
@@ -373,6 +377,11 @@ function DashboardMenu() {
         onConfirm={logoutOption}
         onCancel={() => setShowLogoutConfirm(false)}
         variant="danger"
+      />
+
+      <UserInfo
+        show={showUserInfo}
+        onHide={() => setShowUserInfo(false)}
       />
     </header>
   );

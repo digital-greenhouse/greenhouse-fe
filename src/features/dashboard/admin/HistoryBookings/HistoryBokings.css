@@ -1,0 +1,43 @@
+.history-bookings {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+    padding: 15px 2px 0px 5px;
+}
+
+.history-bookings__header {
+	display: grid;
+	gap: 6px;
+}
+
+.history-bookings__kicker {
+	margin: 0;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-size: 12px;
+	font-weight: 700;
+	color: #8a7d68;
+}
+
+.history-bookings__title {
+	margin: 0;
+	color: #2f2a21;
+	font-size: 28px;
+	line-height: 1.1;
+}
+
+.history-bookings__loading,
+.history-bookings__empty {
+	width: 100%;
+	min-height: 160px;
+	display: grid;
+	place-items: center;
+	background: #fbfaf7;
+	color: #6f6455;
+}
+@media (max-width: 768px) {
+    .history-bookings {
+        padding-left: 0px !important;
+        padding-right: 10px !important;
+    }   
+}

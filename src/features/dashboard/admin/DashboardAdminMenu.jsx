@@ -7,8 +7,8 @@ import { jwtDecode } from 'jwt-decode';
 import './DashboardAdminMenu.css';
 // import { getUserById } from '../../api/UserService';
 import axios from 'axios';
-// import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
-import { useNavigate, Outlet } from 'react-router-dom';
+import ConfirmModal from '../../../components/ui/ConfirmModal';
+import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 
 
 
@@ -21,6 +21,7 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [isTokenChecked, setIsTokenChecked] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuVisible, setMenuVisible] = useState(true);
   const [isOverlayVisible, setOverlayVisible] = useState(false);
 
@@ -57,11 +58,6 @@ function AdminDashboard() {
     const handleLogout = async () => {
       try {
         setLoading(true);  // Mostrar el spinner
-        const response = await axios.get(`/users/logout`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Si necesitas enviar el token de autenticación
-          }
-        });
         localStorage.removeItem('authToken');  // Eliminar el token de localStorage
         navigate('/login');    // Redirigir a la página de login
       } catch (error) {
@@ -104,41 +100,9 @@ function AdminDashboard() {
 
 
   const handleNavigation = async (path) => {
-    if (path === '/profile-info') {
-      const token = localStorage.getItem('authToken'); // Obtener el token desde el localStorage
 
+    navigate(`${path}`);
 
-      try {
-        const decodedToken = jwtDecode(token);
-        const userId = decodedToken.id;
-
-
-
-        const userData = await getUserById(userId, token);
-
-        // Formatear los datos recibidos
-        const formattedData = {
-          name: userData.name,
-          lastName: userData.lastName,
-          typeIdentification: userData.typeIdentification,
-          numberIdentification: userData.numberIdentification,
-          email: userData.email,
-          phoneNumber: userData.phoneNumber,
-          address: userData.address,
-          pathImage: userData.pathImage,
-          userStatus: userData.userStatus,
-          roles: userData.roles && userData.roles.length > 0 ? userData.roles[0].name : null
-        };
-
-        // Navegar y pasar los datos en el estado
-        navigate(`${path}`, { state: { user: formattedData } });
-      } catch (error) {
-        console.error("Error al cargar los datos del usuario", error);
-        // Opcional: Mostrar un mensaje de error al usuario
-      }
-    } else {
-      navigate(`${path}`);
-    }
   };
 
 
@@ -169,6 +133,8 @@ function AdminDashboard() {
     });
   };
 
+  const isSelectedRoute = (path) => location.pathname === path;
+
 
 
   if (!isTokenChecked) {
@@ -192,7 +158,10 @@ function AdminDashboard() {
                 </div>
               </Nav.Link>
 
-              <Nav.Link className="nav-item-custom" >  {/* onClick={() => handleNavigation('/welcome')} */}
+              <Nav.Link
+                className={`nav-item-custom ${isSelectedRoute('/admin/history-bookings') ? 'is-active' : ''}`}
+                onClick={() => handleNavigation('/admin/history-bookings')}
+              >
                 <FontAwesomeIcon className="icon-margin" icon={faCalendarDays} />
                 Reservas
               </Nav.Link>
@@ -219,7 +188,7 @@ function AdminDashboard() {
 
             <div className="section-2">
               <div className="separator-line" />
-              <Nav.Link className='profile-header-user' onClick={() => handleNavigation('/profile-info')}>
+              <Nav.Link className='profile-header-user' >
                 <span className="user-avatar" aria-hidden="true">{userData.name.charAt(0).toUpperCase()}</span>
                 <div className="title-profile">
                   <h5 className="profile-title-user">{userData.name} {userData.lastName}</h5>
@@ -230,7 +199,7 @@ function AdminDashboard() {
 
             <div className="section-3">
 
-              <Nav.Link className="nav-item-custom" onClick={() => navigate(-1)}>
+              <Nav.Link className="nav-item-custom" onClick={() => navigate(-2)}>
 
                 <FontAwesomeIcon className="icon-margin" icon={faCircleArrowLeft} />
                 Volver al sitio
@@ -271,17 +240,16 @@ function AdminDashboard() {
 
 
 
-      {/* Modal de confirmación de cierre de sesión */}
-      {/* <ConfirmationModal
+   
+      <ConfirmModal
         show={showLogoutModal}
-        onHide={handleCancelLogout}
+        onCancel={handleCancelLogout}
         onConfirm={handleConfirmLogout}
         title="Cierre de Sesión"
-        bodyText="¿Estás seguro de que deseas cerrar sesión?"
-        confirmText={loading ? <Spinner animation="border" size="sm" /> : "Sí"}
+        message="¿Estás seguro de que deseas cerrar sesión?"
+        confirmText={loading ? 'Cargando...' : 'Sí'}
         cancelText="No"
-        containerId="modal-container"
-      /> */}
+      />
 
 
     </div>

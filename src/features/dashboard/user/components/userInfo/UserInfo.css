@@ -1,0 +1,61 @@
+.user-info-modal .modal-content {
+	border: 1px solid #e4dbc8;
+	border-radius: 18px;
+	overflow: hidden;
+}
+
+.user-info-modal .modal-header {
+	border-bottom: 1px solid #eee5d3;
+	background: linear-gradient(180deg, #fbfaf7 0%, #f6f1e6 100%);
+}
+
+.user-info-modal .modal-footer {
+	border-top: 1px solid #eee5d3;
+}
+
+.user-info-modal__kicker {
+	margin: 0 0 4px;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-size: 12px;
+	font-weight: 700;
+	color: #8a7d68;
+}
+
+.user-info-modal__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 12px;
+}
+
+.user-info-modal__item {
+	padding: 12px 14px;
+	border: 1px solid #e7ddcb;
+	border-radius: 12px;
+	background: #fffdf8;
+}
+
+.user-info-modal__label {
+	display: block;
+	margin-bottom: 6px;
+	font-size: 12px;
+	font-weight: 700;
+	color: #7b6f5c;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.user-info-modal__value {
+	display: block;
+	color: #2f2a21;
+	font-size: 14px;
+	word-break: break-word;
+}
+
+.user-info-modal__empty {
+	padding: 16px;
+	border: 1px dashed #d8ccb5;
+	border-radius: 12px;
+	color: #6f6455;
+	background: #fbf8f1;
+}
