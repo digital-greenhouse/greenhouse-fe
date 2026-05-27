@@ -347,6 +347,80 @@
   color: #fff;
 }
 
+.contact-footer {
+  margin: 3rem 0 0;
+  padding: 0;
+  background: #f4efe3;
+}
+
+.contact-footer__content {
+  width: 100%;
+  margin: 0;
+  padding: 2.2rem 3rem 1.2rem;
+  border-radius: 0;
+  background: #f4efe3;
+  color: #2f2a21;
+  box-shadow: none;
+}
+
+.contact-footer__columns {
+  display: grid;
+  grid-template-columns: 1.35fr 0.9fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.contact-footer__brand-title,
+.contact-footer__links h3,
+.contact-footer__contact h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  line-height: 1.2;
+  color: #232019;
+}
+
+.contact-footer__brand-copy {
+  margin: 0;
+  margin-top: 0.95rem;
+  max-width: 320px;
+  font-size: 0.93rem;
+  line-height: 1.55;
+  color: #5f584c;
+}
+
+.contact-footer__links,
+.contact-footer__contact {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.contact-footer__links a,
+.contact-footer__contact a,
+.contact-footer__contact span {
+  color: #5f584c;
+  font-size: 0.93rem;
+  text-decoration: none;
+  line-height: 1.45;
+}
+
+.contact-footer__links a:hover,
+.contact-footer__contact a:hover {
+  color: var(--villa-accent);
+}
+
+.contact-footer__divider {
+  margin: 2rem 0 0.95rem;
+  border-top: 1px solid rgba(96, 78, 38, 0.18);
+}
+
+.contact-footer__copyright {
+  margin: 0;
+  text-align: center;
+  color: #7a7265;
+  font-size: 0.78rem;
+}
+
 @keyframes reveal {
   from {
     opacity: 0;
@@ -374,6 +448,11 @@
 
   .pricing-grid {
     grid-template-columns: 1fr;
+  }
+
+  .contact-footer__columns {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 
   .hero-section {
@@ -447,6 +526,15 @@
 
   .pricing-section {
     padding: 1.7rem 0.3rem;
+  }
+
+  .contact-footer {
+    margin-top: 2.2rem;
+    padding: 0;
+  }
+
+  .contact-footer__content {
+    padding: 1.5rem 1rem 0.95rem;
   }
 
   .gallery-card.main,

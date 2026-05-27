@@ -266,6 +266,41 @@ function DashboardPage() {
               ))}
             </div>
           </section>
+
+          <footer id="contacto" className="contact-footer" aria-label="Contacto">
+            <div className="contact-footer__content">
+              <div className="contact-footer__columns">
+                <div className="contact-footer__brand">
+                  <p className="contact-footer__brand-title">Villa Encantada La Villa del Amor</p>
+                  <p className="contact-footer__brand-copy">
+                    La Villa del Amor en Motavita, Boyacá. Finca recreativa para eventos,
+                    naturaleza y experiencias inolvidables.
+                  </p>
+                </div>
+
+                <nav className="contact-footer__links" aria-label="Enlaces del pie de página">
+                  <h3>Enlaces</h3>
+                  <a href="#hero">Inicio</a>
+                  <a href="/reservar">Reservar</a>
+                  <a href="#servicios">Servicios</a>
+                  <a href="#gallery">Galeria</a>
+                </nav>
+
+                <div className="contact-footer__contact">
+                  <h3>Contacto</h3>
+                  <a href="tel:+573101234567">+57 310 123 4567</a>
+                  <a href="mailto:reservas@villaencantada.com">reservas@villaencantada.com</a>
+                  <span>Motavita, Boyacá, Colombia</span>
+                </div>
+              </div>
+
+              <div className="contact-footer__divider" />
+
+              <p className="contact-footer__copyright">
+                2026 Villa Encantada - La Villa del Amor. Todos los derechos reservados.
+              </p>
+            </div>
+          </footer>
         </>
       )}
 

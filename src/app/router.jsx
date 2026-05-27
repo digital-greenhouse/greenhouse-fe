@@ -4,6 +4,7 @@ import DashboardPage from '../features/dashboard/user/DashboardPage';
 import ReservarPage from '../features/dashboard/user/ReservarPage';
 import DashboardAdminMenu from '../features/dashboard/admin/DashboardAdminMenu';
 import BokingMenu from '../features/booking/BookingMenu';
+import HistoryBokings from '../features/dashboard/admin/HistoryBookings/HistoryBokings';
 
 function AppRoutes({ location, includeLoginRoute }) {
   return (
@@ -12,7 +13,9 @@ function AppRoutes({ location, includeLoginRoute }) {
         <Route path="booking-actual" element={<BokingMenu />} />
       </Route>
       <Route path="/reservar" element={<ReservarPage />} />
-      <Route path="admin" element={<DashboardAdminMenu />} />
+      <Route path="admin" element={<DashboardAdminMenu />}>
+        <Route path="history-bookings" element={<HistoryBokings />} />
+      </Route>
       {includeLoginRoute && <Route path="/login" element={<LoginPage />} />}
       <Route index element={<Navigate to="/dashboard" />} />
       <Route path="*" element={<h2>404 Not Found</h2>} />
