@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+const MIN_ATTENDEES = 1;
 
 function ReservaFechasStep({
   months,
@@ -24,18 +26,73 @@ function ReservaFechasStep({
   hasQuote,
   quoteError,
   onContinue,
+  maxAttendees
 }) {
-  const [isAttendeesOpen, setIsAttendeesOpen] = useState(false);
+  const [attendeesInput, setAttendeesInput] = useState(String(attendees));
+  const [attendeesError, setAttendeesError] = useState('');
 
-  const handleAttendeesChange = (event) => {
-    setAttendees(Number(event.target.value));
-    setIsAttendeesOpen(false);
+  const MAX_ATTENDEES = maxAttendees;
+
+  useEffect(() => {
+    setAttendeesInput(String(attendees));
+  }, [attendees]);
+
+  const validateAttendees = (value) => {
+    if (Number.isNaN(value)) {
+      return 'Ingresa un numero valido de asistentes.';
+    }
+
+    if (value < MIN_ATTENDEES) {
+      return `El minimo permitido es ${MIN_ATTENDEES}.`;
+    }
+
+    if (value > MAX_ATTENDEES) {
+      return 'Supera el limite permitido.';
+    }
+
+    return '';
   };
 
-  const handleAttendeesKeyDown = (event) => {
-    if (event.key === 'Escape' || event.key === 'Enter' || event.key === 'Tab') {
-      setIsAttendeesOpen(false);
+  const handleAttendeesChange = (event) => {
+    const nextValue = event.target.value;
+    setAttendeesInput(nextValue);
+
+    if (nextValue === '') {
+      setAttendeesError('Ingresa un numero de asistentes.');
+      return;
     }
+
+    const parsedValue = Number(nextValue);
+    const error = validateAttendees(parsedValue);
+    setAttendeesError(error);
+
+    if (!error) {
+      setAttendees(parsedValue);
+    }
+  };
+
+  const handleAttendeesBlur = () => {
+    const parsedValue = Number(attendeesInput);
+    const error = validateAttendees(parsedValue);
+
+    if (error) {
+      const clampedValue = Math.min(Math.max(parsedValue || attendees, MIN_ATTENDEES), MAX_ATTENDEES);
+      setAttendees(clampedValue);
+      setAttendeesInput(String(clampedValue));
+      setAttendeesError('');
+      return;
+    }
+
+    setAttendeesError('');
+  };
+
+  const stepAttendees = (delta) => {
+    const current = Number(attendeesInput);
+    const safeCurrent = Number.isFinite(current) ? current : attendees;
+    const nextValue = Math.min(Math.max(safeCurrent + delta, MIN_ATTENDEES), MAX_ATTENDEES);
+    setAttendees(nextValue);
+    setAttendeesInput(String(nextValue));
+    setAttendeesError('');
   };
 
   return (
@@ -151,22 +208,48 @@ function ReservaFechasStep({
 
       <div className="assistants-row">
         <label htmlFor="asistentes">Numero de asistentes</label>
-        <span className={`custom-select-wrapper ${isAttendeesOpen ? 'is-open' : ''}`}>
-          <select
-            id="asistentes"
-            value={attendees}
-            onChange={handleAttendeesChange}
-            onKeyDown={handleAttendeesKeyDown}
-            onFocus={() => setIsAttendeesOpen(true)}
-            onBlur={() => setIsAttendeesOpen(false)}
-            className="custom-select"
+        <div className="attendees-stepper" role="group" aria-label="Control de asistentes">
+          <button
+            type="button"
+            className="attendees-stepper-btn"
+            onClick={() => stepAttendees(-1)}
+            disabled={attendees <= MIN_ATTENDEES}
+            aria-label="Disminuir asistentes"
           >
-            <option value={30}>30 personas</option>
-            <option value={50}>50 personas</option>
-            <option value={80}>80 personas</option>
-            <option value={100}>100 personas</option>
-          </select>
-        </span>
+            -
+          </button>
+          <input
+            id="asistentes"
+            type="number"
+            min={MIN_ATTENDEES}
+            max={MAX_ATTENDEES}
+            step={1}
+            value={attendeesInput}
+            onChange={handleAttendeesChange}
+            onBlur={handleAttendeesBlur}
+            className="attendees-stepper-input"
+            aria-invalid={Boolean(attendeesError)}
+            aria-describedby="attendees-limit attendees-error"
+          />
+          <button
+            type="button"
+            className="attendees-stepper-btn"
+            onClick={() => stepAttendees(1)}
+            disabled={attendees >= MAX_ATTENDEES}
+            aria-label="Aumentar asistentes"
+          >
+            +
+          </button>
+           <span className="attendees-stepper-unit">personas</span>
+        </div>
+        <p id="attendees-limit" className="attendees-limit-text">
+          Maximo permitido: {MAX_ATTENDEES} personas
+        </p>
+        {attendeesError && (
+          <p id="attendees-error" className="attendees-error-text" role="alert">
+            {attendeesError}
+          </p>
+        )}
       </div>
 
       {quoteError && (

@@ -303,13 +303,83 @@
   color: #433d31;
 }
 
-.assistants-row select {
-  width: min(260px, 100%);
+.attendees-stepper {
+  width: min(320px, 100%);
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 5rem) 2.2rem auto;
+  align-items: center;
+  gap: 0.48rem !important;
+}
+
+.attendees-stepper-btn {
   border: 1px solid #d8d0c3;
   border-radius: 9px;
   background: #fff;
-  padding: 0.6rem 0.7rem;
+  color: #433d31;
+  height: 2.2rem;
+  width: 2.2rem;
+  padding: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.attendees-stepper-btn:hover:not(:disabled) {
+  background: #f3eee5;
+}
+
+.attendees-stepper-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.attendees-stepper-input {
+  border: 1px solid #d8d0c3;
+  border-radius: 9px;
+  background: #fff;
+  padding: 0.52rem 0.55rem;
+  text-align: center;
   font: inherit;
+}
+
+.attendees-stepper-input::-webkit-outer-spin-button,
+.attendees-stepper-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.attendees-stepper-input[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.attendees-stepper-input[aria-invalid='true'] {
+  border-color: #d43b3b;
+}
+
+.attendees-stepper-unit {
+  color: #625b4f;
+  font-weight: 600;
+  justify-self: start;
+  white-space: nowrap;
+}
+
+.attendees-limit-text {
+  margin: 0;
+  color: #706a5f;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.attendees-error-text {
+  margin: 0;
+  color: #d43b3b;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .custom-select-wrapper {
@@ -505,6 +575,64 @@
   color: #5f584c;
 }
 
+.payment-amount-input-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: fit-content;
+}
+
+.payment-amount-input {
+  max-width: 140px;
+  min-width: 140px;
+  border: 1px solid #d8d0c3;
+  border-radius: 9px;
+  background: #fff;
+  padding: 0.6rem 0.7rem;
+  font: inherit;
+  font-size: 0.95rem;
+  text-align: right;
+  font-weight: 600;
+  color: #433d31;
+}
+
+.payment-amount-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(147, 106, 42, 0.1);
+}
+
+.payment-amount-input[aria-invalid='true'] {
+  border-color: #d43b3b;
+}
+
+.payment-amount-input::-webkit-outer-spin-button,
+.payment-amount-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.payment-amount-currency {
+  color: #625b4f;
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.payment-amount-help-text {
+  margin: 0;
+  color: #706a5f;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.payment-amount-error-text {
+  margin: 0;
+  color: #d43b3b;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
 .reserva-side-card {
   padding: 1rem;
   position: sticky;
@@ -662,8 +790,26 @@
     gap: 0.28rem;
   }
 
-  .assistants-row select {
-    padding: 0.5rem 0.6rem;
+  .attendees-stepper {
+    width: min(100%, 280px);
+    grid-template-columns: 2rem minmax(0, 4.4rem) 2rem auto;
+    gap: 0.32rem;
+  }
+
+  .attendees-stepper-btn {
+    height: 2rem;
+    border-radius: 8px;
+    font-size: 1.05rem;
+  }
+
+  .attendees-stepper-input {
+    padding: 0.46rem 0.5rem;
+    border-radius: 8px;
+  }
+
+  .attendees-limit-text,
+  .attendees-error-text {
+    font-size: 0.72rem;
   }
 
   .quote-actions,
@@ -730,5 +876,21 @@
 
   .datos-full {
     grid-column: auto;
+  }
+
+  .payment-amount-input {
+    max-width: 120px;
+    padding: 0.52rem 0.6rem;
+    font-size: 0.9rem;
+    text-align: right;
+  }
+
+  .payment-amount-currency {
+    font-size: 0.85rem;
+  }
+
+  .payment-amount-help-text,
+  .payment-amount-error-text {
+    font-size: 0.72rem;
   }
 }
