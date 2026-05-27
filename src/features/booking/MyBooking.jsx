@@ -8,7 +8,7 @@ import { OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
 import { cancelBooking, getBookingByUser } from '../../api/bookings';
 import { sendPayment } from '../../api/payment';
 import './BookingMenu.css';
-import ViewPaymentModal from './viewPayment/viewPayment';
+import ViewPaymentModal from './viewPayment/ViewPayment';
 import CancelBooking from './cancelBooking/CancelBooking';
 import UploadPayment from './uploadPayment/UploadPayment';
 import { convertToBase64 } from '../../components/utils/ConvertBase64File';
