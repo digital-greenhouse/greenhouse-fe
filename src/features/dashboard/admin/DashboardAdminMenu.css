@@ -64,7 +64,7 @@
 
     overflow-y: auto;       /* Habilita el desplazamiento vertical */
     overflow-x: hidden;  /*Evita el scroll horizontal */
-    padding-right: 10px;    /* Evita que el contenido se superponga con la barra de desplazamiento */
+    padding-right: 2px;    /* Evita que el contenido se superponga con la barra de desplazamiento */
     padding-bottom: 25px;
 
 }
@@ -100,7 +100,10 @@
 
 .menuU .nav-item-custom {
     padding-top:4% ;
+    padding-left: 10px !important;
     background-color: black;
+      padding-left: 20px;
+         border-radius: 7px;
     color: white;
 }
 
@@ -111,6 +114,21 @@
     border: none;
     border-radius: 7px;
     color: rgb(0, 0, 0);
+}
+
+.menuU .nav-item-custom.is-active,
+.menuU .profile-header-user.is-active {
+    background-color: #484c48;
+    color: #ffffff;
+    margin-left: 1px;
+    margin-right: 1px;
+    font-weight: 400;
+}
+
+.menuU .nav-item-custom.is-active:hover,
+.menuU .profile-header-user.is-active:hover {
+    background-color: #d8e4d7;
+    color: #1f2b1f;
 }
 
 .icon-margin {
@@ -236,7 +254,7 @@
   }
   
   .menu-button:hover{
-    background-color: #000000 !important;
+    background-color: #997575 !important;
 }
  
 
@@ -266,6 +284,7 @@
     }
 
     .container-content-scrollable{
-        height: calc(100vh - 50px); /* Ajusta la altura según lo necesario, restando la altura del encabezado o la barra superior si la tienes */
+        height: calc(100vh - 50px);
+        /* Ajusta la altura según lo necesario, restando la altura del encabezado o la barra superior si la tienes */
     }
   }
