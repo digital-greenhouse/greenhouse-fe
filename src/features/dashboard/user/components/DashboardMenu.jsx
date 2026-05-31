@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import ConfirmModal from '../../../../components/ui/ConfirmModal';
 import UserInfo from './userInfo/UserInfo';
+import { extractRoleNames, getDisplayUserName, getUserName, parseStoredUser } from '../../../../components/utils/accountSession';
 import './DashboardMenu.css';
 
 const menuItems = [
@@ -11,8 +12,8 @@ const menuItems = [
   { label: 'Servicios', to: '/dashboard#servicios' },
   { label: 'Galeria', to: '/dashboard#gallery' },
   { label: 'Tarifa', to: '/dashboard#tarifas' },
-  { label: 'Contacto', to: '/dashboard#contacto' }
-  // { label: 'Propiedades', to: '/' },
+  { label: 'Contacto', to: '/dashboard#contacto' },
+  { label: 'Propiedades', to: '/properties' },
 ];
 
 function DashboardMenu() {
@@ -23,26 +24,28 @@ function DashboardMenu() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showUserInfo, setShowUserInfo] = useState(false);
   const [hasAuthToken, setHasAuthToken] = useState(Boolean(localStorage.getItem('authToken')));
-  const userName = JSON.parse(localStorage.getItem("user"))?.name || 'Usuario';
-  const displayUserName = userName.length > 15 ? `${userName.slice(0, 15)}...` : userName;
+  const storedUser = parseStoredUser();
+  const userName = getUserName(storedUser);
+  const displayUserName = getDisplayUserName(userName);
   const authActionsRef = useRef(null);
+  const property = localStorage.getItem('property') ? JSON.parse(localStorage.getItem('property')) : null;
   const [userData, setUserData] = useState({
     //name: '', 
     email: '',
     roles: [],
   });
 
-  const roleNames = Array.isArray(userData.roles)
-    ? userData.roles.map((role) => (typeof role === 'string' ? role : role?.name)).filter(Boolean)
-    : (typeof userData.roles === 'string' && userData.roles ? [userData.roles] : []);
+  const roleNames = extractRoleNames(userData.roles);
   const isSuperAdmin = roleNames.includes('SUPERADMIN');
 
   const closeMobileMenu = () => setMenuOpen(false);
 
-  const clearSessionAndGoLogin = () => {
-    const isOnLoginPage = typeof globalThis !== 'undefined' && globalThis.location.pathname === '/login';
-
+  const clearSession = () => {
+    const savedProperty = localStorage.getItem('property');
     localStorage.clear();
+    if (savedProperty) {
+      localStorage.setItem('property', savedProperty);
+    }
     sessionStorage.clear();
     globalThis.dispatchEvent(new Event('auth-state-changed'));
     setHasAuthToken(false);
@@ -53,10 +56,18 @@ function DashboardMenu() {
       email: '',
       roles: [],
     });
+  };
 
-    if (!isOnLoginPage) {
-      navigate('/login', { replace: true, state: { backgroundLocation: location } });
+  const clearSessionAndGoLogin = () => {
+    const hasProperty = Boolean(localStorage.getItem('property'));
+    clearSession();
+
+    if (!hasProperty) {
+      navigate('/properties', { replace: true });
+      return;
     }
+
+    navigate('/login', { replace: true, state: { backgroundLocation: location } });
   };
 
   const scrollToSection = (sectionId) => {
@@ -83,7 +94,7 @@ function DashboardMenu() {
       closeMobileMenu();
       return;
     }
-    if(location.pathname.includes('/reservar')) {
+    if (location.pathname.includes('/reservar')) {
       console.log('No se esta en dashboard ni en reservar, no se hace scroll');
       sessionStorage.clear();
     }
@@ -99,24 +110,44 @@ function DashboardMenu() {
 
     try {
       const token = localStorage.getItem('authToken');
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (token !== null && user !== null) {
+      const property = localStorage.getItem('property');
+      const rawUser = localStorage.getItem('user');
+      const user = rawUser ? JSON.parse(rawUser) : null;
+
+      if (token !== null && user !== null && property !== null) {
         const data = jwtDecode(token);
         if (!data?.exp || data.exp * 1000 <= Date.now()) {
-          throw new Error('Token expirado');
+          // token expired: remove it but keep property so public dashboard can be viewed
+          localStorage.removeItem('authToken');
+          setHasAuthToken(false);
+          setUserData({ email: '', roles: [] });
+        } else {
+          setUserData({
+            email: data.email || '',
+            roles: data.roles || data.role || [],
+          });
+          setHasAuthToken(true);
         }
-        //setIsTokenChecked(true);
-        setUserData({
-          email: data.email || '',
-          roles: data.roles || data.role || [],
-        });
+
+      } else if (property !== null) {
+        // allow visiting the dashboard in a public (unauthenticated) mode when a property is selected
+        setHasAuthToken(false);
+        setUserData({ email: '', roles: [] });
 
       } else {
+        // no property and no valid session — clear and go to login
+        clearSession();
         clearSessionAndGoLogin();
       }
     } catch (error) {
       console.error('Error al verificar el token:', error);
-      clearSessionAndGoLogin();
+      // If a property is present, allow public dashboard view; otherwise redirect to login
+      if (localStorage.getItem('property')) {
+        clearSession();
+        setHasAuthToken(false);
+      } else {
+        clearSessionAndGoLogin();
+      }
     }
   }, [hasAuthToken, navigate]);
 
@@ -140,7 +171,11 @@ function DashboardMenu() {
   };
 
   const logoutOption = () => {
+    const savedProperty = localStorage.getItem('property');
     localStorage.clear();
+    if (savedProperty) {
+      localStorage.setItem('property', savedProperty);
+    }
     sessionStorage.clear();
     globalThis.dispatchEvent(new Event('auth-state-changed'));
     setHasAuthToken(false);
@@ -152,7 +187,7 @@ function DashboardMenu() {
       replace: true,
       state: {
         backgroundLocation: {
-          pathname: '/dashboard',
+          pathname: '/properties',
           search: '',
           hash: '',
           state: null,
@@ -231,8 +266,8 @@ function DashboardMenu() {
           </svg>
         </span>
         <div className="brand-text">
-          <p className="brand-title">Villa Encantada</p>
-          <p className="brand-subtitle">La Villa del Amor</p>
+          <p className="brand-title">{property?.name || ''}</p>
+          <p className="brand-subtitle"></p>
         </div>
       </div>
 
