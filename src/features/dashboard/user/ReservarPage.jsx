@@ -18,7 +18,7 @@ const steps = [
 
 const property = JSON.parse(localStorage.getItem('property') || '{}');
 
-const tags = ['BBQ', 'Parqueadero', 'Eventos', 'Senderos', `${property?.max_capacity || 0} personas`];
+const tags = ['BBQ', 'Parqueadero', 'Eventos', 'Senderos', `${property?.maxCapacity || 0} personas`];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const RESERVA_DRAFT_KEY = 'reserva-draft-v1';
@@ -465,7 +465,7 @@ function ReservarPage() {
               hasQuote={quotedTotal !== null}
               quoteError={quoteError}
               onContinue={() => handleStepChange(2)}
-              maxAttendees={property.max_capacity || 0}
+              maxAttendees={property.maxCapacity || 0}
             />
           )}
 
