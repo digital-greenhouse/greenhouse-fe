@@ -34,6 +34,14 @@ function LoginPage() {
   const [showRegisterConfirm, setShowRegisterConfirm] = useState(false);
 
   const handleClose = () => {
+    if (hasBackgroundApp && backgroundLocation) {
+      navigate(
+        `${backgroundLocation.pathname || '/dashboard'}${backgroundLocation.search || ''}${backgroundLocation.hash || ''}`,
+        { replace: true }
+      );
+      return;
+    }
+
     navigate('/dashboard', { replace: true });
   };
 
@@ -62,15 +70,15 @@ function LoginPage() {
     return () => globalThis.removeEventListener('keydown', handleKeyDown);
   }, [hasBackgroundApp, navigate]);
 
-  const getActualProperty = async () => {   
-    const propertie = await getPropertieById(2).then((res) => res.data)
-      .catch((error) => {
-        console.error('Error fetching property:', error);
-        return null;
-      });
+  // const getActualProperty = async () => {   
+  //   const propertie = await getPropertieById(2).then((res) => res.data)
+  //     .catch((error) => {
+  //       console.error('Error fetching property:', error);
+  //       return null;
+  //     });
 
-    return propertie;
-  }
+  //   return propertie;
+  // }
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -86,7 +94,7 @@ function LoginPage() {
         if (token && user) {
           localStorage.setItem('authToken', token);
           localStorage.setItem('user', JSON.stringify(user));
-          localStorage.setItem('property', JSON.stringify(await getActualProperty()));
+          // localStorage.setItem('property', JSON.stringify(await getActualProperty()));
           globalThis.dispatchEvent(new Event('auth-state-changed'));
           if (hasBackgroundApp) {
             navigate(nextPath, { replace: true });

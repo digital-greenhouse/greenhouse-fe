@@ -40,7 +40,11 @@ function AdminDashboard() {
         setIsTokenChecked(true);
       } else {
         localStorage.removeItem('authToken');
+        const savedProperty = localStorage.getItem('property');
         localStorage.clear();
+        if (savedProperty) {
+          localStorage.setItem('property', savedProperty);
+        }
         globalThis.location.href = '/login';
       }
     } catch (error) {

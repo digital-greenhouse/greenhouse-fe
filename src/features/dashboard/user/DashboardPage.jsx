@@ -131,6 +131,7 @@ function DashboardPage() {
   const actualLocation = globalThis.location.pathname;
   const galleryRef = useRef(null);
   const [galleryVisible, setGalleryVisible] = useState(false);
+  const property = localStorage.getItem('property') ? JSON.parse(localStorage.getItem('property')) : null;
   useEffect(() => {
     const section = galleryRef.current;
     if (!section) {
@@ -169,6 +170,8 @@ function DashboardPage() {
     });
   }, [location.hash]);
 
+
+
   return (
     <main className="villa-page">
       <DashboardMenu />
@@ -178,12 +181,10 @@ function DashboardPage() {
             <div className="hero-overlay" />
 
             <div className="hero-content">
-              <p className="hero-location">Motavita, Boyaca - Colombia</p>
+              <p className="hero-location">{property?.address || ''}</p>
               <h1>Tu escape rural te espera</h1>
               <p>
-                Celebra tus eventos en un entorno natural unico. Villa Encantada La Villa
-                del Amor, finca recreativa con capacidad hasta 100 personas. Planifica tu
-                evento y vive una experiencia inolvidable.
+                {property?.description || ''}
               </p>
 
               <div className="hero-actions">
