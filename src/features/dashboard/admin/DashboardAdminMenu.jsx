@@ -162,7 +162,10 @@ function AdminDashboard() {
                 Reservas
               </Nav.Link>
 
-              <Nav.Link className="nav-item-custom">
+              <Nav.Link
+                className={`nav-item-custom ${isSelectedRoute('/admin/reports') ? 'is-active' : ''}`}
+                onClick={() => handleNavigation('/admin/reports')}
+              >
                 <FontAwesomeIcon className="icon-margin" icon={faChartColumn} />
                 Reportes
               </Nav.Link>

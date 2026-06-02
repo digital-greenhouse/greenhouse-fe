@@ -6,6 +6,7 @@ import ReservarPage from '../features/dashboard/user/ReservarPage';
 import DashboardAdminMenu from '../features/dashboard/admin/DashboardAdminMenu';
 import BokingMenu from '../features/booking/BookingMenu';
 import HistoryBokings from '../features/dashboard/admin/HistoryBookings/HistoryBokings';
+import Reports from '../features/dashboard/admin/Reports/Reports';
 import PropertiesNav from '../features/dashboard/properties/propertiesNav/PropertiesNav';
 import NewProperty from '../features/dashboard/properties/newProperty/NewProperty';
 
@@ -19,6 +20,7 @@ function AppRoutes({ location, includeLoginRoute }) {
       <Route path="/reservar" element={<ReservarPage />} />
       <Route path="admin" element={<DashboardAdminMenu />}>
         <Route path="history-bookings" element={<HistoryBokings />} />
+        <Route path="reports" element={<Reports />} />
       </Route>
       {includeLoginRoute && <Route path="/login" element={<LoginPage />} />}
       <Route index element={<Navigate to="/dashboard" />} />
