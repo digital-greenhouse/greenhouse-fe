@@ -212,7 +212,6 @@ function DashboardProperties({
             'property',
             JSON.stringify(propertyWithoutImages)
         );
-        console.log(propertyWithoutImages);
         window.location.assign('/dashboard');
     }
     return (

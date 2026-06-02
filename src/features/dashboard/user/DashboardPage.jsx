@@ -8,7 +8,6 @@ import { getParcingRules } from '../../../api/properties';
 import './DashboardPage.css';
 
 function buildPropertyImageSrc(image) {
-  console.log('Construyendo src de imagen para ss:', image);
   if (!image) {
     return '';
   }
@@ -40,9 +39,7 @@ function buildPropertyImageSrc(image) {
 }
 
 function buildGalleryItems(property) {
-  console.log('Construyendo items de galeria para la propiedad:', property);
   const images = Array.isArray(property?.images) ? property.images.slice() : [];
-  console.log('Imagenes obtenidas de la propiedad:', images);
 
   const sortedImages = images.sort((left, right) => {
     const leftCover = left?.is_cover ? 1 : 0;
