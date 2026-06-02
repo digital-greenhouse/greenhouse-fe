@@ -67,7 +67,7 @@ function DashboardMenu() {
       return;
     }
 
-    navigate('/login', { replace: true, state: { backgroundLocation: location } });
+    //navigate('/login', { replace: true, state: { backgroundLocation: location } });
   };
 
   const scrollToSection = (sectionId) => {

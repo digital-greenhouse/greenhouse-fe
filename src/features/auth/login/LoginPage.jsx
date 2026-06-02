@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 import { AuthContext } from './AuthContext';
 import { createUser } from '../../../api/users'
-import { getPropertieById } from '../../../api/properties';
 import FeedbackToast from '../../../components/ui/FeedbackToast';
 import ConfirmModal from '../../../components/ui/ConfirmModal';
 import './LoginPage.css';
@@ -124,13 +123,6 @@ function LoginPage() {
       setIsSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    const property = JSON.parse(localStorage.getItem('property'));
-    if (!property && actualLocation.includes('/login')) {
-      navigate('/properties', { replace: true });
-    }
-  }, [navigate]);
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
@@ -263,6 +255,7 @@ function LoginPage() {
                 onChange={(event) =>
                   setLoginData((prev) => ({ ...prev, email: event.target.value }))
                 }
+                maxLength={80}
                 required
               />
             </label>
@@ -279,6 +272,8 @@ function LoginPage() {
                     password: event.target.value.replace(/\s/g, ''),
                   }))
                 }
+                minLength={6}
+                maxLength={50}
                 required
               />
             </label>
@@ -298,6 +293,8 @@ function LoginPage() {
                 onChange={(event) =>
                   setRegisterData((prev) => ({ ...prev, fullName: event.target.value }))
                 }
+                maxLength={80}
+                minLength={3}
                 required
               />
             </label>
@@ -311,6 +308,7 @@ function LoginPage() {
                 onChange={(event) =>
                   setRegisterData((prev) => ({ ...prev, email: event.target.value }))
                 }
+                maxLength={80}
                 required
               />
             </label>
@@ -367,6 +365,7 @@ function LoginPage() {
                   }))
                 }
                 minLength={6}
+                maxLength={50}
                 required
               />
             </label>
@@ -383,6 +382,8 @@ function LoginPage() {
                     confirmPassword: event.target.value.replace(/\s/g, ''),
                   }))
                 }
+                minLength={6}
+                maxLength={50}
                 required
               />
             </label>

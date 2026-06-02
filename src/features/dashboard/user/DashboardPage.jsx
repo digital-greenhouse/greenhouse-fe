@@ -1,14 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DashboardMenu from './components/DashboardMenu';
+import { getPropertyById } from '../../../api/properties';
+import { getParcingRules } from '../../../api/properties';
 import './DashboardPage.css';
 
 function buildPropertyImageSrc(image) {
+  console.log('Construyendo src de imagen para ss:', image);
   if (!image) {
     return '';
   }
   if (typeof image === 'object') {
-    const base64 = image.src || image.base64 || image.data || image.content;
+    const base64 = image.image_data || image.base64 || image.data || image.content;
     if (typeof image.url === 'string' && image.url) {
       return image.url;
     }
@@ -35,7 +40,9 @@ function buildPropertyImageSrc(image) {
 }
 
 function buildGalleryItems(property) {
+  console.log('Construyendo items de galeria para la propiedad:', property);
   const images = Array.isArray(property?.images) ? property.images.slice() : [];
+  console.log('Imagenes obtenidas de la propiedad:', images);
 
   const sortedImages = images.sort((left, right) => {
     const leftCover = left?.is_cover ? 1 : 0;
@@ -65,8 +72,25 @@ function buildGalleryItems(property) {
   });
 }
 
-const property = localStorage.getItem('property') ? JSON.parse(localStorage.getItem('property')) : null;
+function formatPricingDate(dateValue) {
+  if (!dateValue) {
+    return '';
+  }
 
+  const parsedDate = new Date(`${dateValue}T00:00:00`);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return dateValue;
+  }
+
+  const formattedDate = new Intl.DateTimeFormat('es-CO', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(parsedDate);
+
+  return formattedDate.replace('.', '');
+}
 
 const services = [
   {
@@ -113,7 +137,7 @@ const services = [
   {
     id: 'capacidad',
     icon: 'C1',
-    title: `Capacidad ${property?.maxCapacity || 50} Personas`,
+    title: 'Capacidad Personas',
     description: 'Amplios espacios para eventos grandes, reuniones y celebraciones.',
   },
   {
@@ -125,14 +149,16 @@ const services = [
   },
 ];
 
-const pricingPlans = [
+const propertyIdFromStorage = localStorage.getItem('property') ? JSON.parse(localStorage.getItem('property'))?.id || null : null;
+
+
+const pricingPlanTemplates = [
   {
     id: 'semana',
-    name: 'Entre Semana',
     price: '$350.000',
     per: '/ dia',
     featured: false,
-    features: ['Lunes a Jueves', 'Hasta 50 personas', 'Zonas comunes y BBQ', 'Parqueadero'],
+    features: ['Lunes a Jueves', `Hasta ${propertyIdFromStorage.maxCapacity || 50} personas`, 'Zonas comunes y BBQ', 'Parqueadero'],
   },
   {
     id: 'finde',
@@ -141,8 +167,7 @@ const pricingPlans = [
     per: '/ dia',
     featured: true,
     features: [
-      'Viernes a Domingo',
-      'Hasta 100 personas',
+      `Hasta ${propertyIdFromStorage.maxCapacity || 50} personas`,
       'Zona BBQ y eventos',
       'Parqueadero',
       'Senderos naturales',
@@ -155,8 +180,7 @@ const pricingPlans = [
     per: '/ dia',
     featured: false,
     features: [
-      'Festivos y vacaciones',
-      'Hasta 100 personas',
+      `Hasta ${propertyIdFromStorage.maxCapacity || 50} personas`,
       'Todos los servicios',
       'Parqueadero',
       'Zona de eventos',
@@ -169,7 +193,109 @@ function DashboardPage() {
   const actualLocation = globalThis.location.pathname;
   const galleryRef = useRef(null);
   const [galleryVisible, setGalleryVisible] = useState(false);
+  const [pricingRules, setPricingRules] = useState([]);
+  const storedProperty = localStorage.getItem('property') ? JSON.parse(localStorage.getItem('property')) : null;
+  const propertyId = storedProperty?.id ?? storedProperty?.property_id ?? storedProperty?.propertyId ?? storedProperty;
+  const [property, setProperty] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadProperty = async () => {
+      if (!propertyId) {
+        return;
+      }
+
+      try {
+        const response = await getPropertyById(propertyId);
+        const loadedProperty = response?.data?.data || response?.data || null;
+
+        if (mounted) {
+          setProperty(loadedProperty);
+        }
+      } catch (error) {
+        console.error('Error al cargar la propiedad:', error);
+
+        if (mounted) {
+          setProperty(storedProperty);
+        }
+      }
+    };
+
+    loadProperty();
+
+    return () => {
+      mounted = false;
+    };
+  }, [propertyId]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadPricingRules = async () => {
+      if (!propertyId) {
+        return;
+      }
+
+      try {
+        const response = await getParcingRules(propertyId);
+        const rules = response?.data?.data || response?.data || [];
+
+        if (mounted) {
+          setPricingRules(Array.isArray(rules) ? rules : []);
+        }
+      } catch (error) {
+        console.error('Error al cargar las reglas de precio:', error);
+
+        if (mounted) {
+          setPricingRules([]);
+        }
+      }
+    };
+
+    loadPricingRules();
+
+    return () => {
+      mounted = false;
+    };
+  }, [propertyId]);
+
   const galleryItems = buildGalleryItems(property);
+  const heroBackgroundImage = galleryItems.find((item) => item.hasImage)?.image || '';
+  const propertyCapacity = property?.max_capacity ?? property?.maxCapacity ?? 50;
+  const basePricePerNight = Number(
+    property?.base_price_per_night ??
+    property?.basePricePerNight ??
+    storedProperty?.base_price_per_night ??
+    storedProperty?.basePricePerNight ??
+    0
+  );
+
+  const pricingPlans = pricingRules
+    .slice()
+    .sort((left, right) => Number(right?.id ?? 0) - Number(left?.id ?? 0))
+    .slice(0, 3)
+    .map((rule, index) => {
+      const template = pricingPlanTemplates[index] || pricingPlanTemplates[pricingPlanTemplates.length - 1];
+      const modifier = Number(rule?.price_modifier ?? 1);
+      const computedPrice = basePricePerNight * modifier;
+      const formattedPrice = computedPrice > 0
+        ? `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(computedPrice)}`
+        : template.price;
+
+      return {
+        id: rule?.id ?? template.id,
+        name: rule?.name || template.name,
+        price: formattedPrice,
+        per: template.per,
+        featured: template.featured,
+        features: template.features,
+        inicio: rule?.start_date || '',
+        fin: rule?.end_date || '',
+      };
+    });
+
+  const pricingPlansToRender = pricingPlans.length > 0 ? pricingPlans : pricingPlanTemplates;
   useEffect(() => {
     const section = galleryRef.current;
     if (!section) {
@@ -215,14 +341,22 @@ function DashboardPage() {
       <DashboardMenu />
       {actualLocation.includes('/dashboard/booking-actual') ? <Outlet /> : (
         <>
-          <section id="hero" className="hero-section" aria-label="Presentacion principal">
+          <section
+            id="hero"
+            className="hero-section"
+            aria-label="Presentacion principal"
+            style={{ backgroundImage: heroBackgroundImage ? `url("${heroBackgroundImage}")` : 'none' }}
+          >
             <div className="hero-overlay" />
 
             <div className="hero-content">
-              <p className="hero-location">{property?.address || ''}</p>
+              <div className="hero-location-row">
+                <FontAwesomeIcon icon={faLocationDot} />
+                <p className="hero-location">{storedProperty?.address || ''}</p>
+              </div>
               <h1>Tu escape rural te espera</h1>
               <p>
-                {property?.description || ''}
+                {storedProperty?.description || ''}
               </p>
 
               <div className="hero-actions">
@@ -251,6 +385,7 @@ function DashboardPage() {
                     {service.icon}
                   </span>
                   <h3>{service.title}</h3>
+                  {service.id === 'capacidad' && <p>{`Hasta ${propertyCapacity} personas`}</p>}
                   <p>{service.description}</p>
                 </article>
               ))}
@@ -284,7 +419,7 @@ function DashboardPage() {
             </p>
 
             <div className="pricing-grid">
-              {pricingPlans.map((plan) => (
+              {pricingPlansToRender.map((plan) => (
                 <article
                   key={plan.id}
                   className={`pricing-card ${plan.featured ? 'is-featured' : ''}`}
@@ -297,6 +432,13 @@ function DashboardPage() {
                     <strong>{plan.price}</strong>
                     <span>{plan.per}</span>
                   </p>
+
+                  {plan.inicio && plan.fin && (
+                    <p className="pricing-range">
+                      <span>Inicio {formatPricingDate(plan.inicio)}</span>
+                      <span>Fin {formatPricingDate(plan.fin)}</span>
+                    </p>
+                  )}
 
                   <ul>
                     {plan.features.map((feature) => (
@@ -316,10 +458,9 @@ function DashboardPage() {
             <div className="contact-footer__content">
               <div className="contact-footer__columns">
                 <div className="contact-footer__brand">
-                  <p className="contact-footer__brand-title">Villa Encantada La Villa del Amor</p>
+                  <p className="contact-footer__brand-title">{storedProperty?.name || 'Green House'}</p>
                   <p className="contact-footer__brand-copy">
-                    La Villa del Amor en Motavita, Boyacá. Finca recreativa para eventos,
-                    naturaleza y experiencias inolvidables.
+                    {storedProperty?.description || 'Un lugar magico para tus eventos especiales en Motavita, Boyaca.'}
                   </p>
                 </div>
 
@@ -335,14 +476,14 @@ function DashboardPage() {
                   <h3>Contacto</h3>
                   <a href="tel:+573101234567">+57 310 123 4567</a>
                   <a href="mailto:reservas@villaencantada.com">reservas@villaencantada.com</a>
-                  <span>Motavita, Boyacá, Colombia</span>
+                  <span>{storedProperty?.address || 'Motavita, Boyacá, Colombia'}</span>
                 </div>
               </div>
 
               <div className="contact-footer__divider" />
 
               <p className="contact-footer__copyright">
-                2026 Villa Encantada - La Villa del Amor. Todos los derechos reservados.
+                2026 Green House. Todos los derechos reservados.
               </p>
             </div>
           </footer>
