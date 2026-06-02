@@ -1,17 +1,18 @@
 .properties-topbar {
 	display: grid;
-	grid-template-columns: auto 1fr auto;
-	align-items: center;
-	gap: 20px;
-	position: relative;
-	z-index: 30;
-	isolation: isolate;
-	padding: 12px 18px;
-	border: 1px solid rgba(24, 53, 34, 0.08);
-	border-radius: 24px;
-	background: rgba(255, 255, 255, 0.84);
-	box-shadow: var(--prop-shadow-soft);
-	backdrop-filter: blur(18px);
+ 	grid-template-columns: auto 1fr auto;
+ 	align-items: center;
+ 	gap: 20px;
+ 	position: sticky;
+ 	top: 12px;
+ 	z-index: 1000;
+ 	isolation: isolate;
+ 	padding: 12px 18px;
+ 	border: 1px solid rgba(24, 53, 34, 0.08);
+ 	border-radius: 24px;
+ 	background: rgba(255, 255, 255, 0.84);
+ 	box-shadow: var(--prop-shadow-soft);
+ 	backdrop-filter: blur(18px);
 }
 
 .properties-brand {
@@ -268,11 +269,12 @@
 }
 
 @media (max-width: 1077px) {
-	.properties-topbar {
-		position: relative;
-		grid-template-columns: 1fr auto auto;
-		align-items: start;
-	}
+ 	.properties-topbar {
+ 		position: sticky;
+ 		top: 8px;
+ 		grid-template-columns: 1fr auto auto;
+ 		align-items: start;
+ 	}
 
 	.properties-brand {
 		grid-column: 1;

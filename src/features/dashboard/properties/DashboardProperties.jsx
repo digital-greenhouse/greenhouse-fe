@@ -207,9 +207,13 @@ function DashboardProperties({
     onManageProperty,
 }) {
     const handleViewPublicSite = (property) => {
-        localStorage.setItem('property', JSON.stringify(property));
+        const { images, image, ...propertyWithoutImages } = property;
+        localStorage.setItem(
+            'property',
+            JSON.stringify(propertyWithoutImages)
+        );
         window.location.assign('/dashboard');
-     }
+    }
     return (
         <>
             <section className="properties-hero">

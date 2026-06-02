@@ -162,6 +162,17 @@
 	background: linear-gradient(140deg, #357f5b, #1f5e42);
 }
 
+.booking-action-btn--success {
+	background: var(--gradient-primary);
+	color: #fff;
+	border-color: rgba(47, 119, 85, 0.2);
+}
+
+.booking-action-btn--success:hover {
+	color: #fff;
+	background: linear-gradient(140deg, #357f5b, #1f5e42);
+}
+
 .booking-action-btn--danger {
 	background: #fff3ee;
 	color: #9d4b2d;

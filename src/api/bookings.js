@@ -24,3 +24,7 @@ export async function getBookingByUser(UserId) {
     return await apiFactory(true).get(`/api/v1/bookings/user/${UserId}`);
 }
 
+export async function getBookingByPropertyOwner(ownerId) {  
+    return await apiFactory(true).get(`/api/v1/bookings/owner/${ownerId}`);
+}
+

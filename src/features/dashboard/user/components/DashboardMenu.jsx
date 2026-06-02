@@ -67,7 +67,7 @@ function DashboardMenu() {
       return;
     }
 
-    navigate('/login', { replace: true, state: { backgroundLocation: location } });
+    //navigate('/login', { replace: true, state: { backgroundLocation: location } });
   };
 
   const scrollToSection = (sectionId) => {
@@ -95,7 +95,6 @@ function DashboardMenu() {
       return;
     }
     if (location.pathname.includes('/reservar')) {
-      console.log('No se esta en dashboard ni en reservar, no se hace scroll');
       sessionStorage.clear();
     }
 

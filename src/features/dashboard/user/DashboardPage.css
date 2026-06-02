@@ -52,6 +52,12 @@
   color: #f4efe3;
 }
 
+.hero-location-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
 .hero-location {
   margin: 0;
   font-size: 1.1rem !important;
@@ -321,6 +327,25 @@
   margin-left: 0.25rem;
   color: #655f54;
   font-size: 1.1rem;
+}
+
+.pricing-range {
+  margin: 0.65rem 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  text-align: center;
+  color: #6a6258;
+  font-size: 0.94rem;
+  font-weight: 600;
+}
+
+.pricing-range span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .pricing-card ul {

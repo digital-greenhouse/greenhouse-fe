@@ -255,7 +255,7 @@
 	grid-template-columns: auto 1fr;
 	align-items: center;
 	gap: 10px;
-	padding: 0 14px;
+	padding: 0 10px;
 }
 
 .properties-select span {
@@ -266,6 +266,7 @@
 }
 
 .properties-select select {
+	padding: 10px 5px;
 	width: 100%;
 	border: 0;
 	outline: 0;

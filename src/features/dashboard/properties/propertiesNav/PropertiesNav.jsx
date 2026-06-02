@@ -6,6 +6,7 @@ import { getProperties } from '../../../../api/properties';
 import { getPropertiesByOwner } from '../../../../api/properties';
 import DashboardProperties from '../DashboardProperties';
 import NewProperty from '../newProperty/NewProperty';
+import NewRule from '../newRule/NewRule';
 import UserInfo from '../../user/components/userInfo/UserInfo';
 import { jwtDecode } from 'jwt-decode';
 import ConfirmModal from '../../../../components/ui/ConfirmModal';
@@ -180,6 +181,8 @@ function PropertiesNav() {
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const [showUserInfo, setShowUserInfo] = useState(false);
+    const [showPricingRuleModal, setShowPricingRuleModal] = useState(false);
+    const [selectedPropertyForRule, setSelectedPropertyForRule] = useState(null);
     const [feedback, setFeedback] = useState({ type: '', message: '' });
     const authActionsRef = useRef(null);
     const [propertiesRefreshKey, setPropertiesRefreshKey] = useState(0);
@@ -414,7 +417,7 @@ function PropertiesNav() {
     const sectionTitle = sectionMode === 'explore' ? 'Explorar propiedades' : 'Mis propiedades';
     const sectionCopy =
         sectionMode === 'explore'
-            ? 'Explora propiedades que no están registradas como tuyas desde el mismo panel.'
+            ? 'Descubre propiedades disponibles para tu próxima reserva.'
             : 'Gestiona la información, disponibilidad y reservas de tus propiedades.';
     const handleExploreProperties = () => {
         setSectionMode('explore');
@@ -439,6 +442,13 @@ function PropertiesNav() {
 
     const handleManageProperty = (property) => {
         localStorage.setItem('property', JSON.stringify(property));
+        setSelectedPropertyForRule(property);
+        setShowPricingRuleModal(true);
+    };
+
+    const handleClosePricingRuleModal = () => {
+        setShowPricingRuleModal(false);
+        setSelectedPropertyForRule(null);
     };
 
     const userOption = () => {
@@ -740,6 +750,12 @@ function PropertiesNav() {
                 show={showUserInfo}
                 onHide={() => setShowUserInfo(false)}
                 user={currentUser}
+            />
+
+            <NewRule
+                show={showPricingRuleModal}
+                property={selectedPropertyForRule}
+                onHide={handleClosePricingRuleModal}
             />
 
             <FeedbackToast
