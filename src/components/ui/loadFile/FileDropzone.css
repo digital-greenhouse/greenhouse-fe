@@ -44,3 +44,12 @@
   margin: 0;
   word-break: break-all;
 }
+
+.file-preview-list {
+  margin: 0.65rem 0 0;
+  padding-left: 1rem;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #4b453b;
+}
