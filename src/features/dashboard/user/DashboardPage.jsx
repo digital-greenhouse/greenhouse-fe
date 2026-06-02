@@ -155,7 +155,7 @@ const pricingPlanTemplates = [
     price: '$350.000',
     per: '/ dia',
     featured: false,
-    features: ['Lunes a Jueves', `Hasta ${propertyIdFromStorage.maxCapacity || 50} personas`, 'Zonas comunes y BBQ', 'Parqueadero'],
+    features: ['Lunes a Jueves', `Hasta ${propertyIdFromStorage?.maxCapacity || 50} personas`, 'Zonas comunes y BBQ', 'Parqueadero'],
   },
   {
     id: 'finde',
@@ -164,7 +164,7 @@ const pricingPlanTemplates = [
     per: '/ dia',
     featured: true,
     features: [
-      `Hasta ${propertyIdFromStorage.maxCapacity || 50} personas`,
+      `Hasta ${propertyIdFromStorage?.maxCapacity || 50} personas`,
       'Zona BBQ y eventos',
       'Parqueadero',
       'Senderos naturales',
@@ -177,7 +177,7 @@ const pricingPlanTemplates = [
     per: '/ dia',
     featured: false,
     features: [
-      `Hasta ${propertyIdFromStorage.maxCapacity || 50} personas`,
+      `Hasta ${propertyIdFromStorage?.maxCapacity || 50} personas`,
       'Todos los servicios',
       'Parqueadero',
       'Zona de eventos',
