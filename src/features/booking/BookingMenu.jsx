@@ -6,6 +6,7 @@ import { faCalendarDays, faHouse, faMagnifyingGlass, faXmark, faChevronDown, faS
 import "./BookingMenu.css";
 import "./Filters.css";
 import MyBooking from './MyBooking';
+import MyPropertyBooking from './MyPropertyBooking';
 const BOOKING_MENU_OPTIONS = {
     MADE_BY_ME: 'madeByMe',
     ON_MY_PROPERTY: 'onMyProperty',
@@ -241,7 +242,7 @@ function BokingMenu({
                 >
                     <FontAwesomeIcon className='icon-sliders' icon={faSliders} />
                     Filtros
-                    
+
                 </button>
             </div>
 
@@ -344,9 +345,13 @@ function BokingMenu({
                         selectedDateMode={selectedDateMode}
                     />
                 ) : (
-                    <div className="booking-placeholder">
-                        Aqui veras las reservas recibidas en tus propiedades.
-                    </div>
+                    <MyPropertyBooking
+                        statusLabels={statusLabels}
+                        searchQuery={searchQuery}
+                        selectedStatus={selectedStatus}
+                        selectedDate={selectedDate}
+                        selectedDateMode={selectedDateMode}
+                    />
                 )}
             </section>
         </main>

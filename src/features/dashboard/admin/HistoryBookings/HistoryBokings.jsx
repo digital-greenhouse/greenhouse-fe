@@ -148,7 +148,7 @@ function HistoryBokings() {
 		},
 		{
 			name: 'Propiedad',
-			selector: (row) => row?.property_id,
+			selector: (row) => row?.property_name||'No disponible',
 			sortable: true,
 			grow: 0.5,
 		},

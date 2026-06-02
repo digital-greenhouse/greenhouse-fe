@@ -10,3 +10,7 @@ export async function getPayment(idPayment) {
     });
 }
 
+export async function confirmPayment(paymentId, data) {
+    return await apiFactory(true).post(`/api/v1/payments/${paymentId}/verify`, data);
+}
+

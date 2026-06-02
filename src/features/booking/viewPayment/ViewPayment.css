@@ -1,6 +1,12 @@
-.view-payment-modal{
-   overflow: hidden;
+.view-payment-modal {
+  margin-top: 20px;
+  height: 95%;
+}
 
+.view-payment-modal .modal-dialog {
+  min-height: calc(100vh - 1.5rem);
+  display: flex;
+  align-items: center;
 }
 
 .view-payment-modal .modal-content {
@@ -9,6 +15,7 @@
   background: linear-gradient(180deg, #fffdf8 0%, #f5efe3 100%);
   box-shadow: 0 28px 60px rgba(25, 16, 4, 0.24);
   overflow: hidden;
+  width: 100%;
 }
 
 .view-payment-modal .modal-header {

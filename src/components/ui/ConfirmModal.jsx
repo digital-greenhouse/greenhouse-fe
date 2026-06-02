@@ -20,6 +20,7 @@ function ConfirmModal({
       onHide={onCancel}
       centered
       backdrop="static"
+      backdropClassName="confirm-modal-backdrop"
       className="confirm-modal"
     >
       <Modal.Header closeButton>
