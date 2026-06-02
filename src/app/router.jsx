@@ -7,6 +7,7 @@ import DashboardAdminMenu from '../features/dashboard/admin/DashboardAdminMenu';
 import BokingMenu from '../features/booking/BookingMenu';
 import HistoryBokings from '../features/dashboard/admin/HistoryBookings/HistoryBokings';
 import PropertiesNav from '../features/dashboard/properties/propertiesNav/PropertiesNav';
+import NewProperty from '../features/dashboard/properties/newProperty/NewProperty';
 
 function AppRoutes({ location, includeLoginRoute }) {
   return (
@@ -24,6 +25,7 @@ function AppRoutes({ location, includeLoginRoute }) {
       <Route path="*" element={<h2>404 Not Found</h2>} />
       <Route path="/properties" element={<PropertiesNav />} >
         <Route path="reservas" element={<BokingMenu />} />
+        <Route path="new" element={<NewProperty />} />  
       </Route>
     </Routes>
 

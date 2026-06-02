@@ -210,6 +210,22 @@
   transform: scale(1.01);
 }
 
+.gallery-card__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.45), transparent 42%),
+    linear-gradient(145deg, #d8e4d7, #eef4ec);
+  color: #2d7a4f;
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
 .gallery-card.main {
   grid-row: 1 / span 2;
   animation-delay: 0.05s;

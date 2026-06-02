@@ -8,11 +8,13 @@ function GenericFileDropzone({
   getInputProps,
   isDragActive,
   file,
+  files,
   disabled = false,
   accept = '*',
   emptyLabel = 'Haga clic para cargar o arrastre y suelte',
   activeLabel = 'Suelta el archivo aqui...',
 }) {
+  const previewFiles = Array.isArray(files) ? files : file ? [file] : [];
   const rootProps = getRootProps({
     onClick: (event) => disabled && event.preventDefault(),
     onDrop: (event) => {
@@ -43,11 +45,22 @@ function GenericFileDropzone({
 
   return (
     <div {...rootProps} className={`file-dropzone ${disabled ? 'disabled' : ''}`}>
-      <input {...getInputProps({ accept })} disabled={disabled} />
+      <input {...getInputProps({ accept })} disabled={disabled} style={{ display: 'none' }} />
 
-      {file ? (
+      {previewFiles.length > 0 ? (
         <div className="file-preview">
-          <p className="file-name">{`Archivo: ${file.name}`}</p>
+          <p className="file-name">
+            {previewFiles.length === 1
+              ? `Archivo: ${previewFiles[0].name}`
+              : `${previewFiles.length} archivos seleccionados`}
+          </p>
+          {previewFiles.length > 1 && (
+            <ul className="file-preview-list">
+              {previewFiles.map((item) => (
+                <li key={`${item.name}-${item.size}`}>{item.name}</li>
+              ))}
+            </ul>
+          )}
         </div>
       ) : (
         <div className="overlay-text">
@@ -68,6 +81,13 @@ GenericFileDropzone.propTypes = {
     type: PropTypes.string,
     size: PropTypes.number,
   }),
+  files: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      type: PropTypes.string,
+      size: PropTypes.number,
+    })
+  ),
   disabled: PropTypes.bool,
   accept: PropTypes.string,
   emptyLabel: PropTypes.string,

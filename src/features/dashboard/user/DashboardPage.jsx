@@ -3,32 +3,70 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import DashboardMenu from './components/DashboardMenu';
 import './DashboardPage.css';
 
-const galleryItems = [
-  {
-    id: 'main',
-    alt: 'Vista de montanas de la villa',
-    image:
-      'https://images.unsplash.com/photo-1501554728187-ce583db33af7?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'interior',
-    alt: 'Sala interior de la villa',
-    image:
-      'https://images.unsplash.com/photo-1616046229478-9901c5536a45?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    id: 'pool',
-    alt: 'Piscina con vista al paisaje',
-    image:
-      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    id: 'terrace',
-    alt: 'Terraza iluminada de noche',
-    image:
-      'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1400&q=80',
-  },
-];
+function buildPropertyImageSrc(image) {
+  if (!image) {
+    return '';
+  }
+  if (typeof image === 'object') {
+    const base64 = image.src || image.base64 || image.data || image.content;
+    if (typeof image.url === 'string' && image.url) {
+      return image.url;
+    }
+    if (typeof base64 !== 'string' || !base64) {
+      return '';
+    }
+
+    if (base64.startsWith('data:')) {
+      return base64;
+    }
+
+    const mimeType = image.mime_type || image.mimeType || 'image/png';
+    return `data:${mimeType};base64,${base64}`;
+  }
+  if (typeof image === 'string') {
+    if (image.startsWith('data:') || image.startsWith('http')) {
+      return image;
+    }
+
+    return `data:image/png;base64,${image}`;
+  }
+
+  return '';
+}
+
+function buildGalleryItems(property) {
+  const images = Array.isArray(property?.images) ? property.images.slice() : [];
+
+  const sortedImages = images.sort((left, right) => {
+    const leftCover = left?.is_cover ? 1 : 0;
+    const rightCover = right?.is_cover ? 1 : 0;
+
+    if (leftCover !== rightCover) {
+      return rightCover - leftCover;
+    }
+
+    const leftOrder = Number(left?.sort_order ?? Number.MAX_SAFE_INTEGER);
+    const rightOrder = Number(right?.sort_order ?? Number.MAX_SAFE_INTEGER);
+
+    return leftOrder - rightOrder;
+  });
+
+  const gallerySlots = ['main', 'interior', 'pool', 'terrace'];
+
+  return gallerySlots.map((slot, index) => {
+    const image = sortedImages[index];
+    const imageSrc = buildPropertyImageSrc(image);
+    return {
+      id: slot,
+      alt: image?.alt_text || property?.name || 'Propiedad',
+      image: imageSrc,
+      hasImage: Boolean(imageSrc),
+    };
+  });
+}
+
+const property = localStorage.getItem('property') ? JSON.parse(localStorage.getItem('property')) : null;
+
 
 const services = [
   {
@@ -75,7 +113,7 @@ const services = [
   {
     id: 'capacidad',
     icon: 'C1',
-    title: 'Capacidad 100 Personas',
+    title: `Capacidad ${property?.maxCapacity || 50} Personas`,
     description: 'Amplios espacios para eventos grandes, reuniones y celebraciones.',
   },
   {
@@ -131,7 +169,7 @@ function DashboardPage() {
   const actualLocation = globalThis.location.pathname;
   const galleryRef = useRef(null);
   const [galleryVisible, setGalleryVisible] = useState(false);
-  const property = localStorage.getItem('property') ? JSON.parse(localStorage.getItem('property')) : null;
+  const galleryItems = buildGalleryItems(property);
   useEffect(() => {
     const section = galleryRef.current;
     if (!section) {
@@ -226,8 +264,14 @@ function DashboardPage() {
             aria-label="Galeria principal de la villa"
           >
             {galleryItems.map((item) => (
-              <article key={item.id} className={`gallery-card ${item.id}`}>
-                <img src={item.image} alt={item.alt} loading="lazy" />
+              <article key={item.id} className={`gallery-card ${item.id} ${item.hasImage ? 'has-image' : 'is-empty'}`}>
+                {item.hasImage ? (
+                  <img src={item.image} alt={item.alt} loading="lazy" />
+                ) : (
+                  <div className="gallery-card__placeholder" aria-hidden="true">
+                    <span>{item.id}</span>
+                  </div>
+                )}
               </article>
             ))}
           </section>

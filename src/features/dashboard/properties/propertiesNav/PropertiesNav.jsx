@@ -5,9 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getProperties } from '../../../../api/properties';
 import { getPropertiesByOwner } from '../../../../api/properties';
 import DashboardProperties from '../DashboardProperties';
+import NewProperty from '../newProperty/NewProperty';
 import UserInfo from '../../user/components/userInfo/UserInfo';
 import { jwtDecode } from 'jwt-decode';
 import ConfirmModal from '../../../../components/ui/ConfirmModal';
+import FeedbackToast from '../../../../components/ui/FeedbackToast';
 import {
     extractRoleNames,
     getDisplayUserName,
@@ -178,7 +180,9 @@ function PropertiesNav() {
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const [showUserInfo, setShowUserInfo] = useState(false);
+    const [feedback, setFeedback] = useState({ type: '', message: '' });
     const authActionsRef = useRef(null);
+    const [propertiesRefreshKey, setPropertiesRefreshKey] = useState(0);
     const [userData, setUserData] = useState({
         email: '',
         roles: [],
@@ -221,6 +225,28 @@ function PropertiesNav() {
             roles: [],
         });
     };
+
+    useEffect(() => {
+        const handlePropertiesUpdated = () => {
+            setPropertiesRefreshKey((currentValue) => currentValue + 1);
+        };
+
+        const handlePropertyFeedback = (event) => {
+            const detail = event.detail || {};
+            setFeedback({
+                type: detail.type || 'info',
+                message: detail.message || '',
+            });
+        };
+
+        globalThis.addEventListener('properties-updated', handlePropertiesUpdated);
+        globalThis.addEventListener('property-feedback', handlePropertyFeedback);
+
+        return () => {
+            globalThis.removeEventListener('properties-updated', handlePropertiesUpdated);
+            globalThis.removeEventListener('property-feedback', handlePropertyFeedback);
+        };
+    }, []);
 
     useEffect(() => {
         let mounted = true;
@@ -272,7 +298,7 @@ function PropertiesNav() {
             mounted = false;
             window.removeEventListener('resize', handleResize);
         };
-    }, [sectionMode, currentUserId]);
+    }, [sectionMode, currentUserId, propertiesRefreshKey]);
 
     useEffect(() => {
         syncAuthSession();
@@ -390,20 +416,16 @@ function PropertiesNav() {
         sectionMode === 'explore'
             ? 'Explora propiedades que no están registradas como tuyas desde el mismo panel.'
             : 'Gestiona la información, disponibilidad y reservas de tus propiedades.';
-    const [isBookingsRoute, setIsBookingsRoute] = useState(false);
-
-
-
     const handleExploreProperties = () => {
         setSectionMode('explore');
         setIsMenuOpen(false);
-        setIsBookingsRoute(false);
+        navigate('/properties');
     };
 
     const handleOwnedProperties = () => {
         setSectionMode('owned');
         setIsMenuOpen(false);
-        setIsBookingsRoute(false);
+        navigate('/properties');
     };
 
     const handleToggleMenu = () => {
@@ -426,12 +448,13 @@ function PropertiesNav() {
 
     const adminOption = () => {
         setProfileMenuOpen(false);
+        setIsMenuOpen(false);
         navigate('/admin/history-bookings');
     };
 
     const myBookingsOption = () => {
-        setIsBookingsRoute(true);
         setProfileMenuOpen(false);
+        setIsMenuOpen(false);
         navigate('/properties/reservas');
     };
 
@@ -449,7 +472,6 @@ function PropertiesNav() {
         setShowUserInfo(false);
         setShowLogoutConfirm(false);
         setSectionMode('explore');
-        setIsBookingsRoute(false);
         navigate('/properties', {
             replace: true,
             state: {
@@ -479,7 +501,14 @@ function PropertiesNav() {
             ? 'Mostrando 1 a 1 de 1 propiedad'
             : `Mostrando 1 a ${visibleProperties.length} de ${visibleProperties.length} propiedades`;
 
-    
+    const handeleShowViewNewProperty = () => {
+        setProfileMenuOpen(false);
+        setIsMenuOpen(false);
+        navigate('/properties/new');
+         
+    };
+
+    const isPropertiesChildRoute = location.pathname.startsWith('/properties/') && location.pathname !== '/properties';
 
     return (
         <main className="properties-dashboard">
@@ -531,15 +560,13 @@ function PropertiesNav() {
                     )}
 
                     <div className="properties-topbar__mobile-actions" aria-label="Acciones de propiedades">
-                        {hasAuthToken && (
-                            <button type="button" className="properties-topbar__publish" onClick={handleMenuLinkClick}>
-                                <FontAwesomeIcon icon={faPlus} />
-                                Publicar propiedad
-                            </button>
-                        )}
-
                         {hasAuthToken ? (
                             <>
+                                <button type="button" className="properties-topbar__publish" onClick={handeleShowViewNewProperty}>
+                                    <FontAwesomeIcon icon={faPlus} />
+                                    Publicar propiedad
+                                </button>
+
                                 <button
                                     type="button"
                                     className="properties-topbar__profile properties-topbar__mobile-user"
@@ -561,7 +588,7 @@ function PropertiesNav() {
                                 {isSuperAdmin && (
                                     <button
                                         type="button"
-                                        className="properties-topbar__mobile-option"
+                                        className="properties-topbar__mobile-option properties-topbar__mobile-option--admin"
                                         onClick={() => {
                                             handleMenuLinkClick();
                                             adminOption();
@@ -573,7 +600,7 @@ function PropertiesNav() {
 
                                 <button
                                     type="button"
-                                    className="properties-topbar__mobile-option"
+                                    className="properties-topbar__mobile-option properties-topbar__mobile-option--bookings"
                                     onClick={() => {
                                         handleMenuLinkClick();
                                         myBookingsOption();
@@ -609,7 +636,7 @@ function PropertiesNav() {
                 <div className="properties-topbar__actions" ref={authActionsRef}>
                     {hasAuthToken && (
                         <>
-                            <button type="button" className="properties-topbar__publish">
+                            <button type="button" className="properties-topbar__publish" onClick={handeleShowViewNewProperty}>
                                 <FontAwesomeIcon icon={faPlus} />
                                 Publicar propiedad
                             </button>
@@ -674,7 +701,7 @@ function PropertiesNav() {
                     )}
                 </div>
             </header>
-            {isBookingsRoute ? (
+            {isPropertiesChildRoute ? (
                 <Outlet />
             ) : (
                 <DashboardProperties
@@ -713,6 +740,13 @@ function PropertiesNav() {
                 show={showUserInfo}
                 onHide={() => setShowUserInfo(false)}
                 user={currentUser}
+            />
+
+            <FeedbackToast
+                show={Boolean(feedback.message)}
+                type={feedback.type}
+                message={feedback.message}
+                onClose={() => setFeedback({ type: '', message: '' })}
             />
 
         </main>
