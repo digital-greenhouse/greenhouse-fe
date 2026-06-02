@@ -9,8 +9,6 @@ import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 
 
 
-
-
 function AdminDashboard() {
   const [userData, setUserData] = useState({ name: '', lastName: '', email: '' });
   const [logout, setLogout] = useState(false);

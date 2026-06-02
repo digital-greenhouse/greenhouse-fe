@@ -1,5 +1,6 @@
 import { useEffect, useState, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode';
 import { AuthContext } from './AuthContext';
 import { createUser } from '../../../api/users'
 import { getPropertieById } from '../../../api/properties';
@@ -15,6 +16,8 @@ function LoginPage() {
   const hasBackgroundApp = Boolean(location.state?.backgroundLocation);
   const backgroundLocation = location.state?.backgroundLocation;
   const requestedPath = location.state?.redirectTo;
+  const actualLocation = backgroundLocation?.pathname || location.pathname;
+  console.log('LoginPage rendered with location:', actualLocation);
   const nextPath = requestedPath || (backgroundLocation
     ? `${backgroundLocation.pathname || '/dashboard'}${backgroundLocation.search || ''}${backgroundLocation.hash || ''}`
     : '/dashboard');
@@ -121,6 +124,13 @@ function LoginPage() {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    const property = JSON.parse(localStorage.getItem('property'));
+    if (!property && actualLocation.includes('/login')) {
+      navigate('/properties', { replace: true });
+    }
+  }, [navigate]);
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();

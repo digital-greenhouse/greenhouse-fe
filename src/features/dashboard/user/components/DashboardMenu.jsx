@@ -129,11 +129,6 @@ function DashboardMenu() {
           setHasAuthToken(true);
         }
 
-      } else if (property !== null) {
-        // allow visiting the dashboard in a public (unauthenticated) mode when a property is selected
-        setHasAuthToken(false);
-        setUserData({ email: '', roles: [] });
-
       } else {
         // no property and no valid session — clear and go to login
         clearSession();
@@ -150,6 +145,8 @@ function DashboardMenu() {
       }
     }
   }, [hasAuthToken, navigate]);
+
+
 
   const loginOption = () => {
     navigate('/login', { state: { backgroundLocation: location } });
