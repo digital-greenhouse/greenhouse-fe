@@ -257,11 +257,11 @@ function HistoryBokings() {
 					selected <= checkoutDate) ||
 
 				(selectedDateMode === 'month' &&
-					checkinDate.getMonth() === selected.getMonth() + 1 &&
+					checkinDate.getMonth() === selected.getMonth() 	&&
 					checkinDate.getFullYear() === selected.getFullYear()) ||
 
 				(selectedDateMode === 'year' &&
-					checkinDate.getFullYear() === selected.getFullYear() + 1)
+					checkinDate.getFullYear() === selected.getFullYear() )
 			);
 		});
 
