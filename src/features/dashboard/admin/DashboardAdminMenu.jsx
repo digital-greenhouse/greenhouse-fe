@@ -149,9 +149,17 @@ function AdminDashboard() {
             <div className="section-1">
               <Nav.Link className="profile-header" style={{ padding: 0 }} >
                 <div className="title-profile">
-                  <h5 className="profile-title">Villa Encantada</h5>
-                  <p className="profile-subtitle">La Villa del Amor</p>
+                  <h5 className="profile-title">Green House</h5>
+                  <p className="profile-subtitle">Gestión rural inteligente</p>
                 </div>
+              </Nav.Link>
+
+               <Nav.Link
+                className={`nav-item-custom ${isSelectedRoute('/admin/reports') ? 'is-active' : ''}`}
+                onClick={() => handleNavigation('/admin/reports')}
+              >
+                <FontAwesomeIcon className="icon-margin" icon={faChartColumn} />
+                Reportes
               </Nav.Link>
 
               <Nav.Link
@@ -162,13 +170,7 @@ function AdminDashboard() {
                 Reservas
               </Nav.Link>
 
-              <Nav.Link
-                className={`nav-item-custom ${isSelectedRoute('/admin/reports') ? 'is-active' : ''}`}
-                onClick={() => handleNavigation('/admin/reports')}
-              >
-                <FontAwesomeIcon className="icon-margin" icon={faChartColumn} />
-                Reportes
-              </Nav.Link>
+             
             </div>
 
             <div className="section-2">
