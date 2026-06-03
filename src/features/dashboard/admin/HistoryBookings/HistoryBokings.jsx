@@ -19,7 +19,6 @@ const statusLabels = {
 	CANCELLED: 'Cancelada',
 	COMPLETED: 'Completada',
 	PENDING_VERIFICATION: 'Pendiente de verificación',
-	VERIFIED: 'Verificada',
 };
 
 const YEAR_MIN = 1900;
@@ -124,6 +123,12 @@ function formatDate(value) {
 
 function resolveStatus(row) {
 	return statusLabels[row?.payment_status || row?.status] || row?.payment_status || row?.status || 'No disponible';
+}
+
+function resolveBookingStateKey(row) {
+	return !row?.payment_status || row?.status === 'CANCELLED' || row?.status === 'CONFIRMED'
+		? row?.status
+		: row?.payment_status;
 }
 
 function normalizeToDateValue(value) {
@@ -232,45 +237,39 @@ function HistoryBokings() {
 
 	const filteredBookings = useMemo(() => {
 		const normalizedQuery = searchQuery.trim().toLowerCase();
+		const selectedState = bookings.filter((record) => {
+			const status = resolveBookingStateKey(record) || '';
 
-		return bookings.filter((booking) => {
-			const statusKey = booking?.payment_status || booking?.status || '';
-			if (selectedStatus && statusKey !== selectedStatus) {
-				return false;
-			}
+			return !selectedStatus || status === selectedStatus;
+		});
 
-			if (selectedDate) {
-				const checkIn = normalizeToDateValue(booking?.check_in_date);
-				const checkOut = normalizeToDateValue(booking?.check_out_date);
+		const selectedDateRecords = selectedState.filter((record) => {
+			if (!selectedDate) return true;
 
-				if (selectedDateMode === 'day') {
-					if (checkIn !== selectedDate && checkOut !== selectedDate) {
-						return false;
-					}
-				}
+			const checkinDate = new Date(record?.check_in_date);
+			const checkoutDate = new Date(record?.check_out_date);
+			const selected = new Date(selectedDate);
+			selected.setDate(selected.getDate() + 1);
 
-				if (selectedDateMode === 'month') {
-					const selectedMonth = selectedDate.slice(0, 7);
-					const checkInMonth = checkIn.slice(0, 7);
-					const checkOutMonth = checkOut.slice(0, 7);
-					if (checkInMonth !== selectedMonth && checkOutMonth !== selectedMonth) {
-						return false;
-					}
-				}
+			return (
+				(selectedDateMode === 'day' &&
+					selected >= checkinDate &&
+					selected <= checkoutDate) ||
 
-				if (selectedDateMode === 'year') {
-					const checkInYear = checkIn.slice(0, 4);
-					const checkOutYear = checkOut.slice(0, 4);
-					if (checkInYear !== selectedDate && checkOutYear !== selectedDate) {
-						return false;
-					}
-				}
-			}
+				(selectedDateMode === 'month' &&
+					checkinDate.getMonth() === selected.getMonth() + 1 &&
+					checkinDate.getFullYear() === selected.getFullYear()) ||
 
-			if (!normalizedQuery) {
-				return true;
-			}
+				(selectedDateMode === 'year' &&
+					checkinDate.getFullYear() === selected.getFullYear() + 1)
+			);
+		});
 
+		if (!normalizedQuery) {
+			return selectedDateRecords;
+		}
+
+		return selectedDateRecords.filter((booking) => {
 			const searchableFields = [
 				String(booking?.id ?? ''),
 				booking?.property_name || '',
@@ -337,7 +336,7 @@ function HistoryBokings() {
 		},
 		{
 			name: 'Estado',
-			selector: (row) => resolveStatus(row),
+			selector: (row) => statusLabels[resolveBookingStateKey(row)] || resolveBookingStateKey(row) || 'No disponible',
 			sortable: true,
 			grow: 0.8,
 		},
