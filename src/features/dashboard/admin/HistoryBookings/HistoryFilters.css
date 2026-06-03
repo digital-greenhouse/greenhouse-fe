@@ -1,0 +1,631 @@
+/* reservation-filters.css */
+
+/* Scope variables to the filters components to avoid global overrides */
+.reservation-filters-root,
+.filters-desktop,
+.mobile-filter-modal,
+.mobile-actions,
+.filter-placeholder,
+.reservation-tabs {
+    --fg: #1f3942;
+    --muted: #617077;
+    --accent: #2f7755;
+    --input-h: 24px; /* compact */
+    --label-size: 12px;
+    --control-size: 13px;
+    --icon-size: 19px;
+    --shadow-1: 0 6px 18px rgba(16,34,43,0.06);
+}
+
+/* Tabs (kept for compatibility) */
+.reservation-tabs {
+    gap: 12px; /* tighter */
+    width: 100%;
+    max-width: 700px;
+    padding: 10px; /* reduced */
+    margin-bottom: 28px;
+}
+
+.tab {
+    flex: 1;
+    height: 56px;
+    border: none;
+    border-radius: 14px;
+    background: transparent;
+    font-size: 16px;
+    gap: 10px;
+    cursor: pointer;
+    color: var(--fg);
+}
+
+
+/* =========================
+   DESKTOP FILTERS
+   Uses the classnames present in BookingMenu.jsx
+========================= */
+
+.filters-desktop {
+    width: 100%;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    background: #ffffff;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-1);
+    border: 1px solid rgba(16, 34, 43, 0.04);
+}
+
+.search-box {
+    flex: 1.6;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #ffffff;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    padding: 0 1px;
+    padding-left: 14px;
+    height: 56px;
+}
+
+.search-box .icon-search {
+    font-size: var(--icon-size);
+    color: var(--accent);
+}
+
+/* clear button inside search-box */
+.search-clear-btn {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.search-clear-btn .icon-Xmark,
+.icon-Xmark {
+    font-size: var(--icon-size);
+    color: #9b6b63; /* matches clear button color elsewhere */
+}
+
+.search-box input {
+    border: none;
+    width: 100%;
+    font-size: var(--control-size);
+    color: var(--fg);
+    height: var(--input-h);
+    background: transparent;
+}
+
+/* Each direct child div inside .filters-desktop is a filter block (label + select) */
+.filters-desktop>div:not(.search-box) {
+    min-width: 170px;
+    background: #ffffff;
+    border: 1px solid #eef1f0;
+    border-radius: 8px;
+    padding: 4px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 4px 10px rgba(16, 34, 43, 0.03);
+    position: relative;
+    /* for chevron */
+}
+
+.filters-desktop>div:not(.search-box) span {
+    font-size: var(--label-size);
+    color: var(--muted);
+}
+
+.filters-desktop>div:not(.search-box) select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: var(--input-h);
+    padding: 0px 12px 8px 10px;
+    padding-right: 38px;
+    border-radius: 10px;
+    border: none;
+    background: #ffffff;
+    font-size: var(--control-size);
+    color: var(--fg);
+}
+
+/* date inputs styled like selects inside desktop filters */
+.filters-desktop>div:not(.search-box) input[type="date"],
+.filters-desktop>div:not(.search-box) input[type="month"],
+.filters-desktop>div:not(.search-box) input[type="number"],
+.filters-desktop>div:not(.search-box) input[type="text"] {
+    width: 100%;
+    height: var(--input-h);
+    padding: 0px 12px 8px 10px;
+    padding-right: 38px;
+    border-radius: 10px;
+    border: none;
+    background: #ffffff;
+    font-size: var(--control-size);
+    color: var(--fg);
+    font-family: inherit;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Keep number input visually clean and aligned with the other controls */
+.filters-desktop>div:not(.search-box) input[type="number"]::-webkit-outer-spin-button,
+.filters-desktop>div:not(.search-box) input[type="number"]::-webkit-inner-spin-button,
+.mobile-filter-modal .modal-content input[type="number"]::-webkit-outer-spin-button,
+.mobile-filter-modal .modal-content input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.filters-desktop>div:not(.search-box) input[type="number"],
+.mobile-filter-modal .modal-content input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* Remove focus outline/shadow on date inputs (desktop + mobile) */
+.filters-desktop>div:not(.search-box) input[type="date"]:focus,
+.filters-desktop>div:not(.search-box) input[type="date"]:focus-visible,
+.filters-desktop>div:not(.search-box) input[type="month"]:focus,
+.filters-desktop>div:not(.search-box) input[type="month"]:focus-visible,
+.filters-desktop>div:not(.search-box) input[type="number"]:focus,
+.filters-desktop>div:not(.search-box) input[type="number"]:focus-visible,
+.filters-desktop>div:not(.search-box) input[type="text"]:focus,
+.filters-desktop>div:not(.search-box) input[type="text"]:focus-visible,
+.mobile-filter-modal .modal-content input[type="date"]:focus,
+.mobile-filter-modal .modal-content input[type="date"]:focus-visible,
+.mobile-filter-modal .modal-content input[type="month"]:focus,
+.mobile-filter-modal .modal-content input[type="month"]:focus-visible,
+.mobile-filter-modal .modal-content input[type="number"]:focus,
+.mobile-filter-modal .modal-content input[type="number"]:focus-visible,
+.mobile-filter-modal .modal-content input[type="text"]:focus,
+.mobile-filter-modal .modal-content input[type="text"]:focus-visible {
+    outline: none;
+    box-shadow: none;
+    border-color: transparent;
+}
+
+/* Remove focus/active borders/outlines on selects (desktop and mobile) */
+.filters-desktop>div:not(.search-box) select:focus,
+.filters-desktop>div:not(.search-box) select:active,
+.mobile-filter-modal select:focus,
+.mobile-filter-modal .modal-content select:focus,
+.mobile-filter-modal select:active,
+.mobile-filter-modal .modal-content select:active {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+/* Also remove default focus outline on search input */
+.search-box input:focus,
+.mobile-search input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* chevron on the right of each filter block */
+.filters-desktop>div:not(.search-box)::after {
+    content: '';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b4f48'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-size: 14px 14px;
+}
+
+/* hide chevron for specific filter blocks (status and date) */
+.filters-desktop>div.filter-status::after,
+.filters-desktop>div.filter-date::after {
+    display: none;
+}
+
+/* remove border for selects inside mobile modal as well */
+.mobile-filter-modal select,
+.mobile-filter-modal .modal-content select {
+    border: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding-right: 12px;
+}
+
+.clear-btn {
+    height: 42px;
+    padding: 0 18px;
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid rgba(16, 34, 43, 0.06);
+    cursor: pointer;
+    font-weight: 700;
+    color: #3b4f48;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.clear-btn::before {
+    content: '\2715';
+    display: inline-block;
+    font-size: 14px;
+    line-height: 1;
+    color: #9b6b63;
+}
+
+/* placeholder block used when no results */
+.filter-placeholder {
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #475569;
+    padding: 16px 18px;
+    font-size: 14px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+.mobile-actions {
+    display: none;
+}
+
+.mobile-filter-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+}
+
+.mobile-filter-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* modal sheet used by JSX: .mobile-filter-modal */
+.mobile-filter-modal {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    transform: translateY(100%);
+    transition: 0.3s;
+}
+
+.mobile-filter-overlay.show .mobile-filter-modal {
+    transform: translateY(0);
+}
+
+/* mobile modal header (scoped to mobile-filter-modal) */
+.mobile-filter-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.mobile-filter-modal .modal-header h3 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.mobile-filter-modal .modal-header button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.mobile-filter-modal .modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* mobile modal visual tweaks to match the reference image */
+
+.mobile-filter-modal::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 72px;
+    height: 6px;
+    background: #e9e9e9;
+    border-radius: 6px;
+}
+
+.mobile-filter-modal .modal-content>div {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #edf0ef;
+    border-radius: 12px;
+    padding: 10px 12px;
+}
+
+.mobile-filter-modal .modal-content>div span {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+
+.mobile-filter-modal .modal-content>div.filter-date input[type="date"],
+.mobile-filter-modal .modal-content>div.filter-date input[type="month"],
+.mobile-filter-modal .modal-content>div.filter-date input[type="text"] {
+    width: 100%;
+    height: 44px;
+    border-radius: 10px;
+    border: 1px solid #e6e6e6;
+    background: #ffffff;
+    padding: 8px 12px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--fg);
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.mobile-filter-modal select,
+.mobile-filter-modal .modal-content select {
+    width: 100%;
+    height: 44px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #e6e6e6;
+    background: transparent;
+    font-size: 14px;
+    color: var(--fg);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.mobile-filter-modal .modal-content>div::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b4f48'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-size: 14px 14px;
+    pointer-events: none;
+}
+
+/* hide mobile chevron for status and date blocks */
+.mobile-filter-modal .modal-content>div.filter-status::after,
+.mobile-filter-modal .modal-content>div.filter-date::after {
+    display: none;
+}
+
+/* Position actual FontAwesome chevrons (inserted in JSX) to the right and vertically centered */
+.filters-desktop>div.filter-status,
+.filters-desktop>div.filter-date {
+    position: relative;
+}
+
+.filters-desktop>div.filter-status .icon-chevron-down,
+.filters-desktop>div.filter-date .icon-chevron-down {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px; /* reduced size */
+    color: #3b4f48;
+    pointer-events: none;
+}
+
+/* give selects/inputs extra right padding so text doesn't overlap the icon */
+.filters-desktop>div.filter-status select,
+.filters-desktop>div.filter-date input[type="date"],
+.filters-desktop>div.filter-date input[type="month"],
+.filters-desktop>div.filter-date input[type="number"],
+.filters-desktop>div.filter-date input[type="text"] {
+    padding-right: 44px;
+}
+
+.filters-desktop>div.filter-date input[type="date"] {
+    width: 150px;
+    max-width: 150px;
+}
+
+.filters-desktop>div.filter-date input[type="month"] {
+    width: 195px;
+    max-width: 200px;
+}
+
+.filters-desktop>div.filter-date input[type="text"] {
+    width: 90px;
+    max-width: 90px;
+    align-self: flex-start;
+}
+
+/* Mobile modal: wrapper div holds select+icon, make it relative */
+.mobile-filter-modal .modal-content>div.filter-status > div {
+    position: relative;
+}
+
+.mobile-filter-modal .modal-content>div.filter-status .icon-chevron-down,
+.mobile-filter-modal .modal-content>div.filter-date .icon-chevron-down {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px; /* smaller on mobile too */
+    color: #3b4f48;
+    pointer-events: none;
+}
+
+/* Desktop tweak: nudge chevron slightly downward for visual alignment */
+@media (min-width: 769px) {
+    .filters-desktop>div.filter-status .icon-chevron-down,
+    .filters-desktop>div.filter-date .icon-chevron-down {
+        transform: translateY(calc(-50% + 3px));
+    }
+}
+
+/* ensure mobile date input has padding if icon appears */
+.mobile-filter-modal .modal-content>div.filter-date input[type="date"],
+.mobile-filter-modal .modal-content>div.filter-date input[type="month"],
+.mobile-filter-modal .modal-content>div.filter-date input[type="number"],
+.mobile-filter-modal .modal-content>div.filter-date input[type="text"] {
+    padding-right: 44px;
+}
+
+/* Mobile: ensure selects and date inputs show a normal border by default
+   (visible even when not focused). Keep focus styles neutral. */
+@media (max-width: 768px) {
+    .mobile-filter-modal .modal-content>div select,
+    .mobile-filter-modal .modal-content>div input[type="date"],
+    .mobile-filter-modal .modal-content>div input[type="month"],
+    .mobile-filter-modal .modal-content>div input[type="number"],
+    .mobile-filter-modal .modal-content>div input[type="text"] {
+        border: 1px solid #e6e6e6;
+        border-radius: 10px;
+        background: transparent;
+        padding: 8px 12px;
+    }
+
+    .mobile-filter-modal .modal-content>div.filter-date input[type="date"],
+    .mobile-filter-modal .modal-content>div.filter-date input[type="month"],
+    .mobile-filter-modal .modal-content>div.filter-date input[type="text"] {
+        background: #ffffff;
+        padding: 8px 12px;
+    }
+
+    /* If the desktop filters are rendered on small screens, ensure they also show border */
+    .filters-desktop>div.filter-status select,
+    .filters-desktop>div.filter-date input[type="date"],
+    .filters-desktop>div.filter-date input[type="month"],
+    .filters-desktop>div.filter-date input[type="number"],
+    .filters-desktop>div.filter-date input[type="text"] {
+        border: 1px solid #e6e6e6;
+        border-radius: 10px;
+        background: transparent;
+        padding: 6px 10px;
+    }
+
+    .filters-desktop>div.filter-date input[type="date"],
+    .filters-desktop>div.filter-date input[type="month"] {
+        width: 140px;
+        max-width: 140px;
+    }
+
+    .filters-desktop>div.filter-date input[type="text"] {
+        width: 90px;
+        max-width: 90px;
+    }
+
+    /* On mobile, show a subtle focus indicator (soft border/shadow) */
+    .mobile-filter-modal .modal-content>div select:focus,
+    .mobile-filter-modal .modal-content>div input[type="date"]:focus,
+    .mobile-filter-modal .modal-content>div input[type="month"]:focus,
+    .mobile-filter-modal .modal-content>div input[type="number"]:focus,
+    .mobile-filter-modal .modal-content>div input[type="text"]:focus,
+    .filters-desktop>div.filter-status select:focus,
+    .filters-desktop>div.filter-date input[type="date"]:focus,
+    .filters-desktop>div.filter-date input[type="month"]:focus,
+    .filters-desktop>div.filter-date input[type="number"]:focus,
+    .filters-desktop>div.filter-date input[type="text"]:focus {
+        outline: none;
+        box-shadow: 0 0 0 6px rgba(47,119,85,0.06); /* soft green glow */
+        border-color: rgba(47,119,85,0.15);
+    }
+}
+
+.apply-btn {
+    height: 56px;
+    border: none;
+    border-radius: 16px;
+    background: var(--accent);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.clear-mobile-btn {
+    height: 56px;
+    border-radius: 16px;
+    border: 1px solid #dcdcdc;
+    background: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 992px) {
+    .filters-desktop {
+        display: none;
+    }
+
+    .mobile-actions {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .mobile-search {
+        flex: 1;
+        height: 54px;
+        background: white;
+        border: 1px solid #dcdcdc;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+    }
+
+    .mobile-search input {
+        border: none;
+        outline: none;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .mobile-filter-btn {
+        height: 54px;
+        padding: 0 18px;
+        border: none;
+        border-radius: 16px;
+        background: var(--accent);
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+}
+
+/* mobile date input inside modal */
+.mobile-filter-modal .modal-content input[type="date"] {
+    width: 100%;
+}

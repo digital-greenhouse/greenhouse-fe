@@ -146,7 +146,7 @@ const services = [
   },
 ];
 
-const propertyIdFromStorage = localStorage.getItem('property') ? JSON.parse(localStorage.getItem('property'))?.id || null : null;
+const propertyIdFromStorage = JSON.parse(localStorage.getItem('property')) || null;
 
 
 const pricingPlanTemplates = [
@@ -155,7 +155,7 @@ const pricingPlanTemplates = [
     price: '$350.000',
     per: '/ dia',
     featured: false,
-    features: ['Lunes a Jueves', `Hasta ${propertyIdFromStorage?.maxCapacity || 50} personas`, 'Zonas comunes y BBQ', 'Parqueadero'],
+    features: ['Lunes a Jueves', `Hasta ${propertyIdFromStorage?.maxCapacity || 10} personas`, 'Zonas comunes y BBQ', 'Parqueadero'],
   },
   {
     id: 'finde',
@@ -259,7 +259,7 @@ function DashboardPage() {
 
   const galleryItems = buildGalleryItems(property);
   const heroBackgroundImage = galleryItems.find((item) => item.hasImage)?.image || '';
-  const propertyCapacity = property?.max_capacity ?? property?.maxCapacity ?? 50;
+  const propertyCapacity = property?.maxCapacity ?? 50;
   const basePricePerNight = Number(
     property?.base_price_per_night ??
     property?.basePricePerNight ??
@@ -270,7 +270,12 @@ function DashboardPage() {
 
   const pricingPlans = pricingRules
     .slice()
-    .sort((left, right) => Number(right?.id ?? 0) - Number(left?.id ?? 0))
+    .sort((right, left) => {
+      const leftDate = new Date(left?.start_date || left?.end_date || 0).getTime();
+      const rightDate = new Date(right?.start_date || right?.end_date || 0).getTime();
+
+      return rightDate - leftDate;
+    })
     .slice(0, 3)
     .map((rule, index) => {
       const template = pricingPlanTemplates[index] || pricingPlanTemplates[pricingPlanTemplates.length - 1];
@@ -382,7 +387,7 @@ function DashboardPage() {
                     {service.icon}
                   </span>
                   <h3>{service.title}</h3>
-                  {service.id === 'capacidad' && <p>{`Hasta ${propertyCapacity} personas`}</p>}
+                  {service.id === 'capacidad' && <p>{`Hasta ${storedProperty?.maxCapacity || 10} personas`}</p>}
                   <p>{service.description}</p>
                 </article>
               ))}

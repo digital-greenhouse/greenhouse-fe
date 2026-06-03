@@ -158,7 +158,7 @@ function DashboardMenu() {
 
   const adminOption = () => {
     setProfileMenuOpen(false);
-    navigate('/admin/history-bookings');
+    navigate('/admin/reports');
   };
 
   const myBookingsOption = () => {

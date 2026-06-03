@@ -1,8 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Spinner } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+	faChevronDown,
+	faMagnifyingGlass,
+	faSliders,
+	faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import { getBookings } from '../../../../api/bookings';
+import { getUserById } from '../../../../api/users';
 import './HistoryBokings.css';
+import './HistoryFilters.css';
 
 const statusLabels = {
 	PENDING_PAYMENT: 'Pendiente de pago',
@@ -12,6 +21,9 @@ const statusLabels = {
 	PENDING_VERIFICATION: 'Pendiente de verificación',
 	VERIFIED: 'Verificada',
 };
+
+const YEAR_MIN = 1900;
+const YEAR_MAX = 2100;
 
 const customStyles = {
 	table: {
@@ -114,10 +126,56 @@ function resolveStatus(row) {
 	return statusLabels[row?.payment_status || row?.status] || row?.payment_status || row?.status || 'No disponible';
 }
 
+function normalizeToDateValue(value) {
+	if (!value) {
+		return '';
+	}
+
+	const date = new Date(value);
+	if (Number.isNaN(date.getTime())) {
+		return '';
+	}
+
+	return date.toISOString().slice(0, 10);
+}
+
 function HistoryBokings() {
 	const [bookings, setBookings] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [feedback, setFeedback] = useState('');
+	const [showMobileFilters, setShowMobileFilters] = useState(false);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [selectedStatus, setSelectedStatus] = useState('');
+	const [selectedDateMode, setSelectedDateMode] = useState('day');
+	const [selectedDate, setSelectedDate] = useState('');
+	const selectedDateLabel = selectedDateMode === 'day'
+		? 'Fecha'
+		: selectedDateMode === 'month'
+			? 'Mes'
+			: 'Año';
+
+	const handleYearChange = (value) => {
+		const digitsOnly = String(value ?? '').replace(/\D/g, '').slice(0, 4);
+		setSelectedDate(digitsOnly);
+	};
+
+	const handleYearBlur = () => {
+		if (!selectedDate) {
+			return;
+		}
+
+		const year = Number(selectedDate);
+		const normalizedYear = Math.min(YEAR_MAX, Math.max(YEAR_MIN, year));
+		setSelectedDate(String(normalizedYear));
+	};
+
+	const handleClearFilters = () => {
+		setSearchQuery('');
+		setSelectedStatus('');
+		setSelectedDate('');
+		setSelectedDateMode('day');
+		setShowMobileFilters(false);
+	};
 
 	useEffect(() => {
 		const fetchHistory = async () => {
@@ -125,7 +183,40 @@ function HistoryBokings() {
 
 			try {
 				const response = await getBookings();
-				setBookings(Array.isArray(response?.data) ? response.data : []);
+				const history = Array.isArray(response?.data) ? response.data : [];
+				const userCache = new Map();
+
+				const historyWithClientNames = await Promise.all(
+					history.map(async (booking) => {
+						const clientId = booking?.client_id;
+
+						if (!clientId) {
+							return {
+								...booking,
+								client_name: 'No disponible',
+							};
+						}
+
+						if (!userCache.has(clientId)) {
+							userCache.set(
+								clientId,
+								getUserById(clientId)
+									.then((userResponse) => userResponse?.data?.name || userResponse?.data?.data?.name || 'No disponible')
+									.catch(() => 'No disponible')
+							);
+						}
+
+						const clientName = await userCache.get(clientId);
+
+						return {
+							...booking,
+							client_name: clientName,
+						};
+					})
+				);
+
+				setBookings(historyWithClientNames);
+
 				setFeedback('');
 			} catch (error) {
 				console.error('Error al cargar el historial de reservas:', error);
@@ -139,24 +230,80 @@ function HistoryBokings() {
 		fetchHistory();
 	}, []);
 
+	const filteredBookings = useMemo(() => {
+		const normalizedQuery = searchQuery.trim().toLowerCase();
+
+		return bookings.filter((booking) => {
+			const statusKey = booking?.payment_status || booking?.status || '';
+			if (selectedStatus && statusKey !== selectedStatus) {
+				return false;
+			}
+
+			if (selectedDate) {
+				const checkIn = normalizeToDateValue(booking?.check_in_date);
+				const checkOut = normalizeToDateValue(booking?.check_out_date);
+
+				if (selectedDateMode === 'day') {
+					if (checkIn !== selectedDate && checkOut !== selectedDate) {
+						return false;
+					}
+				}
+
+				if (selectedDateMode === 'month') {
+					const selectedMonth = selectedDate.slice(0, 7);
+					const checkInMonth = checkIn.slice(0, 7);
+					const checkOutMonth = checkOut.slice(0, 7);
+					if (checkInMonth !== selectedMonth && checkOutMonth !== selectedMonth) {
+						return false;
+					}
+				}
+
+				if (selectedDateMode === 'year') {
+					const checkInYear = checkIn.slice(0, 4);
+					const checkOutYear = checkOut.slice(0, 4);
+					if (checkInYear !== selectedDate && checkOutYear !== selectedDate) {
+						return false;
+					}
+				}
+			}
+
+			if (!normalizedQuery) {
+				return true;
+			}
+
+			const searchableFields = [
+				String(booking?.id ?? ''),
+				booking?.property_name || '',
+				booking?.client_name || '',
+				String(booking?.client_id ?? ''),
+				booking?.special_requests || '',
+				resolveStatus(booking),
+			];
+
+			return searchableFields.some((value) =>
+				String(value).toLowerCase().includes(normalizedQuery)
+			);
+		});
+	}, [bookings, searchQuery, selectedStatus, selectedDateMode, selectedDate]);
+
 	const columns = useMemo(() => ([
 		{
 			name: 'ID',
 			selector: (row) => row?.id,
 			sortable: true,
-			grow: 0.4,
+			grow: 0.1,
 		},
 		{
 			name: 'Propiedad',
 			selector: (row) => row?.property_name||'No disponible',
 			sortable: true,
-			grow: 0.5,
+			grow: 0.8,
 		},
 		{
 			name: 'Cliente',
-			selector: (row) => row?.client_id,
+				selector: (row) => row?.client_name || row?.client_id || 'No disponible',
 			sortable: true,
-			grow: 0.5,
+			grow: 0.8,
 		},
 		{
 			name: 'Ingreso',
@@ -198,7 +345,7 @@ function HistoryBokings() {
 			name: 'Solicitud',
 			selector: (row) => row?.special_requests || 'Sin solicitudes',
 			sortable: true,
-			grow: 1.6,
+			grow: 1,
 		},
 	]), []);
 
@@ -209,9 +356,204 @@ function HistoryBokings() {
 				<h2 className="history-bookings__title">Reservas registradas</h2>
 			</header>
 
+			<div className="filters-desktop reservation-filters-root">
+				<div className="search-box">
+					<FontAwesomeIcon className="icon-search" icon={faMagnifyingGlass} />
+					<input
+						type="search"
+						placeholder="Buscar reserva por ID, nombre de propiedad, cliente, requerimiento o estado..."
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+					/>
+					<button
+						type="button"
+						aria-label="Vaciar búsqueda"
+						className="search-clear-btn"
+						onClick={() => setSearchQuery('')}
+					>
+					</button>
+				</div>
+
+				<div className="filter-status">
+					<span>Estado</span>
+					<select
+						value={selectedStatus}
+						onChange={(e) => setSelectedStatus(e.target.value)}
+					>
+						<option value="">Todos los estados</option>
+						{Object.entries(statusLabels).map(([key, label]) => (
+							<option key={key} value={key}>{label}</option>
+						))}
+					</select>
+					<FontAwesomeIcon className="icon-chevron-down" icon={faChevronDown} />
+				</div>
+
+				<div className="filter-date">
+					<span>Filtrar por</span>
+					<select
+						value={selectedDateMode}
+						onChange={(e) => {
+							setSelectedDateMode(e.target.value);
+							setSelectedDate('');
+						}}
+					>
+						<option value="day">Día</option>
+						<option value="month">Mes</option>
+						<option value="year">Año</option>
+					</select>
+					<FontAwesomeIcon className="icon-chevron-down" icon={faChevronDown} />
+				</div>
+
+				<div className="filter-date">
+					<span>{selectedDateLabel}</span>
+					{selectedDateMode === 'day' && (
+						<input
+							type="date"
+							value={selectedDate}
+							onChange={(e) => setSelectedDate(e.target.value)}
+						/>
+					)}
+					{selectedDateMode === 'month' && (
+						<input
+							type="month"
+							value={selectedDate}
+							onChange={(e) => setSelectedDate(e.target.value)}
+						/>
+					)}
+					{selectedDateMode === 'year' && (
+						<input
+							type="text"
+							inputMode="numeric"
+							pattern="[0-9]*"
+							maxLength={4}
+							placeholder="2026"
+							value={selectedDate}
+							onChange={(e) => handleYearChange(e.target.value)}
+							onBlur={handleYearBlur}
+						/>
+					)}
+				</div>
+
+				<button className="clear-btn" onClick={handleClearFilters}>
+					Limpiar
+				</button>
+			</div>
+
+			<div className="mobile-actions reservation-filters-root">
+				<div className="search-box mobile-search">
+					<FontAwesomeIcon className="icon-search" icon={faMagnifyingGlass} />
+					<input
+						type="text"
+						placeholder="Buscar reserva..."
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+					/>
+					<button
+						type="button"
+						aria-label="Vaciar búsqueda"
+						className="search-clear-btn"
+						onClick={() => setSearchQuery('')}
+					>
+						<FontAwesomeIcon className="icon-Xmark" icon={faXmark} />
+					</button>
+				</div>
+
+				<button
+					className="mobile-filter-btn"
+					onClick={() => setShowMobileFilters(true)}
+				>
+					<FontAwesomeIcon className="icon-sliders" icon={faSliders} />
+					Filtros
+				</button>
+			</div>
+
+			<div className={`mobile-filter-overlay ${showMobileFilters ? 'show' : ''}`}>
+				<div className="mobile-filter-modal reservation-filters-root">
+					<div className="modal-header">
+						<h3>Filtros</h3>
+						<button type="button" onClick={() => setShowMobileFilters(false)}>
+							<FontAwesomeIcon icon={faXmark} />
+						</button>
+					</div>
+
+					<div className="modal-content">
+						<div className="filter-status">
+							<span>Estado</span>
+							<div>
+								<select
+									value={selectedStatus}
+									onChange={(e) => setSelectedStatus(e.target.value)}
+								>
+									<option value="">Todos los estados</option>
+									{Object.entries(statusLabels).map(([key, label]) => (
+										<option key={key} value={key}>{label}</option>
+									))}
+								</select>
+								<FontAwesomeIcon className="icon-chevron-down" icon={faChevronDown} />
+							</div>
+						</div>
+
+						<div className="filter-date">
+							<span>Filtrar por</span>
+							<div>
+								<select
+									value={selectedDateMode}
+									onChange={(e) => {
+										setSelectedDateMode(e.target.value);
+										setSelectedDate('');
+									}}
+								>
+									<option value="day">Día</option>
+									<option value="month">Mes</option>
+									<option value="year">Año</option>
+								</select>
+								<FontAwesomeIcon className="icon-chevron-down" icon={faChevronDown} />
+							</div>
+						</div>
+
+						<div className="filter-date">
+							<span>{selectedDateLabel}</span>
+							{selectedDateMode === 'day' && (
+								<input
+									type="date"
+									value={selectedDate}
+									onChange={(e) => setSelectedDate(e.target.value)}
+								/>
+							)}
+							{selectedDateMode === 'month' && (
+								<input
+									type="month"
+									value={selectedDate}
+									onChange={(e) => setSelectedDate(e.target.value)}
+								/>
+							)}
+							{selectedDateMode === 'year' && (
+								<input
+									type="text"
+									inputMode="numeric"
+									pattern="[0-9]*"
+									maxLength={4}
+									placeholder="2026"
+									value={selectedDate}
+									onChange={(e) => handleYearChange(e.target.value)}
+									onBlur={handleYearBlur}
+								/>
+							)}
+						</div>
+
+						<button type="button" className="apply-btn" onClick={() => setShowMobileFilters(false)}>
+							Aplicar filtros
+						</button>
+						<button type="button" className="clear-mobile-btn" onClick={handleClearFilters}>
+							Limpiar filtros
+						</button>
+					</div>
+				</div>
+			</div>
+
 			<DataTable
 				columns={columns}
-				data={bookings}
+				data={filteredBookings}
 				customStyles={customStyles}
 				striped
 				highlightOnHover
