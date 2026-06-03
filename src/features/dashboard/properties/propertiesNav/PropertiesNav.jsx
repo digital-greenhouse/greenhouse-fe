@@ -651,9 +651,7 @@ function PropertiesNav() {
                                 Publicar propiedad
                             </button>
 
-                            <button type="button" className="properties-topbar__icon-btn" aria-label="Notificaciones">
-                                <FontAwesomeIcon icon={faBell} />
-                            </button>
+                            
                         </>
                     )}
 
