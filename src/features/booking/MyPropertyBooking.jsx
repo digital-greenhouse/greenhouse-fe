@@ -147,7 +147,13 @@ function MyPropertyBooking({ statusLabels = {}, searchQuery = '', selectedStatus
     };
 
     const columns = [
-        { name: 'id', selector: (row) => row?.id, sortable: true, grow: 0.3 },
+        { name: 'id', selector: (row) => row?.id, sortable: true, grow: 0.2 },
+        {
+            name: 'Nombre Propiedad',
+            selector: (row) => row?.property_name || 'N/A',
+            sortable: true,
+            grow: 0.7
+        },
         {
             name: 'Requerimiento adicional',
             selector: (row) => row.special_requests || 'Sin solicitudes especiales',

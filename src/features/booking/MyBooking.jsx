@@ -150,8 +150,15 @@ function MyBooking({ statusLabels = {},
             name: 'id',
             selector: (row) => row?.id,
             sortable: true,
-            grow: 0.3
+            grow: 0.2
         },
+        {
+            name: 'Nombre Propiedad',
+            selector: (row) => row?.property_name || 'N/A',
+            sortable: true,
+            grow: 0.7
+        },
+
         {
             name: 'Requerimiento adicional',
             selector: (row) => row.special_requests || 'Sin solicitudes especiales',
@@ -323,7 +330,7 @@ function MyBooking({ statusLabels = {},
         }
 
         try {
-            
+
             const payload = await saveFile(booking?.id, file, amountToPay);
 
             await sendPayment(payload);
@@ -345,7 +352,8 @@ function MyBooking({ statusLabels = {},
             try {
                 const search = bookings.filter(record => {
                     return record.id.toString().includes(searchQuery.toLowerCase()) ||
-                        record.special_requests.toLowerCase().includes(searchQuery.toLowerCase())
+                        record.special_requests.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        record.property_name.toLowerCase().includes(searchQuery.toLowerCase());
                 });
                 const selectedState = search.filter((record) => {
                     const status =

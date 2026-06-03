@@ -138,7 +138,7 @@ function BokingMenu({
                     <FontAwesomeIcon className='icon-search' icon={faMagnifyingGlass} />
                     <input
                         type="search"
-                        placeholder="Buscar reserva por ID, requerimiento o estado..."
+                        placeholder="Buscar reserva por ID, nombre de propiedad, requerimiento o estado..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
