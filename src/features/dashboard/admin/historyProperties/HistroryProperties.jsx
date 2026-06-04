@@ -9,6 +9,7 @@ import {
     faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import { getProperties } from '../../../../api/properties';
+import { getUsers } from '../../../../api/users';
 import './HistoryProperties.css';
 import '../HistoryBookings/HistoryFilters.css';
 
@@ -178,7 +179,17 @@ function HistoryProperties() {
 
             try {
                 const response = await getProperties();
-                setProperties(Array.isArray(response?.data) ? response.data : []);
+                const historyProperties = Array.isArray(response?.data) ? response.data : [];
+                const usersResponse = await getUsers();
+                const users = Array.isArray(usersResponse?.data) ? usersResponse.data : [];
+                const usersMap = users.reduce((acc, user) => {
+                    acc[user.id] = user;
+                    return acc;
+                }, {});
+                setProperties(historyProperties.map(property => ({
+                    ...property,
+                    ownerName: usersMap[property.owner_id]?.name || "Sin propietario"
+                })));
                 setFeedback('');
             } catch (error) {
                 console.error('Error al cargar las propiedades:', error);
@@ -218,9 +229,9 @@ function HistoryProperties() {
         return selectedDateRecords.filter((property) => {
             const searchableFields = [
                 String(property?.id ?? ''),
+                property?.ownerName || '',
                 property?.name || '',
                 property?.address || '',
-                property?.description || '',
                 String(property?.owner_id ?? ''),
                 resolvePropertyStatusKey(property),
             ];
@@ -235,6 +246,12 @@ function HistoryProperties() {
             selector: (row) => row?.id,
             sortable: true,
             grow: 0.4,
+        },
+         {
+            name: 'Dueño',
+            selector: (row) => row?.ownerName || 'No disponible',
+            sortable: true,
+            grow: 1.1,
         },
         {
             name: 'Nombre',
@@ -286,7 +303,7 @@ function HistoryProperties() {
                     <FontAwesomeIcon className="icon-search" icon={faMagnifyingGlass} />
                     <input
                         type="search"
-                        placeholder="Buscar propiedad por ID, nombre, dirección, descripción o estado..."
+                        placeholder="Buscar propiedad por ID, dueño, nombre, dirección o estado..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
