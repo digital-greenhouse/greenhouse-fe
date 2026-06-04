@@ -268,34 +268,69 @@ function DashboardPage() {
     0
   );
 
-  const pricingPlans = pricingRules
-    .slice()
-    .sort((right, left) => {
-      const leftDate = new Date(left?.start_date || left?.end_date || 0).getTime();
-      const rightDate = new Date(right?.start_date || right?.end_date || 0).getTime();
+ const now = Date.now();
 
-      return rightDate - leftDate;
-    })
-    .slice(0, 3)
-    .map((rule, index) => {
-      const template = pricingPlanTemplates[index] || pricingPlanTemplates[pricingPlanTemplates.length - 1];
-      const modifier = Number(rule?.price_modifier ?? 1);
-      const computedPrice = basePricePerNight * modifier;
-      const formattedPrice = computedPrice > 0
-        ? `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(computedPrice)}`
+const pricingPlans = pricingRules
+  .slice()
+  .sort((a, b) => {
+    const getPriority = (rule) => {
+      const start = new Date(rule.start_date).getTime();
+      const end = new Date(rule.end_date).getTime();
+
+      if (now >= start && now <= end) return 0; // Vigente
+      if (start > now) return 1; // Próxima
+      return 2; // Pasada
+    };
+
+    const priorityA = getPriority(a);
+    const priorityB = getPriority(b);
+
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB;
+    }
+
+    const startA = new Date(a.start_date).getTime();
+    const startB = new Date(b.start_date).getTime();
+
+    // Futuras: la más cercana primero
+    if (priorityA === 1) {
+      return startA - startB;
+    }
+
+    // Pasadas: la más reciente primero
+    if (priorityA === 2) {
+      return startB - startA;
+    }
+
+    return 0;
+  })
+  .slice(0, 3)
+  .map((rule, index) => {
+    const template =
+      pricingPlanTemplates[index] ||
+      pricingPlanTemplates[pricingPlanTemplates.length - 1];
+
+    const modifier = Number(rule?.price_modifier ?? 1);
+    const computedPrice = basePricePerNight * modifier;
+
+    const formattedPrice =
+      computedPrice > 0
+        ? `$${new Intl.NumberFormat("es-CO", {
+            maximumFractionDigits: 0,
+          }).format(computedPrice)}`
         : template.price;
 
-      return {
-        id: rule?.id ?? template.id,
-        name: rule?.name || template.name,
-        price: formattedPrice,
-        per: template.per,
-        featured: template.featured,
-        features: template.features,
-        inicio: rule?.start_date || '',
-        fin: rule?.end_date || '',
-      };
-    });
+    return {
+      id: rule?.id ?? template.id,
+      name: rule?.name || template.name,
+      price: formattedPrice,
+      per: template.per,
+      featured: template.featured,
+      features: template.features,
+      inicio: rule?.start_date || "",
+      fin: rule?.end_date || "",
+    };
+  });
 
   const pricingPlansToRender = pricingPlans.length > 0 ? pricingPlans : pricingPlanTemplates;
   useEffect(() => {
