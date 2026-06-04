@@ -7,3 +7,6 @@ export async function createUser(data) {
 export async function getUserById(id) {
     return await apiFactory(false).get(`/api/v1/users/${id}`);
 }
+ export async function getUsers() {
+    return await apiFactory(false).get('/api/v1/users/');
+}
