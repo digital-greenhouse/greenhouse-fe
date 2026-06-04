@@ -9,6 +9,8 @@ import HistoryBokings from '../features/dashboard/admin/HistoryBookings/HistoryB
 import Reports from '../features/dashboard/admin/Reports/Reports';
 import PropertiesNav from '../features/dashboard/properties/propertiesNav/PropertiesNav';
 import NewProperty from '../features/dashboard/properties/newProperty/NewProperty';
+import HistoryProperties from '../features/dashboard/admin/historyProperties/HistroryProperties';
+import Users from '../features/dashboard/admin/users/Users';
 
 function AppRoutes({ location, includeLoginRoute }) {
   return (
@@ -21,6 +23,8 @@ function AppRoutes({ location, includeLoginRoute }) {
       <Route path="admin" element={<DashboardAdminMenu />}>
         <Route path="history-bookings" element={<HistoryBokings />} />
         <Route path="reports" element={<Reports />} />
+        <Route path="history-properties" element={<HistoryProperties />} />
+        <Route path="users" element={<Users />} />
       </Route>
       {includeLoginRoute && <Route path="/login" element={<LoginPage />} />}
       <Route index element={<Navigate to="/dashboard" />} />
