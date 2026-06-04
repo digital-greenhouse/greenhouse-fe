@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartColumn, faBars, faRightFromBracket, faCalendarDays, faCircleArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faChartColumn, faBars, faRightFromBracket, faCalendarDays, faCircleArrowLeft, faHouse, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { Nav } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
 import './DashboardAdminMenu.css';
@@ -170,6 +170,22 @@ function AdminDashboard() {
                 Reservas
               </Nav.Link>
 
+               <Nav.Link
+                className={`nav-item-custom ${isSelectedRoute('/admin/history-properties') ? 'is-active' : ''}`}
+                onClick={() => handleNavigation('/admin/history-properties')}
+              >
+                <FontAwesomeIcon className="icon-margin" icon={faHouse} />
+                Propiedades
+              </Nav.Link>
+
+               <Nav.Link
+                className={`nav-item-custom ${isSelectedRoute('/admin/users') ? 'is-active' : ''}`}
+                onClick={() => handleNavigation('/admin/users')}
+              >
+                <FontAwesomeIcon className="icon-margin" icon={faUsers} />
+                Usuarios
+              </Nav.Link>
+
              
             </div>
 
@@ -186,7 +202,7 @@ function AdminDashboard() {
 
             <div className="section-3">
 
-              <Nav.Link className="nav-item-custom" onClick={() => navigate(-2)}>
+              <Nav.Link className="nav-item-custom" onClick={() => navigate('/dashboard')}>
 
                 <FontAwesomeIcon className="icon-margin" icon={faCircleArrowLeft} />
                 Volver al sitio
